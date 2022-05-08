@@ -323,8 +323,10 @@ public:
 };
 // ----- CHANGE FOR PROBLEM -----
 
+#ifdef LC_LOCAL
 int main() {
   ios_base::sync_with_stdio(false);
   cin.tie(NULL);
   exec(&Solution::test); // CHANGE FOR PROBLEM
 }
+#endif
