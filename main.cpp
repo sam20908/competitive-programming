@@ -133,7 +133,7 @@ template <bool WriteEnd, typename T> void write(FILE *f, const T &val) {
   if constexpr (is_same_v<T, int>)
     fprintf(f, "%d%s", val, end);
   else if constexpr (is_same_v<T, float>)
-    fprintf(f, "%f%s", val, end);
+    fprintf(f, "%.f%s", val, end);
   else if constexpr (is_same_v<T, bool>)
     fprintf(f, "%s%s", val ? "true" : "false", end);
   else if constexpr (is_same_v<T, string>)
@@ -316,13 +316,15 @@ constexpr int dy[] = {0, 1, -1, 0, -1, 1, -1, 1};
 constexpr int INF = 1e9;
 constexpr double EPS = 1e-9;
 
+// ----- CHANGE FOR PROBLEM -----
 class Solution {
 public:
   void test() {}
 };
+// ----- CHANGE FOR PROBLEM -----
 
 int main() {
   ios_base::sync_with_stdio(false);
   cin.tie(NULL);
-  exec(&Solution::test);
+  exec(&Solution::test); // CHANGE FOR PROBLEM
 }
