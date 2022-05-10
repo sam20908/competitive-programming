@@ -38,7 +38,6 @@ template <typename T, typename = void> struct is_container {
 template <typename T>
 struct is_container<T, void_t<decltype(T{}.begin()), decltype(T{}.end())>> {
   static constexpr bool value = true;
-  using type = T;
 };
 
 template <typename T, bool ReadEnd> T parse(FILE *f, int &c) {
