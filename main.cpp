@@ -39,6 +39,7 @@ template <typename T>
 struct is_container<T, void_t<decltype(T{}.begin()), decltype(T{}.end())>> {
   static constexpr bool value = true;
 };
+template <typename = void> inline constexpr bool always_false = false;
 
 template <typename T, bool ReadEnd> T parse(FILE *f, int &c) {
   if constexpr (is_same_v<T, int>) {
@@ -122,7 +123,8 @@ template <typename T, bool ReadEnd> T parse(FILE *f, int &c) {
     if constexpr (ReadEnd)
       c = fgetc(f);
     return ans;
-  }
+  } else
+    static_assert(always_false<T>, "parsing for type not supported");
 }
 
 template <bool WriteEnd, typename T> void write(FILE *f, const T &val) {
@@ -182,7 +184,8 @@ template <bool WriteEnd, typename T> void write(FILE *f, const T &val) {
       write<false>(f, val[i]);
     }
     fprintf(f, "]%s", end);
-  }
+  } else
+    static_assert(always_false<T>, "writing for type not supported");
 }
 
 template <typename Args, size_t... Idx>
