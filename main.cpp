@@ -313,12 +313,7 @@ constexpr double EPS = 1e-9;
 // ----- CHANGE FOR PROBLEM -----
 class Solution {
 public:
-  void test() {
-    map<int, int> a{{1, 2}, {3, 4}};
-    vector<pair<string, bool>> b{{"asfd", true}, {"hello world", false}};
-    tuple c{1, 2.0, string{"asf"}, true};
-    dbg(a, b, c);
-  }
+  void test() {}
 };
 // ----- CHANGE FOR PROBLEM -----
 
