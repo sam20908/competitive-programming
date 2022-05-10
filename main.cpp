@@ -214,7 +214,8 @@ void exec(R (Solution::*fn)(Ts...)) {
       else
         ungetc(c, in);
       if (char(c = fgetc(in)) == '/') {
-        while ((c = fgetc(in)) != '\n' && c != EOF) {}
+        while ((c = fgetc(in)) != '\n' && c != EOF) {
+        }
       } else {
         ungetc(c, in);
         tuple args{Solution{}, parse<decay_t<Ts>, true>(in, c)...};
@@ -238,21 +239,20 @@ void _print(T x) {
   cout << x;
 }
 template <typename T, size_t... Idx>
-void _print2(const T& x, index_sequence<Idx...>) {
+void _print2(const T &x, index_sequence<Idx...>) {
   int c = 0;
   ((cout << (c++ ? "," : ""), _print(get<Idx>(x))), ...);
 }
-template <typename T>
-void_t<decltype(get<0>(T{}))> _print(const T& x) {
+template <typename T> void_t<decltype(get<0>(T{}))> _print(const T &x) {
   cout << '{';
   _print2(x, make_index_sequence<tuple_size_v<T>>{});
   cout << '}';
 }
 template <typename T, typename = enable_if_t<is_container<T>::value>>
-void _print(const T& x) {
+void _print(const T &x) {
   cout << '[';
   int c = 0;
-  for (auto& e : x) {
+  for (auto &e : x) {
     cout << (c++ ? "," : "");
     _print(e);
   }
