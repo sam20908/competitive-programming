@@ -146,7 +146,7 @@ template <bool WriteEnd, typename T> void write(FILE *f, const T &val) {
       fprintf(f, "%d", val->val);
     }
     while (!q.empty()) {
-      int sz = q.size(), sz2 = sz, nulls = 0;
+      int sz = q.size();
       string ans;
       while (sz-- > 0) {
         auto cur = q.front();
@@ -155,20 +155,16 @@ template <bool WriteEnd, typename T> void write(FILE *f, const T &val) {
           q.push_back(cur->left);
           ans += ',';
           ans += to_string(cur->left->val);
-        } else {
+        } else
           ans += ",null";
-          nulls++;
-        }
         if (cur->right) {
           q.push_back(cur->right);
           ans += ',';
           ans += to_string(cur->right->val);
-        } else {
+        } else
           ans += ",null";
-          nulls++;
-        }
       }
-      if (nulls != sz2 * 2)
+      if (!q.empty())
         fprintf(f, ans.data());
     }
     fprintf(f, "]%s", end);
