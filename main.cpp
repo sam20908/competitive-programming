@@ -220,18 +220,13 @@ void exec(R (Solution::*fn)(Ts...)) {
       else
         ungetc(c, in);
       if (char(c = fgetc(in)) == '/') {
-        while (char(c = fgetc(in)) == 'n' || (char)c == 'u' || (char)c == 'l' ||
-               (char)c == '"' || ((char)c >= 'a' && (char)c <= 'z') ||
-               ((char)c >= 'A' && (char)c <= 'Z') ||
-               ((char)c >= '0' && (char)c <= '9') || (char)c == '[' ||
-               (char)c == ']') {
-        }
+        while ((c = fgetc(in)) != '\n' && c != EOF) {}
       } else {
         ungetc(c, in);
         tuple args{Solution{}, parse<decay_t<Ts>, true>(in, c)...};
         if constexpr (!returns) {
           apply(fn, args);
-          fprintf(out, "New state of parameters: \n");
+          fprintf(out, "New state of parameters:\n");
           write_args(out, args, index_sequence_for<Ts...>{});
         } else
           write<true>(out, apply(fn, args));
