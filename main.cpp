@@ -234,8 +234,7 @@ void exec(R (Solution::*fn)(Ts...)) {
 
 void _print(const string &x) { cout << '\"' << x << '\"'; }
 void _print(bool x) { cout << (x ? "true" : "false"); }
-template <typename T, typename = enable_if_t<is_arithmetic_v<T>>>
-void _print(T x) {
+template <typename T> enable_if_t<is_arithmetic_v<T>> _print(const T &x) {
   cout << x;
 }
 template <typename T, size_t... Idx>
@@ -243,13 +242,12 @@ void _print2(const T &x, index_sequence<Idx...>) {
   int c = 0;
   ((cout << (c++ ? "," : ""), _print(get<Idx>(x))), ...);
 }
-template <typename T> void_t<decltype(get<0>(T{}))> _print(const T &x) {
+template <typename T> void_t<typename tuple_size<T>::type> _print(const T &x) {
   cout << '{';
   _print2(x, make_index_sequence<tuple_size_v<T>>{});
   cout << '}';
 }
-template <typename T, typename = enable_if_t<is_container<T>::value>>
-void _print(const T &x) {
+template <typename T> enable_if_t<is_container<T>::value> _print(const T &x) {
   cout << '[';
   int c = 0;
   for (auto &e : x) {
