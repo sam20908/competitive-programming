@@ -12,14 +12,14 @@ for /f "tokens=* usebackq" %%f in (`where g++`) do set gccvar=%%f
 if "%gccvar%"=="%gccvar:nocompiler=%" (
   echo Found GCC as the compiler
   echo.
-  g++ -DLC_LOCAL -std=c++17 main.cpp -o main
+  g++ -DLC_LOCAL -std=c++17 main.cpp -o main.exe
   goto exec
 )
 for /f "tokens=* usebackq" %%f in (`where clang++`) do set clangvar=%%f
 if "%clangvar%"=="%clangvar:nocompiler=%" (
   echo Found Clang as the compiler
   echo.
-  clang++ -DLC_LOCAL -std=c++17 main.cpp -o main
+  clang++ -DLC_LOCAL -std=c++17 main.cpp -o main.exe
   goto exec
 )
 echo you don't have a compiler in your PATH, nothing is built
