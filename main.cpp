@@ -102,16 +102,12 @@ template <typename T, bool ReadEnd> T parse(FILE *f, int &c) {
     auto dummy = new ListNode{};
     auto cur = dummy;
     fgetc(f);
-    while ((char)c != ']') {
-      int val = 0, neg = 0;
-      while (char(c = fgetc(f)) != ',' && (char)c != ']') {
-        if ((char)c >= '0' && (char)c <= '9')
-          val = val * 10 + ((char)c - '0') * (1 - 2 * neg);
-        else
-          neg = 1;
+    if (char(c = fgetc(f)) != ']') {
+      ungetc(c, f);
+      while ((char)c != ']') {
+        cur->next = parse<int, true>(f, c);
+        cur = cur->next;
       }
-      cur->next = new ListNode{val};
-      cur = cur->next;
     }
     if constexpr (ReadEnd)
       c = fgetc(f);
@@ -121,10 +117,8 @@ template <typename T, bool ReadEnd> T parse(FILE *f, int &c) {
     fgetc(f);
     if (char(c = fgetc(f)) != ']') {
       ungetc(c, f);
-      while ((char)c != ']') {
-        ans.emplace_back(parse<typename T::value_type, false>(f, c));
-        c = fgetc(f);
-      }
+      while ((char)c != ']')
+        ans.emplace_back(parse<typename T::value_type, true>(f, c));
     }
     if constexpr (ReadEnd)
       c = fgetc(f);
