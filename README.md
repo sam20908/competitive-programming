@@ -76,5 +76,5 @@ This template was also designed to read inputs **FAST**, meaning it'll construct
 map<int, vector<pair<int, int>>> a{{3, {{4, 5}, {6, 7}}}};
 int b = INF;
 dbg(a, b);
-// [a = [3,[{4,5},{6,7}]]] [b = 1000000000]
+// [a = [{3,[{4,5},{6,7}]}]] [b = 1000000000]
 ```
