@@ -32,9 +32,13 @@ struct ListNode {
   ListNode *next = nullptr;
 };
 
-template <typename T> struct is_vec { static constexpr bool value = false; };
-template <typename T> struct is_vec<vector<T>> {
+template <typename T, typename = void> struct is_container {
+  static constexpr bool value = false;
+};
+template <typename T>
+struct is_container<T, void_t<decltype(T{}.begin()), decltype(T{}.end())>> {
   static constexpr bool value = true;
+  using type = T;
 };
 
 template <typename T, bool ReadEnd> T parse(FILE *f, int &c) {
@@ -112,7 +116,7 @@ template <typename T, bool ReadEnd> T parse(FILE *f, int &c) {
     if constexpr (ReadEnd)
       c = fgetc(f);
     return dummy->next;
-  } else if constexpr (is_vec<T>::value) {
+  } else if constexpr (is_container<T>::value) {
     T ans;
     fgetc(f);
     if (char(c = fgetc(f)) != ']') {
@@ -177,7 +181,7 @@ template <bool WriteEnd, typename T> void write(FILE *f, const T &val) {
       cur = cur->next;
     }
     fprintf(f, "]%s", end);
-  } else if constexpr (is_vec<T>::value) {
+  } else if constexpr (is_container<T>::value) {
     fprintf(f, "[");
     int c = 0;
     for (int i = 0; i < val.size(); i++) {
@@ -200,7 +204,8 @@ void exec(R (Solution::*fn)(Ts...)) {
   if constexpr (sizeof...(Ts) == 0) {
     if constexpr (returns) {
       write<true>(out, (Solution{}.*fn)());
-    }
+    } else
+      (Solution{}.*fn)();
   } else {
     auto in = fopen("input.txt", "r");
     int c = fgetc(in);
@@ -239,38 +244,31 @@ void exec(R (Solution::*fn)(Ts...)) {
 
 void _print(const string &x) { cout << '\"' << x << '\"'; }
 void _print(bool x) { cout << (x ? "true" : "false"); }
-template <typename T> void _print(T x) { cout << x; }
-template <typename T, typename V> void _print(const pair<T, V> &x) {
+template <typename T, typename = enable_if_t<is_arithmetic_v<T>>>
+void _print(T x) {
+  cout << x;
+}
+template <typename T, size_t... Idx>
+void _print2(const T& x, index_sequence<Idx...>) {
+  int c = 0;
+  ((cout << (c++ ? "," : ""), _print(get<Idx>(x))), ...);
+}
+template <typename T>
+void_t<decltype(get<0>(T{}))> _print(const T& x) {
   cout << '{';
-  _print(x.first);
-  cout << ',';
-  _print(x.second);
+  _print2(x, make_index_sequence<tuple_size_v<T>>{});
   cout << '}';
 }
-#define _PRINT_SEQUENCIAL_CONTAINER(x)                                         \
-  template <typename T> void _print(const x<T> &c) {                           \
-    int f = 0;                                                                 \
-    cout << '[';                                                               \
-    for (auto &i : c)                                                          \
-      cout << (f++ ? "," : ""), _print(i);                                     \
-    cout << "]";                                                               \
+template <typename T, typename = enable_if_t<is_container<T>::value>>
+void _print(const T& x) {
+  cout << '[';
+  int c = 0;
+  for (auto& e : x) {
+    cout << (c++ ? "," : "");
+    _print(e);
   }
-_PRINT_SEQUENCIAL_CONTAINER(vector)
-_PRINT_SEQUENCIAL_CONTAINER(stack)
-_PRINT_SEQUENCIAL_CONTAINER(deque)
-_PRINT_SEQUENCIAL_CONTAINER(set)
-_PRINT_SEQUENCIAL_CONTAINER(unordered_set)
-#define _PRINT_MAPPED_CONTAINER(x)                                             \
-  template <typename K, typename V> void _print(const x<K, V> &c) {            \
-    int f = 0;                                                                 \
-    cout << '[';                                                               \
-    for (auto &[k, v] : c)                                                     \
-      cout << (f++ ? ",{" : "{"), _print(k), cout << ',', _print(v),           \
-          cout << '}';                                                         \
-    cout << "]";                                                               \
-  }
-_PRINT_MAPPED_CONTAINER(map)
-_PRINT_MAPPED_CONTAINER(unordered_map)
+  cout << ']';
+}
 
 #define CONCAT_IMPL(x, y) x##y
 #define CONCAT(x, y) CONCAT_IMPL(x, y)
@@ -315,7 +313,12 @@ constexpr double EPS = 1e-9;
 // ----- CHANGE FOR PROBLEM -----
 class Solution {
 public:
-  void test() {}
+  void test() {
+    map<int, int> a{{1, 2}, {3, 4}};
+    vector<pair<string, bool>> b{{"asfd", true}, {"hello world", false}};
+    tuple c{1, 2.0, string{"asf"}, true};
+    dbg(a, b, c);
+  }
 };
 // ----- CHANGE FOR PROBLEM -----
 
