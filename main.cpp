@@ -105,7 +105,7 @@ template <typename T, bool ReadEnd> T parse(FILE *f, int &c) {
     if (char(c = fgetc(f)) != ']') {
       ungetc(c, f);
       while ((char)c != ']') {
-        cur->next = parse<int, true>(f, c);
+        cur->next = new ListNode{parse<int, true>(f, c)};
         cur = cur->next;
       }
     }
