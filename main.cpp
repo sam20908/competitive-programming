@@ -253,7 +253,7 @@ template <typename T> void_t<typename tuple_size<T>::type> _print(const T &x) {
 template <typename T> enable_if_t<is_container<T>::value> _print(const T &x) {
   cout << '[';
   int c = 0;
-  for (auto &e : x) {
+  for (const auto &e : x) {
     cout << (c++ ? "," : "");
     _print(e);
   }
