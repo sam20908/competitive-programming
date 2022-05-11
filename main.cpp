@@ -22,16 +22,17 @@
 #include <vector>
 using namespace std;
 
+#ifdef LC_LOCAL
 struct TreeNode {
   int val;
   TreeNode *left = nullptr;
   TreeNode *right = nullptr;
 };
-
 struct ListNode {
   int val;
   ListNode *next = nullptr;
 };
+#endif
 
 template <typename T, typename = void> struct is_container {
   static constexpr bool value = false;
