@@ -285,7 +285,7 @@ template <typename T> enable_if_t<is_container<T>::value> _print(const T &x) {
 #endif
 
 #define all(x) begin(x), end(x)
-#define has(c, x) c.find(x) != c.end()
+#define has(c, x) (c.find(x) != c.end())
 #define amin(x, y) x = min(x, y)
 #define amax(x, y) x = max(x, y)
 #define umap unordered_map
