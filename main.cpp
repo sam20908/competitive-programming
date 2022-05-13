@@ -229,6 +229,9 @@ void exec(R (Solution::*fn)(Ts...)) {
           write_args(out, args, index_sequence_for<Ts...>{});
         } else
           write<true>(out, apply(fn, args));
+#ifdef LC_LOCAL
+        cout << endl;
+#endif
       }
     }
     fclose(in);
