@@ -289,10 +289,11 @@ template <typename T> enable_if_t<is_container<T>::value> _print(const T &x) {
 
 #define all(x) begin(x), end(x)
 #define has(c, x) (c.find(x) != c.end())
-#define amin(x, y) x = min(x, y)
-#define amax(x, y) x = max(x, y)
 #define umap unordered_map
 #define uset unordered_set
+
+template <typename T> T &amin(T &a, const T &b) { return a = min(a, b); }
+template <typename T> T &amax(T &a, const T &b) { return a = max(a, b); }
 
 using pii = pair<int, int>;
 using pipii = pair<int, pii>;
