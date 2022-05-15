@@ -302,6 +302,18 @@ using pipii = pair<int, pii>;
 using pippiipii = pair<int, pair<pii, pii>>;
 using ll = long long;
 
+namespace std {
+template <typename T> class hash<std::pair<T, T>> {
+public:
+  size_t operator()(const pair<T, T> &x) const {
+    // https://stackoverflow.com/questions/5889238/why-is-xor-the-default-way-to-combine-hashes
+    ll lhs = hash<T>()(x.first), rhs = hash<T>()(x.second);
+    lhs ^= rhs + 0x9e3779b9 + (lhs << 6) + (lhs >> 2);
+    return lhs;
+  }
+};
+} // namespace std
+
 constexpr int dx[] = {-1, 0, 0, 1, -1, -1, 1, 1};
 constexpr int dy[] = {0, 1, -1, 0, -1, 1, -1, 1};
 constexpr int INF = 1e9;
