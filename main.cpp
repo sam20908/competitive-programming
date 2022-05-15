@@ -291,6 +291,8 @@ template <typename T> enable_if_t<is_container<T>::value> _print(const T &x) {
 #define has(c, x) (c.find(x) != c.end())
 #define umap unordered_map
 #define uset unordered_set
+#define vec vector
+#define valid(i, j, m, n) (i >= 0 && i < m && j >= 0 && j < n)
 
 template <typename T> T &amin(T &a, const T &b) { return a = min(a, b); }
 template <typename T> T &amax(T &a, const T &b) { return a = max(a, b); }
