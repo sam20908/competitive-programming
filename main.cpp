@@ -293,6 +293,7 @@ template <typename T> enable_if_t<is_container<T>::value> _print(const T &x) {
 #define uset unordered_set
 #define vec vector
 #define valid(i, j, m, n) (i >= 0 && i < m && j >= 0 && j < n)
+#define valid2(i, j, sm, sn, m, n) (i >= sm && i < m && j >= sn && j < n)
 
 template <typename T> T &amin(T &a, const T &b) { return a = min(a, b); }
 template <typename T> T &amax(T &a, const T &b) { return a = max(a, b); }
@@ -315,7 +316,7 @@ public:
 } // namespace std
 
 constexpr int dx[] = {-1, 0, 0, 1, -1, -1, 1, 1};
-constexpr int dy[] = {0, 1, -1, 0, -1, 1, -1, 1};
+constexpr int dy[] = {0, -1, 1, 0, -1, 1, -1, 1};
 constexpr int INF = 1e9;
 constexpr double EPS = 1e-9;
 
