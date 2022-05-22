@@ -293,27 +293,15 @@ template <typename T> enable_if_t<is_container<T>::value> _print(const T &x) {
 #define uset unordered_set
 #define vec vector
 #define valid(i, j, m, n) (i >= 0 && i < m && j >= 0 && j < n)
-#define valid2(i, j, sm, sn, m, n) (i >= sm && i < m && j >= sn && j < n)
 
 template <typename T> T &amin(T &a, const T &b) { return a = min(a, b); }
 template <typename T> T &amax(T &a, const T &b) { return a = max(a, b); }
 
 using pii = pair<int, int>;
 using pipii = pair<int, pii>;
+using ppiipii = pair<pii, pii>;
 using pippiipii = pair<int, pair<pii, pii>>;
 using ll = long long;
-
-namespace std {
-template <typename T> class hash<std::pair<T, T>> {
-public:
-  size_t operator()(const pair<T, T> &x) const {
-    // https://stackoverflow.com/questions/5889238/why-is-xor-the-default-way-to-combine-hashes
-    ll lhs = hash<T>()(x.first), rhs = hash<T>()(x.second);
-    lhs ^= rhs + 0x9e3779b9 + (lhs << 6) + (lhs >> 2);
-    return lhs;
-  }
-};
-} // namespace std
 
 constexpr int dx[] = {-1, 0, 0, 1, -1, -1, 1, 1};
 constexpr int dy[] = {0, -1, 1, 0, -1, 1, -1, 1};
