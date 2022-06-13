@@ -26,6 +26,11 @@ constexpr int dy[] = {0, -1, 1, 0, -1, 1, -1, 1};
 constexpr int INF = 1e9;
 constexpr double EPS = 1e-9;
 
+template <typename T> struct trie_node {
+  umap<T, trie_node<T> *> adj;
+  bool end = false;
+};
+
 // ----- CHANGE FOR PROBLEM -----
 class Solution {
 public:
