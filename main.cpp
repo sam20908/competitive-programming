@@ -26,10 +26,12 @@ constexpr int dy[] = {0, -1, 1, 0, -1, 1, -1, 1};
 constexpr int INF = 1e9;
 constexpr double EPS = 1e-9;
 
-template <typename T> struct trie_node {
-  umap<T, trie_node<T> *> adj;
-  bool end = false;
-};
+constexpr int gcd(int a, int b) {
+  if (b == 0)
+    return a;
+  return gcd(b, a % b);
+}
+constexpr int lcm(int a, int b) { return (a * b) / gcd(a, b); }
 
 // ----- CHANGE FOR PROBLEM -----
 class Solution {
