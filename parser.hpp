@@ -63,6 +63,13 @@ template <typename T, bool ReadEnd> T parse(FILE *f, int &c) {
     if constexpr (ReadEnd)
       c = fgetc(f);
     return ans;
+  } else if constexpr (is_same_v<T, char>) {
+    fgetc(f);
+    char ans = char(c = fgetc(f));
+    fgetc(f);
+    if constexpr (ReadEnd)
+      c = fgetc(f);
+    return ans;
   } else if constexpr (is_same_v<T, TreeNode *>) {
     int e = 2;
     auto dummy = new TreeNode{};
