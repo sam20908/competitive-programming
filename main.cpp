@@ -26,7 +26,8 @@ constexpr int dy[] = {0, -1, 1, 0, -1, 1, -1, 1};
 constexpr int INF = 1e9;
 constexpr ll INFL = 1e18;
 constexpr double EPS = 1e-9;
-constexpr int MOD = 1e9 + 7;
+constexpr int P = 29791;
+constexpr int M = 1e9 + 7;
 
 constexpr int gcd(int a, int b) {
   if (b == 0)
