@@ -26,11 +26,10 @@ constexpr int dy[] = {0, -1, 1, 0, -1, 1, -1, 1};
 constexpr int INF = 1e9;
 constexpr ll INFL = 1e18;
 constexpr double EPS = 1e-9;
-constexpr int P1 = 31;
+constexpr int P = 31;
 constexpr int P2 = 33;
-constexpr int M1 = 1e9 + 7;
+constexpr int M = 1e9 + 7;
 constexpr int M2 = 1e9 + 9;
-constexpr int M = M1;
 
 constexpr int gcd(int a, int b) {
   if (b == 0)
