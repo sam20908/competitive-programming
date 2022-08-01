@@ -273,6 +273,15 @@ template <typename T> enable_if_t<is_container<T>::value> _print(const T &x) {
   }
   cout << ']';
 }
+template <typename T, size_t N> void _print(const array<T, N> &x) {
+  cout << '[';
+  int c = 0;
+  for (const auto &e : x) {
+    cout << (c++ ? "," : "");
+    _print(e);
+  }
+  cout << ']';
+}
 
 #define CONCAT_IMPL(x, y) x##y
 #define CONCAT(x, y) CONCAT_IMPL(x, y)
