@@ -142,6 +142,8 @@ template <bool WriteEnd, typename T> void write(FILE *f, const T &val) {
     fprintf(f, "%d%s", val, end);
   else if constexpr (is_same_v<T, float>)
     fprintf(f, "%.f%s", val, end);
+  else if constexpr (is_same_v<T, double>)
+    fprintf(f, "%.18f%s", val, end);
   else if constexpr (is_same_v<T, long long>)
     fprintf(f, "%lld%s", val, end);
   else if constexpr (is_same_v<T, bool>)
