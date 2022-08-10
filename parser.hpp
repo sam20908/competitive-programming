@@ -4,6 +4,7 @@
 #include <bitset>
 #include <cassert>
 #include <charconv>
+#include <chrono>
 #include <cstring>
 #include <functional>
 #include <iomanip>
@@ -210,6 +211,7 @@ template <typename Solution, typename R, typename... Ts>
 void exec(R (Solution::*fn)(Ts...)) {
   constexpr bool returns = !is_same_v<R, void>;
   auto out = fopen("output.txt", "w");
+  long long total_elapsed = 0;
   if constexpr (sizeof...(Ts) == 0) {
     if constexpr (returns) {
       write<true>(out, (Solution{}.*fn)());
@@ -234,12 +236,28 @@ void exec(R (Solution::*fn)(Ts...)) {
       } else {
         ungetc(c, in);
         tuple args{Solution{}, parse<decay_t<Ts>, true>(in, c)...};
+        long long elapsed = 0;
         if constexpr (!returns) {
+          auto start = chrono::steady_clock::now();
           apply(fn, args);
+          auto end = chrono::steady_clock::now();
+          elapsed =
+              chrono::duration_cast<chrono::milliseconds>(end - start).count();
+
           fprintf(out, "New state of parameters:\n");
           write_args(out, args, index_sequence_for<Ts...>{});
-        } else
+          fprintf(out, "Elapsed time: %lldms\n", elapsed);
+        } else {
+          auto start = chrono::steady_clock::now();
+          apply(fn, args);
+          auto end = chrono::steady_clock::now();
+          elapsed =
+              chrono::duration_cast<chrono::milliseconds>(end - start).count();
+
           write<true>(out, apply(fn, args));
+        }
+        total_elapsed += elapsed;
+        fprintf(out, "Elapsed time: %lldms\n", elapsed);
 #ifdef LC_LOCAL
         cout << endl;
 #endif
@@ -247,6 +265,7 @@ void exec(R (Solution::*fn)(Ts...)) {
     }
     fclose(in);
   }
+  fprintf(out, "\nTotal elapsed time: %lldms", total_elapsed);
   fclose(out);
 }
 
