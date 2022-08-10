@@ -54,6 +54,9 @@ This template was also designed to read inputs **FAST**, meaning it'll construct
   *some compiler message*
 
   10
+  Elapsed time: 10ms
+
+  Total elapsed time: 10ms
   ```
 
 - For solution that modifies a parameter in-place:
@@ -66,6 +69,9 @@ This template was also designed to read inputs **FAST**, meaning it'll construct
   New state of parameters:
   #1: [1,2,3,4]
   #2: 10
+  Elapsed time: 10ms
+
+  Total elapsed time: 10ms
   ```
 
 **Note: If the input doesn't match the parameter type, the behavior is undefined!**
