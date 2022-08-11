@@ -246,15 +246,14 @@ void exec(R (Solution::*fn)(Ts...)) {
 
           fprintf(out, "New state of parameters:\n");
           write_args(out, args, index_sequence_for<Ts...>{});
-          fprintf(out, "Elapsed time: %lldms\n", elapsed);
         } else {
           auto start = chrono::steady_clock::now();
-          apply(fn, args);
+          auto res = apply(fn, args);
           auto end = chrono::steady_clock::now();
           elapsed =
               chrono::duration_cast<chrono::milliseconds>(end - start).count();
 
-          write<true>(out, apply(fn, args));
+          write<true>(out, move(res));
         }
         total_elapsed += elapsed;
         fprintf(out, "Elapsed time: %lldms\n", elapsed);
