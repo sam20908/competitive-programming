@@ -253,7 +253,7 @@ void exec(R (Solution::*fn)(Ts...)) {
           elapsed =
               chrono::duration_cast<chrono::milliseconds>(end - start).count();
 
-          write<true>(out, move(res));
+          write<true>(out, res);
         }
         total_elapsed += elapsed;
         fprintf(out, "Elapsed time: %lldms\n", elapsed);
