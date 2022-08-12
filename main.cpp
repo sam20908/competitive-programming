@@ -7,14 +7,49 @@
 
 #define all(x) begin(x), end(x)
 #define has(c, x) (c.find(x) != c.end())
-#define umap unordered_map
-#define uset unordered_set
 #define vec vector
 #define valid(i, j, m, n) (i >= 0 && i < m && j >= 0 && j < n)
 
 template <typename T> T &amin(T &a, const T &b) { return a = min(a, b); }
 template <typename T> T &amax(T &a, const T &b) { return a = max(a, b); }
 
+vec<uint64_t> VALS;
+struct custom_hash {
+  static uint64_t getfixed(int i) {
+    while (VALS.size() < i + 1)
+      if (VALS.empty())
+        VALS.push_back(chrono::steady_clock::now().time_since_epoch().count());
+      else
+        VALS.push_back(splitmix64(VALS.back()));
+    return VALS[i];
+  }
+  static uint64_t splitmix64(uint64_t x) {
+    x += 0x9e3779b97f4a7c15;
+    x = (x ^ (x >> 30)) * 0xbf58476d1ce4e5b9;
+    x = (x ^ (x >> 27)) * 0x94d049bb133111eb;
+    return x ^ (x >> 31);
+  }
+  size_t operator()(uint64_t x) const { return splitmix64(x + getfixed(0)); }
+  template <typename... Ts> size_t operator()(const tuple<Ts...> t) const {
+    int ic = 0;
+    uint64_t rh = 0;
+    apply(
+        [&](auto &&...args) {
+          ((rh ^= splitmix64(args + getfixed(ic++))), ...);
+        },
+        t);
+    return rh;
+  }
+  template <typename T> size_t operator()(const vector<T> v) const {
+    uint64_t rh = getfixed(0);
+    for (int i = 0; i < v.size(); i++)
+      rh ^= splitmix64(v[i] + getfixed(i + 1));
+    return rh;
+  }
+};
+
+template <typename A, typename B> using umap = unordered_map<A, B, custom_hash>;
+template <typename A> using uset = unordered_set<A, custom_hash>;
 using pii = pair<int, int>;
 using pipii = pair<int, pii>;
 using ppiipii = pair<pii, pii>;
