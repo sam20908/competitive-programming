@@ -8,6 +8,8 @@
 #define all(x) begin(x), end(x)
 #define has(c, x) (c.find(x) != c.end())
 #define vec vector
+#define umap unordered_map
+#define uset unordered_set
 #define valid(i, j, m, n) (i >= 0 && i < m && j >= 0 && j < n)
 
 template <typename T> T &amin(T &a, const T &b) { return a = min(a, b); }
@@ -48,8 +50,8 @@ struct custom_hash {
   }
 };
 
-template <typename A, typename B> using umap = unordered_map<A, B, custom_hash>;
-template <typename A> using uset = unordered_set<A, custom_hash>;
+template <typename A, typename B> using tensor_map = umap<A, B, custom_hash>;
+template <typename A> using tensor_set = uset<A, custom_hash>;
 using pii = pair<int, int>;
 using pipii = pair<int, pii>;
 using ppiipii = pair<pii, pii>;
