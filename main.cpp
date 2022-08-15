@@ -3,7 +3,21 @@
 #define dbg(...) CONCAT(DBG_, NUM_ARGS(__VA_ARGS__))(__VA_ARGS__), cout << endl
 #else
 #define dbg(...)
+template <typename T, typename = void> struct is_container {
+  static constexpr bool value = false;
+};
+template <typename T>
+struct is_container<T, void_t<decltype(T{}.begin()), decltype(T{}.end())>> {
+  static constexpr bool value = true;
+};
 #endif
+template <typename T, typename = void> struct is_tuple_like {
+  static constexpr bool value = false;
+};
+template <typename T>
+struct is_tuple_like<T, void_t<typename tuple_size<T>::type>> {
+  static constexpr bool value = true;
+};
 
 #define all(x) begin(x), end(x)
 #define has(c, x) (c.find(x) != c.end())
@@ -15,9 +29,9 @@
 template <typename T> T &amin(T &a, const T &b) { return a = min(a, b); }
 template <typename T> T &amax(T &a, const T &b) { return a = max(a, b); }
 
-vec<uint64_t> VALS;
+vec<size_t> VALS;
 struct custom_hash {
-  static uint64_t getfixed(int i) {
+  static size_t getfixed(int i) {
     while (VALS.size() < i + 1)
       if (VALS.empty())
         VALS.push_back(chrono::steady_clock::now().time_since_epoch().count());
@@ -25,16 +39,17 @@ struct custom_hash {
         VALS.push_back(splitmix64(VALS.back()));
     return VALS[i];
   }
-  static uint64_t splitmix64(uint64_t x) {
-    x += 0x9e3779b97f4a7c15;
-    x = (x ^ (x >> 30)) * 0xbf58476d1ce4e5b9;
-    x = (x ^ (x >> 27)) * 0x94d049bb133111eb;
-    return x ^ (x >> 31);
+  static size_t splitmix64(size_t x) {
+    x += (size_t)0x9e3779b97f4a7c15;
+    x = (x ^ (x >> (size_t)30)) * (size_t)0xbf58476d1ce4e5b9;
+    x = (x ^ (x >> (size_t)27)) * (size_t)0x94d049bb133111eb;
+    return x ^ (x >> (size_t)31);
   }
-  size_t operator()(uint64_t x) const { return splitmix64(x + getfixed(0)); }
-  template <typename... Ts> size_t operator()(const tuple<Ts...> t) const {
+  size_t operator()(size_t x) const { return splitmix64(x + getfixed(0)); }
+  template <typename T>
+  enable_if_t<is_tuple_like<T>::value, size_t> operator()(const T &t) const {
     int ic = 0;
-    uint64_t rh = 0;
+    size_t rh = 0;
     apply(
         [&](auto &&...args) {
           ((rh ^= splitmix64(args + getfixed(ic++))), ...);
@@ -42,10 +57,11 @@ struct custom_hash {
         t);
     return rh;
   }
-  template <typename T> size_t operator()(const vector<T> v) const {
-    uint64_t rh = getfixed(0);
-    for (int i = 0; i < v.size(); i++)
-      rh ^= splitmix64(v[i] + getfixed(i + 1));
+  template <typename T>
+  enable_if_t<is_container<T>::value, size_t> operator()(const T &t) const {
+    size_t rh = getfixed(0);
+    for (int i = 0; i < t.size(); i++)
+      rh ^= splitmix64(t[i] + getfixed(i));
     return rh;
   }
 };
