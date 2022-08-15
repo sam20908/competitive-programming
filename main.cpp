@@ -3,19 +3,18 @@
 #define dbg(...) CONCAT(DBG_, NUM_ARGS(__VA_ARGS__))(__VA_ARGS__), cout << endl
 #else
 #define dbg(...)
-template <typename T, typename = void> struct is_container {
-  static constexpr bool value = false;
-};
-template <typename T>
-struct is_container<T, void_t<decltype(T{}.begin()), decltype(T{}.end())>> {
-  static constexpr bool value = true;
-};
-#endif
+
 template <typename T, typename = void> struct is_tuple_like {
   static constexpr bool value = false;
 };
 template <typename T>
 struct is_tuple_like<T, void_t<typename tuple_size<T>::type>> {
+  static constexpr bool value = true;
+};
+template <typename T, typename = void> struct is_hashable {
+  static constexpr bool value = false;
+};
+template <typename T> struct is_hashable<T, void_t<decltype(hash<T>{}(T{}))>> {
   static constexpr bool value = true;
 };
 
@@ -46,7 +45,10 @@ struct custom_hash {
     x = (x ^ (x >> (size_t)27)) * (size_t)0x94d049bb133111eb;
     return x ^ (x >> (size_t)31);
   }
-  size_t operator()(size_t x) const { return splitmix64(x + getfixed(0)); }
+  template <typename T>
+  enable_if_t<is_hashable<T>::value, size_t> operator()(const T &t) const {
+    return splitmix64(hash<T>{}(t) + getfixed(0));
+  }
   template <typename T>
   enable_if_t<is_tuple_like<T>::value, size_t> operator()(const T &t) const {
     int ic = 0;
@@ -56,13 +58,6 @@ struct custom_hash {
           ((rh ^= splitmix64(args + getfixed(ic++))), ...);
         },
         t);
-    return rh;
-  }
-  template <typename T>
-  enable_if_t<is_container<T>::value, size_t> operator()(const T &t) const {
-    size_t rh = getfixed(0);
-    for (auto &v : t)
-      rh ^= splitmix64(v + getfixed(i));
     return rh;
   }
 };
