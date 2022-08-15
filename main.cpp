@@ -32,9 +32,10 @@ template <typename T> T &amax(T &a, const T &b) { return a = max(a, b); }
 vec<size_t> VALS;
 struct custom_hash {
   static size_t getfixed(int i) {
-    while (VALS.size() < i + 1)
+    while ((int)VALS.size() < i + 1)
       if (VALS.empty())
-        VALS.push_back(chrono::steady_clock::now().time_since_epoch().count());
+        VALS.push_back(
+            (size_t)chrono::steady_clock::now().time_since_epoch().count());
       else
         VALS.push_back(splitmix64(VALS.back()));
     return VALS[i];
@@ -60,8 +61,8 @@ struct custom_hash {
   template <typename T>
   enable_if_t<is_container<T>::value, size_t> operator()(const T &t) const {
     size_t rh = getfixed(0);
-    for (int i = 0; i < t.size(); i++)
-      rh ^= splitmix64(t[i] + getfixed(i));
+    for (auto &v : t)
+      rh ^= splitmix64(v + getfixed(i));
     return rh;
   }
 };
