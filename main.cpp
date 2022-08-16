@@ -15,11 +15,9 @@
 template <typename T> T &amin(T &a, const T &b) { return a = min(a, b); }
 template <typename T> T &amax(T &a, const T &b) { return a = max(a, b); }
 
-using pii = pair<int, int>;
-using pipii = pair<int, pii>;
-using ppiipii = pair<pii, pii>;
-using pippiipii = pair<int, pair<pii, pii>>;
 using ll = long long;
+using pii = pair<int, int>;
+using pll = pair<ll, ll>;
 
 constexpr int dx[] = {-1, 0, 0, 1, -1, -1, 1, 1};
 constexpr int dy[] = {0, -1, 1, 0, -1, 1, -1, 1};
