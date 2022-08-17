@@ -1,7 +1,6 @@
 struct dsu {
   vec<int> parent, rank;
-  int distinct;
-  dsu(int n) : parent(n), rank(n, 1), distinct(n) {
+  dsu(int n) : parent(n), rank(n, 1) {
     for (int i = 0; i < n; i++)
       parent[i] = i;
   }
@@ -12,7 +11,6 @@ struct dsu {
   }
   void unite(int i, int j) {
     if (find(i) != find(j)) {
-      distinct--;
       int repi = find(i);
       int repj = find(j);
       if (rank[repi] < rank[repj])
