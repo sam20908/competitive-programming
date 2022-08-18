@@ -38,7 +38,9 @@ struct custom_hash {
     size_t rh = 0;
     apply(
         [&](auto &&...args) {
-          ((rh ^= splitmix64(args + getfixed(ic++))), ...);
+          ((rh ^=
+            splitmix64(hash<decay_t<decltype(args)>>{}(args) + getfixed(ic++))),
+           ...);
         },
         t);
     return rh;
