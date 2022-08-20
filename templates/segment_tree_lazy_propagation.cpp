@@ -25,7 +25,6 @@ struct segment {
       tree[n] = tree[2 * n + 1] + tree[2 * n + 2];
     }
   }
-
   ll query(int l, int r, int tl, int tr, int n) {
     if (lazy[n] != 0) {
       tree[n] += (tr - tl + 1) * lazy[n];
