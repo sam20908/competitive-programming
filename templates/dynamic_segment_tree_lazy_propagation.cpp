@@ -5,7 +5,7 @@ struct segment {
     ll val = 0, lazy = 0;
   };
   node *root = new node();
-  void update(int l, int r, int tl, int tr, int v, node *cur) {
+  void update(int l, int r, int tl, int tr, ll v, node *cur) {
     if (!cur->left)
       cur->left = new node();
     if (!cur->right)

@@ -1,7 +1,7 @@
 struct segment {
   vec<ll> tree, lazy;
   segment(int n) : tree(4 * n), lazy(4 * n) {}
-  void update(int l, int r, int tl, int tr, int n, int v) {
+  void update(int l, int r, int tl, int tr, int n, ll v) {
     if (lazy[n] != 0) {
       tree[n] += (tr - tl + 1) * lazy[n];
       if (tl != tr) {
