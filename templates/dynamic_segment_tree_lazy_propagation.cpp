@@ -18,7 +18,7 @@ struct segment {
       }
       cur->lazy = 0;
     }
-    if (tl > r || tr < l)
+    if (tl > tr || tl > r || tr < l)
       return;
     if (tl >= l && tr <= r) {
       cur->val += (tr - tl + 1) * v;
@@ -46,7 +46,7 @@ struct segment {
       }
       cur->lazy = 0;
     }
-    if (tl > r || tr < l)
+    if (tl > tr || tl > r || tr < l)
       return 0;
     if (tl >= l && tr <= r) {
       return cur->val;
