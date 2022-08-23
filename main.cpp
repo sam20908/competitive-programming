@@ -21,6 +21,7 @@ using pll = pair<ll, ll>;
 
 constexpr int dx[] = {-1, 0, 0, 1, -1, -1, 1, 1};
 constexpr int dy[] = {0, -1, 1, 0, -1, 1, -1, 1};
+constexpr int MXN = (int)1e6;
 constexpr int INF = (int)1e9 + 15;
 constexpr ll INFL = ll(1e18) + 15;
 constexpr double EPS = 1e-9;
