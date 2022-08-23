@@ -12,20 +12,16 @@ struct segment {
       cur->right = new node();
     if (cur->lazy != 0) {
       cur->val += (tr - tl + 1) * cur->lazy;
-      if (tl != tr) {
-        cur->left->lazy += cur->lazy;
-        cur->right->lazy += cur->lazy;
-      }
+      cur->left->lazy += cur->lazy;
+      cur->right->lazy += cur->lazy;
       cur->lazy = 0;
     }
     if (tl > tr || tl > r || tr < l)
       return;
     if (tl >= l && tr <= r) {
       cur->val += (tr - tl + 1) * v;
-      if (tl != tr) {
-        cur->left->lazy += v;
-        cur->right->lazy += v;
-      }
+      cur->left->lazy += v;
+      cur->right->lazy += v;
     } else {
       int mid = (tl + tr) / 2;
       update(l, r, tl, mid, v, cur->left);
@@ -40,10 +36,8 @@ struct segment {
       cur->right = new node();
     if (cur->lazy != 0) {
       cur->val += (tr - tl + 1) * cur->lazy;
-      if (tl != tr) {
-        cur->left->lazy += cur->lazy;
-        cur->right->lazy += cur->lazy;
-      }
+      cur->left->lazy += cur->lazy;
+      cur->right->lazy += cur->lazy;
       cur->lazy = 0;
     }
     if (tl > tr || tl > r || tr < l)
