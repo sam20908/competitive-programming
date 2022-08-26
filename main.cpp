@@ -18,6 +18,8 @@ template <typename T> T &amax(T &a, const T &b) { return a = max(a, b); }
 using ll = long long;
 using pii = pair<int, int>;
 using pll = pair<ll, ll>;
+using vi = vec<int>;
+using vvi = vec<vec<int>>;
 
 constexpr int dx[] = {-1, 0, 0, 1, -1, -1, 1, 1};
 constexpr int dy[] = {0, -1, 1, 0, -1, 1, -1, 1};
