@@ -20,6 +20,8 @@ using pii = pair<int, int>;
 using pll = pair<ll, ll>;
 using vi = vec<int>;
 using vvi = vec<vec<int>>;
+using vs = vec<string>;
+using vvs = vec<vec<string>>;
 
 constexpr int dx[] = {-1, 0, 0, 1, -1, -1, 1, 1};
 constexpr int dy[] = {0, -1, 1, 0, -1, 1, -1, 1};
