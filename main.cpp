@@ -20,6 +20,7 @@ using pii = pair<int, int>;
 using pll = pair<ll, ll>;
 using vi = vec<int>;
 using vvi = vec<vec<int>>;
+using vvvi = vec<vec<vec<int>>>;
 using vl = vec<ll>;
 using vvl = vec<vec<ll>>;
 using vs = vec<string>;
