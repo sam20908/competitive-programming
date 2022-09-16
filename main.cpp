@@ -26,6 +26,8 @@ using vvl = vec<vec<ll>>;
 using vs = vec<string>;
 using vvs = vec<vec<string>>;
 using vpii = vec<pii>;
+using vvpii = vec<vec<pii>>;
+using tiii = tuple<int, int, int>;
 
 constexpr int dx[] = {-1, 0, 0, 1, -1, -1, 1, 1};
 constexpr int dy[] = {0, -1, 1, 0, -1, 1, -1, 1};
