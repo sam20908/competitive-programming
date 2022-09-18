@@ -4,7 +4,7 @@ struct trie {
     bool end = false;
   };
   node *root = new node();
-  void insert(const string &s) {
+  void insert(string &s) {
     auto cur = root;
     for (int i = 0; i < s.size(); i++) {
       auto &next = cur->adj[s[i] - 'a'];
@@ -14,7 +14,7 @@ struct trie {
     }
     cur->end = true;
   }
-  bool search(const string &s) {
+  bool search(string &s) {
     auto cur = root;
     for (int i = 0; i < s.size(); i++) {
       auto &next = cur->adj[s[i] - 'a'];
