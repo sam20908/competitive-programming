@@ -1,23 +1,15 @@
-template <typename T, typename = void> struct is_tuple_like {
-  static constexpr bool value = false;
-};
-template <typename T>
-struct is_tuple_like<T, void_t<typename tuple_size<T>::type>> {
+template <typename T, typename = void> struct is_tuple_like { static constexpr bool value = false; };
+template <typename T> struct is_tuple_like<T, void_t<typename tuple_size<T>::type>> {
   static constexpr bool value = true;
 };
-template <typename T, typename = void> struct is_hashable {
-  static constexpr bool value = false;
-};
-template <typename T> struct is_hashable<T, void_t<decltype(hash<T>{}(T{}))>> {
-  static constexpr bool value = true;
-};
+template <typename T, typename = void> struct is_hashable { static constexpr bool value = false; };
+template <typename T> struct is_hashable<T, void_t<decltype(hash<T>{}(T{}))>> { static constexpr bool value = true; };
 vec<size_t> VALS;
 struct custom_hash {
   static size_t getfixed(int i) {
     while ((int)VALS.size() < i + 1)
       if (VALS.empty())
-        VALS.push_back(
-            (size_t)chrono::steady_clock::now().time_since_epoch().count());
+        VALS.push_back((size_t)chrono::steady_clock::now().time_since_epoch().count());
       else
         VALS.push_back(splitmix64(VALS.back()));
     return VALS[i];
@@ -28,21 +20,14 @@ struct custom_hash {
     x = (x ^ (x >> (size_t)27)) * (size_t)0x94d049bb133111eb;
     return x ^ (x >> (size_t)31);
   }
-  template <typename T>
-  enable_if_t<is_hashable<T>::value, size_t> operator()(const T &t) const {
+  template <typename T> enable_if_t<is_hashable<T>::value, size_t> operator()(const T &t) const {
     return splitmix64(hash<T>{}(t) + getfixed(0));
   }
-  template <typename T>
-  enable_if_t<is_tuple_like<T>::value, size_t> operator()(const T &t) const {
+  template <typename T> enable_if_t<is_tuple_like<T>::value, size_t> operator()(const T &t) const {
     int ic = 0;
     size_t rh = 0;
-    apply(
-        [&](auto &&...args) {
-          ((rh ^=
-            splitmix64(hash<decay_t<decltype(args)>>{}(args) + getfixed(ic++))),
-           ...);
-        },
-        t);
+    apply([&](auto &&...args) { ((rh ^= splitmix64(hash<decay_t<decltype(args)>>{}(args) + getfixed(ic++))), ...); },
+          t);
     return rh;
   }
 };

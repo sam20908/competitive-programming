@@ -55,8 +55,7 @@ struct segment {
     } else {
       int mid = (tl + tr) / 2;
       cur->extend();
-      return query(l, r, tl, mid, cur->left) +
-             query(l, r, mid + 1, tr, cur->right);
+      return query(l, r, tl, mid, cur->left) + query(l, r, mid + 1, tr, cur->right);
     }
   }
 };

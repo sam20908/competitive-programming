@@ -40,8 +40,7 @@ struct segment {
       return tree[n];
     } else {
       int mid = (tl + tr) / 2;
-      return query(l, r, tl, mid, 2 * n + 1) +
-             query(l, r, mid + 1, tr, 2 * n + 2);
+      return query(l, r, tl, mid, 2 * n + 1) + query(l, r, mid + 1, tr, 2 * n + 2);
     }
   }
 };
