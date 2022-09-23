@@ -35,11 +35,8 @@ struct ListNode {
   ListNode *next = nullptr;
 };
 
-template <typename T, typename = void> struct is_container {
-  static constexpr bool value = false;
-};
-template <typename T>
-struct is_container<T, void_t<decltype(T{}.begin()), decltype(T{}.end())>> {
+template <typename T, typename = void> struct is_container { static constexpr bool value = false; };
+template <typename T> struct is_container<T, void_t<decltype(T{}.begin()), decltype(T{}.end())>> {
   static constexpr bool value = true;
 };
 template <typename = void> inline constexpr bool always_false = false;
@@ -202,13 +199,11 @@ template <bool WriteEnd, typename T> void write(FILE *f, const T &val) {
     static_assert(always_false<T>, "writing for type not supported");
 }
 
-template <typename Args, size_t... Idx>
-void write_args(FILE *f, const Args &args, index_sequence<Idx...>) {
+template <typename Args, size_t... Idx> void write_args(FILE *f, const Args &args, index_sequence<Idx...>) {
   ((fprintf(f, "#%lld: ", Idx + 1), write<true>(f, get<Idx + 1>(args))), ...);
 }
 
-template <typename Solution, typename R, typename... Ts>
-void exec(R (Solution::*fn)(Ts...)) {
+template <typename Solution, typename R, typename... Ts> void exec(R (Solution::*fn)(Ts...)) {
   constexpr bool returns = !is_same_v<R, void>;
   auto out = fopen("output.txt", "w");
   long long total_elapsed = 0;
@@ -241,8 +236,7 @@ void exec(R (Solution::*fn)(Ts...)) {
           auto start = chrono::steady_clock::now();
           apply(fn, args);
           auto end = chrono::steady_clock::now();
-          elapsed =
-              chrono::duration_cast<chrono::milliseconds>(end - start).count();
+          elapsed = chrono::duration_cast<chrono::milliseconds>(end - start).count();
 
           fprintf(out, "New state of parameters:\n");
           write_args(out, args, index_sequence_for<Ts...>{});
@@ -250,8 +244,7 @@ void exec(R (Solution::*fn)(Ts...)) {
           auto start = chrono::steady_clock::now();
           auto res = apply(fn, args);
           auto end = chrono::steady_clock::now();
-          elapsed =
-              chrono::duration_cast<chrono::milliseconds>(end - start).count();
+          elapsed = chrono::duration_cast<chrono::milliseconds>(end - start).count();
 
           write<true>(out, res);
         }
@@ -271,11 +264,8 @@ void exec(R (Solution::*fn)(Ts...)) {
 void _print(const string &x) { cout << '\"' << x << '\"'; }
 void _print(bool x) { cout << (x ? "true" : "false"); }
 template <size_t N> void _print(const bitset<N> &x) { cout << x; }
-template <typename T> enable_if_t<is_arithmetic_v<T>> _print(const T &x) {
-  cout << x;
-}
-template <typename T, size_t... Idx>
-void _print2(const T &x, index_sequence<Idx...>) {
+template <typename T> enable_if_t<is_arithmetic_v<T>> _print(const T &x) { cout << x; }
+template <typename T, size_t... Idx> void _print2(const T &x, index_sequence<Idx...>) {
   int c = 0;
   ((cout << (c++ ? "," : ""), _print(get<Idx>(x))), ...);
 }
