@@ -5,7 +5,7 @@
 #define dbg(...)
 #endif
 
-#define all(x) begin(x), end(x)
+#define all(x) x.begin(), x.end()
 #define has(c, x) (c.find(x) != c.end())
 #define vec vector
 #define umap unordered_map
