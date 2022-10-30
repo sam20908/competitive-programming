@@ -126,7 +126,7 @@ template <typename T, bool ReadEnd> T parse(FILE *f, int &c) {
     fgetc(f);
     while ((char)c != ']') {
       int sz = q.size();
-      while (sz > 0) {
+      while (sz > 0 && (char)c != ']') {
         int val = 0, neg = 0;
         bool is_null = false;
         while (char(c = fgetc(f)) != ',' && (char)c != ']') {
