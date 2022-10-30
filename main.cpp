@@ -1,6 +1,5 @@
 #ifdef LC_LOCAL
 #include "parser.hpp"
-#define dbg(...) CONCAT(DBG_, NUM_ARGS(__VA_ARGS__))(__VA_ARGS__), cout << endl
 #else
 #define dbg(...)
 #endif

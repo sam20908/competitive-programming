@@ -41,6 +41,56 @@ template <typename T> struct is_container<T, void_t<decltype(T{}.begin()), declt
 };
 template <typename = void> inline constexpr bool always_false = false;
 
+void _print(const string &x) { cout << '\"' << x << '\"'; }
+void _print(bool x) { cout << (x ? "true" : "false"); }
+template <size_t N> void _print(const bitset<N> &x) { cout << x; }
+template <typename T> enable_if_t<is_arithmetic_v<T>> _print(const T &x) { cout << x; }
+template <typename T, size_t... Idx> void _print2(const T &x, index_sequence<Idx...>) {
+  int c = 0;
+  ((cout << (c++ ? "," : ""), _print(get<Idx>(x))), ...);
+}
+template <typename T> void_t<typename tuple_size<T>::type> _print(const T &x) {
+  cout << '{';
+  _print2(x, make_index_sequence<tuple_size_v<T>>{});
+  cout << '}';
+}
+template <typename T> enable_if_t<is_container<T>::value> _print(const T &x) {
+  cout << '[';
+  int c = 0;
+  for (const auto &e : x) {
+    cout << (c++ ? "," : "");
+    _print(e);
+  }
+  cout << ']';
+}
+template <typename T, size_t N> void _print(const array<T, N> &x) {
+  cout << '[';
+  int c = 0;
+  for (const auto &e : x) {
+    cout << (c++ ? "," : "");
+    _print(e);
+  }
+  cout << ']';
+}
+
+#define CONCAT_IMPL(x, y) x##y
+#define CONCAT(x, y) CONCAT_IMPL(x, y)
+#define NUM_ARGS_IMPL(_1, _2, _3, _4, _5, _6, _7, _8, _9, _10, N, ...) N
+#define NUM_ARGS(...) NUM_ARGS_IMPL(__VA_ARGS__, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1)
+#define DBG_VAL(x) cout << '[' << #x << " = ", _print(x), cout << "] "
+#define DBG_1(x) DBG_VAL(x)
+#define DBG_2(x, ...) DBG_VAL(x), DBG_1(__VA_ARGS__)
+#define DBG_3(x, ...) DBG_VAL(x), DBG_2(__VA_ARGS__)
+#define DBG_4(x, ...) DBG_VAL(x), DBG_3(__VA_ARGS__)
+#define DBG_5(x, ...) DBG_VAL(x), DBG_4(__VA_ARGS__)
+#define DBG_6(x, ...) DBG_VAL(x), DBG_5(__VA_ARGS__)
+#define DBG_7(x, ...) DBG_VAL(x), DBG_6(__VA_ARGS__)
+#define DBG_8(x, ...) DBG_VAL(x), DBG_7(__VA_ARGS__)
+#define DBG_9(x, ...) DBG_VAL(x), DBG_8(__VA_ARGS__)
+#define DBG_10(x, ...) DBG_VAL(x), DBG_9(__VA_ARGS__)
+#define dbg(...) CONCAT(DBG_, NUM_ARGS(__VA_ARGS__))(__VA_ARGS__), cout << endl
+// supports up to 10 arguments debugging at one time
+
 template <typename T, bool ReadEnd> T parse(FILE *f, int &c) {
   if constexpr (is_same_v<T, int>) {
     int ans = 0, neg = 0;
@@ -260,52 +310,3 @@ template <typename Solution, typename R, typename... Ts> void exec(R (Solution::
   fprintf(out, "\nTotal elapsed time: %lldms", total_elapsed);
   fclose(out);
 }
-
-void _print(const string &x) { cout << '\"' << x << '\"'; }
-void _print(bool x) { cout << (x ? "true" : "false"); }
-template <size_t N> void _print(const bitset<N> &x) { cout << x; }
-template <typename T> enable_if_t<is_arithmetic_v<T>> _print(const T &x) { cout << x; }
-template <typename T, size_t... Idx> void _print2(const T &x, index_sequence<Idx...>) {
-  int c = 0;
-  ((cout << (c++ ? "," : ""), _print(get<Idx>(x))), ...);
-}
-template <typename T> void_t<typename tuple_size<T>::type> _print(const T &x) {
-  cout << '{';
-  _print2(x, make_index_sequence<tuple_size_v<T>>{});
-  cout << '}';
-}
-template <typename T> enable_if_t<is_container<T>::value> _print(const T &x) {
-  cout << '[';
-  int c = 0;
-  for (const auto &e : x) {
-    cout << (c++ ? "," : "");
-    _print(e);
-  }
-  cout << ']';
-}
-template <typename T, size_t N> void _print(const array<T, N> &x) {
-  cout << '[';
-  int c = 0;
-  for (const auto &e : x) {
-    cout << (c++ ? "," : "");
-    _print(e);
-  }
-  cout << ']';
-}
-
-#define CONCAT_IMPL(x, y) x##y
-#define CONCAT(x, y) CONCAT_IMPL(x, y)
-#define NUM_ARGS_IMPL(_1, _2, _3, _4, _5, _6, _7, _8, _9, _10, N, ...) N
-#define NUM_ARGS(...) NUM_ARGS_IMPL(__VA_ARGS__, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1)
-#define DBG_VAL(x) cout << '[' << #x << " = ", _print(x), cout << "] "
-#define DBG_1(x) DBG_VAL(x)
-#define DBG_2(x, ...) DBG_VAL(x), DBG_1(__VA_ARGS__)
-#define DBG_3(x, ...) DBG_VAL(x), DBG_2(__VA_ARGS__)
-#define DBG_4(x, ...) DBG_VAL(x), DBG_3(__VA_ARGS__)
-#define DBG_5(x, ...) DBG_VAL(x), DBG_4(__VA_ARGS__)
-#define DBG_6(x, ...) DBG_VAL(x), DBG_5(__VA_ARGS__)
-#define DBG_7(x, ...) DBG_VAL(x), DBG_6(__VA_ARGS__)
-#define DBG_8(x, ...) DBG_VAL(x), DBG_7(__VA_ARGS__)
-#define DBG_9(x, ...) DBG_VAL(x), DBG_8(__VA_ARGS__)
-#define DBG_10(x, ...) DBG_VAL(x), DBG_9(__VA_ARGS__)
-// supports up to 10 arguments debugging at one time
