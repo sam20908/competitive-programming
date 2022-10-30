@@ -22,6 +22,7 @@ using vvi = vec<vec<int>>;
 using vvvi = vec<vec<vec<int>>>;
 using vl = vec<ll>;
 using vvl = vec<vec<ll>>;
+using vvvl = vec<vec<vec<ll>>>;
 using vs = vec<string>;
 using vvs = vec<vec<string>>;
 using vpii = vec<pii>;
