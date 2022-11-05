@@ -1,5 +1,6 @@
 struct mint {
   ll v{};
+  mint() = default;
   mint(ll vx) : v((vx % M + M) % M) {}
   friend mint operator+(const mint &a, const mint &b) { return {(a.v + b.v) % M}; }
   friend mint operator+(ll a, const mint &b) { return {(a + b.v) % M}; }
