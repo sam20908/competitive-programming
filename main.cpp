@@ -6,34 +6,20 @@
 
 #define all(x) x.begin(), x.end()
 #define has(c, x) (c.find(x) != c.end())
-#define vec vector
-#define umap unordered_map
-#define uset unordered_set
 #define valid(i, j, m, n) (i >= 0 && i < m && j >= 0 && j < n)
 
 template <typename T> T &amin(T &a, const T &b) { return a = min(a, b); }
 template <typename T> T &amax(T &a, const T &b) { return a = max(a, b); }
-
-using ll = long long;
-using pii = pair<int, int>;
-using pll = pair<ll, ll>;
-using vi = vec<int>;
-using vvi = vec<vec<int>>;
-using vvvi = vec<vec<vec<int>>>;
-using vl = vec<ll>;
-using vvl = vec<vec<ll>>;
-using vvvl = vec<vec<vec<ll>>>;
-using vs = vec<string>;
-using vvs = vec<vec<string>>;
-using vpii = vec<pii>;
-using vvpii = vec<vec<pii>>;
-using tiii = tuple<int, int, int>;
+template <typename T> using v = vector<T>;
+template <typename T> using vv = vector<v<T>>;
+template <typename T> using vvv = vector<vv<T>>;
+template <typename T> using vvvv = vector<vvv<T>>;
 
 constexpr int dx[] = {-1, 0, 0, 1, -1, -1, 1, 1};
 constexpr int dy[] = {0, -1, 1, 0, -1, 1, -1, 1};
 constexpr int MXN = (int)1e6;
 constexpr int INF = (int)1e9 + 15;
-constexpr ll INFL = (ll)1e18 + 15;
+constexpr long long INFL = (long long)1e18 + 15;
 constexpr double EPS = 1e-9;
 constexpr int P = 31;
 constexpr int P2 = 33;
