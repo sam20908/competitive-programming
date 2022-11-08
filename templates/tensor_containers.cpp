@@ -4,7 +4,7 @@ template <typename T> struct is_tuple_like<T, void_t<typename tuple_size<T>::typ
 };
 template <typename T, typename = void> struct is_hashable { static constexpr bool value = false; };
 template <typename T> struct is_hashable<T, void_t<decltype(hash<T>{}(T{}))>> { static constexpr bool value = true; };
-vec<size_t> VALS;
+vector<size_t> VALS;
 struct custom_hash {
   static size_t getfixed(int i) {
     while ((int)VALS.size() < i + 1)

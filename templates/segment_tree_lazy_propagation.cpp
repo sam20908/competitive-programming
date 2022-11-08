@@ -1,7 +1,7 @@
 struct segment {
-  vec<ll> tree, lazy;
+  vector<long long> tree, lazy;
   segment(int n) : tree(4 * n), lazy(4 * n) {}
-  void update(int l, int r, int tl, int tr, int n, ll v) {
+  void update(int l, int r, int tl, int tr, int n, long long v) {
     if (lazy[n] != 0) {
       tree[n] += (tr - tl + 1) * lazy[n];
       if (tl != tr) {
@@ -25,7 +25,7 @@ struct segment {
       tree[n] = tree[2 * n + 1] + tree[2 * n + 2];
     }
   }
-  ll query(int l, int r, int tl, int tr, int n) {
+  long long query(int l, int r, int tl, int tr, int n) {
     if (lazy[n] != 0) {
       tree[n] += (tr - tl + 1) * lazy[n];
       if (tl != tr) {

@@ -1,5 +1,5 @@
 struct dsu {
-  vec<int> parent, rank;
+  vector<int> parent, rank;
   dsu(int n) : parent(n), rank(n, 1) {
     for (int i = 0; i < n; i++)
       parent[i] = i;

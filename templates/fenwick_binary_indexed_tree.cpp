@@ -1,6 +1,6 @@
 struct fenwick {
   int n;
-  vec<int> BIT;
+  vector<int> BIT;
   fenwick(int n) : n(n + 1), BIT(n + 2) {}
   void update(int i, int v) {
     for (; i <= n; i += (i & (-i)))

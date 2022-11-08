@@ -2,7 +2,7 @@ struct segment {
   struct node {
     node *left = nullptr;
     node *right = nullptr;
-    ll val = 0, lazy = 0;
+    long long val = 0, lazy = 0;
     void extend() {
       if (!left)
         left = new node();
@@ -11,7 +11,7 @@ struct segment {
     }
   };
   node *root = new node();
-  void update(int l, int r, int tl, int tr, ll v, node *cur) {
+  void update(int l, int r, int tl, int tr, long long v, node *cur) {
     if (cur->lazy != 0) {
       cur->val += (tr - tl + 1) * cur->lazy;
       if (tl != tr) {
@@ -24,7 +24,7 @@ struct segment {
     if (tl > tr || tl > r || tr < l)
       return;
     if (tl >= l && tr <= r) {
-      cur->val += (tr - t + 1) * v;
+      cur->val += (tr - tl + 1) * v;
       if (tl != tr) {
         cur->extend();
         cur->left->lazy += v;
@@ -38,7 +38,7 @@ struct segment {
       cur->val = cur->left->val + cur->right->val;
     }
   }
-  ll query(int l, int r, int tl, int tr, node *cur) {
+  long long query(int l, int r, int tl, int tr, node *cur) {
     if (cur->lazy != 0) {
       cur->val += (tr - tl + 1) * cur->lazy;
       if (tl != tr) {

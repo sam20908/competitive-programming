@@ -1,6 +1,6 @@
 struct trie {
   struct node {
-    vec<node *> adj = vec<node *>(26, nullptr);
+    vector<node *> adj = vector<node *>(26, nullptr);
     bool end = false;
   };
   node *root = new node();
