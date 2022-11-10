@@ -3,7 +3,8 @@
     "C_Cpp.default.configurationProvider": "${default}",
     "C_Cpp.default.compileCommands": "",
     "C_Cpp.default.compilerArgs": [
-        "/DLC_LOCAL=1"
+        "/DLC_LOCAL=1",
+        "/Zc:preprocessor"
     ],
     "files.associations": {
         "xiosbase": "cpp",
