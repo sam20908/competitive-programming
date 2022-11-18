@@ -28,3 +28,5 @@ constexpr int extended_gcd(int a, int b, int &x, int &y) {
   }
   return a1;
 }
+
+constexpr int ceil_div(int a, int b) { return a / b + int(a % b != 0); }
