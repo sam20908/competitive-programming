@@ -92,8 +92,15 @@ template <typename T, size_t N> void _print(const array<T, N> &x) {
 // supports up to 10 arguments debugging at one time
 
 template <typename T, bool ReadEnd> T parse(FILE *f, int &c) {
-  if constexpr (is_same_v<T, int>) {
-    int ans = 0, neg = 0;
+  if constexpr (is_same_v<T, char>) {
+    fgetc(f);
+    char ans = char(c = fgetc(f));
+    fgetc(f);
+    if constexpr (ReadEnd)
+      c = fgetc(f);
+    return ans;
+  } else if constexpr (is_integral_v<T>) {
+    T ans = 0, neg = 0;
     while ((char(c = fgetc(f)) >= '0' && (char)c <= '9') || (char)c == '-') {
       if ((char)c == '-')
         neg = 1;
@@ -108,13 +115,6 @@ template <typename T, bool ReadEnd> T parse(FILE *f, int &c) {
     fgetc(f);
     while (char(c = fgetc(f)) != '"')
       ans += (char)c;
-    if constexpr (ReadEnd)
-      c = fgetc(f);
-    return ans;
-  } else if constexpr (is_same_v<T, char>) {
-    fgetc(f);
-    char ans = char(c = fgetc(f));
-    fgetc(f);
     if constexpr (ReadEnd)
       c = fgetc(f);
     return ans;
