@@ -1,6 +1,6 @@
 struct mod_int {
   long long v{};
-  mod_int() = default;
+  mod_int(bool placeholder) : v{placeholder ? -1 : 0} {}
   mod_int(long long vx) : v((vx + M) % M) {}
   mod_int &operator=(long long vx) { v = (vx + M) % M; }
   friend mod_int operator+(const mod_int &a, const mod_int &b) { return {(a.v + b.v) % M}; }
