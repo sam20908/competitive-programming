@@ -15,8 +15,8 @@ struct dsu {
       int repj = find(j);
       if (rank[repi] < rank[repj])
         swap(repi, repj);
-      parent[repj] = repi;
       rank[repi] += int(rank[repi] == rank[repj]);
+      parent[repj] = repi;
     }
   }
 };
