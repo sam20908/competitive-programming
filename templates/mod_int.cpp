@@ -6,15 +6,22 @@ template <int MOD = 1'000'000'007> struct mod_int {
     v = (vx + MOD) % MOD;
     return *this;
   }
-  friend mod_int operator+(const mod_int &a, const mod_int &b) { return (a.v + b.v) % MOD; }
-  friend mod_int operator+(long long a, const mod_int &b) { return ((a + MOD) % MOD + b.v) % MOD; }
-  friend mod_int operator+(const mod_int &a, long long b) { return (a.v + (b + MOD) % MOD) % MOD; }
-  friend mod_int operator-(const mod_int &a, const mod_int &b) { return (a.v - b.v + MOD) % MOD; }
-  friend mod_int operator-(long long a, const mod_int &b) { return ((a + MOD) % MOD - b.v + MOD) % MOD; }
-  friend mod_int operator-(const mod_int &a, long long b) { return (a.v - (b + MOD) % MOD + MOD) % MOD; }
-  friend mod_int operator*(const mod_int &a, const mod_int &b) { return (a.v * b.v) % MOD; }
-  friend mod_int operator*(long long a, const mod_int &b) { return (((a + MOD) % MOD) * b.v) % MOD; }
-  friend mod_int operator*(const mod_int &a, long long b) { return (a.v * ((b + MOD) % MOD)) % MOD; }
+#define OP(op)                                                                                                         \
+  friend mod_int operator op(const mod_int &a, const mod_int &b) { return (a.v op b.v) % MOD; }                        \
+  friend mod_int operator op(long long a, const mod_int &b) { return ((a + MOD) % MOD op b.v) % MOD; }                 \
+  friend mod_int operator op(const mod_int &a, long long b) { return (a.v op(b + MOD) % MOD) % MOD; }                  \
+  mod_int &operator op##=(const mod_int &other) {                                                                      \
+    v = (v op other.v) % MOD;                                                                                          \
+    return *this;                                                                                                      \
+  }                                                                                                                    \
+  mod_int &operator op##=(long long other) {                                                                           \
+    v = (v op(other + MOD) % MOD) % MOD;                                                                               \
+    return *this;                                                                                                      \
+  }
+  OP(+)
+  OP(-)
+  OP(*)
+#undef OP
   friend bool operator==(const mod_int &a, const mod_int &b) { return a.v == b.v; }
   friend bool operator!=(const mod_int &a, const mod_int &b) { return a.v != b.v; }
 };
