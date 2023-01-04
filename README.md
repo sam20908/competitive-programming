@@ -16,7 +16,6 @@ This template was also designed to read inputs **FAST**, meaning it'll construct
 - Ability to ignore certain lines in `input.txt`, to test regressions later on and debug certain tests for now
 - Adds common values and type aliases from competitive programming, such as `INF = 1e9` and more
 - A dedicated debug macro `dbg` for local debugging only
-  - **GCC note: it doesn't support printing out nested container types**, such as `vector<pair<int, int>>` and more, so this is currently working only for MSVC. A PR to make it work for GCC is welcome!
 - Ability to copy the entire file for submission without removing debug calls, and etc
 
 ### How to use?

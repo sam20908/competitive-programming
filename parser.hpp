@@ -36,42 +36,38 @@ struct ListNode {
   ListNode *next = nullptr;
 };
 
-template <typename T, typename = void> struct is_container { static constexpr bool value = false; };
-template <typename T> struct is_container<T, void_t<decltype(T{}.begin()), decltype(T{}.end())>> {
-  static constexpr bool value = true;
-};
+template <typename T> struct is_bitset : public false_type {};
+template <size_t N> struct is_bitset<bitset<N>> : public true_type {};
+template <typename T, typename = void> struct is_container : public false_type {};
+template <typename T> struct is_container<T, void_t<decltype(T{}.begin()), decltype(T{}.end())>> : public true_type {};
+template <typename T, typename = void> struct is_tuple_like : public false_type {};
+template <typename T> struct is_tuple_like<T, void_t<typename tuple_size<T>::type>> : public true_type {};
 template <typename = void> inline constexpr bool always_false = false;
 
-void _print(const string &x) { cout << '\"' << x << '\"'; }
-void _print(bool x) { cout << (x ? "true" : "false"); }
-template <size_t N> void _print(const bitset<N> &x) { cout << x; }
-template <typename T> enable_if_t<is_arithmetic_v<T>> _print(const T &x) { cout << x; }
-template <typename T, size_t... Idx> void _print2(const T &x, index_sequence<Idx...>) {
-  int c = 0;
-  ((cout << (c++ ? "," : ""), _print(get<Idx>(x))), ...);
-}
-template <typename T> void_t<typename tuple_size<T>::type> _print(const T &x) {
-  cout << '{';
-  _print2(x, make_index_sequence<tuple_size_v<T>>{});
-  cout << '}';
-}
-template <typename T> enable_if_t<is_container<T>::value> _print(const T &x) {
-  cout << '[';
-  int c = 0;
-  for (const auto &e : x) {
-    cout << (c++ ? "," : "");
-    _print(e);
+template <typename T> void _print(const T &x) {
+  if constexpr (is_same_v<T, bool>) {
+    cout << (x ? "true" : "false");
+  } else if constexpr (is_arithmetic_v<T>) {
+    cout << x;
+  } else if constexpr (is_same_v<T, string> || is_bitset<T>::value) {
+    cout << '\"' << x << '\"';
+  } else if constexpr (is_tuple_like<T>::value) {
+    cout << '{';
+    int c = 0;
+    auto f = [&](auto &&...args) { ((cout << (c++ ? "," : ""), _print(args)), ...); };
+    apply(f, x);
+    cout << '}';
+  } else if constexpr (is_container<T>::value) {
+    cout << '[';
+    int c = 0;
+    for (const auto &e : x) {
+      cout << (c++ ? "," : "");
+      _print(e);
+    }
+    cout << ']';
+  } else {
+    static_assert(always_false<T>, "printing for type not supported");
   }
-  cout << ']';
-}
-template <typename T, size_t N> void _print(const array<T, N> &x) {
-  cout << '[';
-  int c = 0;
-  for (const auto &e : x) {
-    cout << (c++ ? "," : "");
-    _print(e);
-  }
-  cout << ']';
 }
 
 #define CONCAT_IMPL(x, y) x##y
