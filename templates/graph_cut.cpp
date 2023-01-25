@@ -21,6 +21,7 @@ struct graph_cut {
       return childrens;
     };
     for (int i = 0; i < adj.size(); i++)
-      is_cut_vertex[i] |= !disc[i] && f(f, i, i) > 1;
+      if (!disc[i])
+        is_cut_vertex[i] = f(f, i, i) > 1;
   }
 };
