@@ -284,7 +284,6 @@ template <typename Solution, typename R, typename... Ts> void exec(R (Solution::
           apply(fn, args);
           auto end = chrono::steady_clock::now();
           elapsed = chrono::duration_cast<chrono::milliseconds>(end - start).count();
-
           fprintf(out, "New state of parameters:\n");
           write_args(out, args, index_sequence_for<Ts...>{});
         } else {
@@ -292,7 +291,6 @@ template <typename Solution, typename R, typename... Ts> void exec(R (Solution::
           auto res = apply(fn, args);
           auto end = chrono::steady_clock::now();
           elapsed = chrono::duration_cast<chrono::milliseconds>(end - start).count();
-
           write<true>(out, res);
         }
         total_elapsed += elapsed;
