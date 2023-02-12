@@ -7,10 +7,10 @@ template <int MOD = 1'000'000'007, typename T = long long> struct mod_int {
     return *this;
   }
 #define OP(op)                                                                                                         \
-  friend mod_int operator op(const mod_int &a, const mod_int &b) { return (a.v op b.v) % MOD; }                        \
-  friend mod_int operator op(T a, const mod_int &b) { return (((a + MOD) % MOD) op b.v) % MOD; }                       \
+  friend mod_int operator op(const mod_int &a, const mod_int &b) { return ((a.v op b.v) % MOD + MOD) % MOD; }          \
+  friend mod_int operator op(T a, const mod_int &b) { return (((a % MOD + MOD) % MOD op b.v) % MOD + MOD) % MOD; }     \
   mod_int &operator op##=(const mod_int &other) {                                                                      \
-    v = (v op other.v) % MOD;                                                                                          \
+    v = ((v op other.v) % MOD + MOD) % MOD;                                                                            \
     return *this;                                                                                                      \
   }
   OP(+)
