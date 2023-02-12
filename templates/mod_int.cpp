@@ -19,5 +19,4 @@ template <int MOD = 1'000'000'007, typename T = long long> struct mod_int {
 #undef OP
   friend bool operator==(const mod_int &a, const mod_int &b) { return a.v == b.v; }
   friend bool operator!=(const mod_int &a, const mod_int &b) { return a.v != b.v; }
-  explicit operator T() { return v; }
 };
