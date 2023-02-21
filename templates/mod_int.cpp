@@ -1,7 +1,7 @@
 template <int MOD = 1'000'000'007, typename T = long long> struct mod_int {
   T v{};
   constexpr mod_int() = default;
-  constexpr mod_int(T vx) : v((vx + MOD) % MOD) {}
+  constexpr mod_int(T vx) : v((vx % MOD + MOD) % MOD) {}
   constexpr mod_int &operator=(T vx) {
     v = (vx + MOD) % MOD;
     return *this;
