@@ -9,10 +9,6 @@
 
 template <typename T> T &amin(T &a, const T &b) { return a = min(a, b); }
 template <typename T> T &amax(T &a, const T &b) { return a = max(a, b); }
-template <typename T> void make_unique_sorted(T &t) {
-  sort(all(t));
-  t.erase(unique(all(t)), t.end());
-}
 template <typename T> using v = vector<T>;
 template <typename T> using vv = vector<v<T>>;
 template <typename T> using vvv = vector<vv<T>>;
