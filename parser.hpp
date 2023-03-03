@@ -38,8 +38,9 @@ struct ListNode {
 
 template <typename T> struct is_bitset : public false_type {};
 template <size_t N> struct is_bitset<bitset<N>> : public true_type {};
-template <typename T, typename = void> struct is_container : public false_type {};
-template <typename T> struct is_container<T, void_t<decltype(T{}.begin()), decltype(T{}.end())>> : public true_type {};
+template <typename T, typename = void> struct is_iterable : public false_type {};
+template <typename T>
+struct is_iterable<T, void_t<decltype(begin(declval<T &>())), decltype(end(declval<T &>()))>> : public true_type {};
 template <typename T, typename = void> struct is_tuple_like : public false_type {};
 template <typename T> struct is_tuple_like<T, void_t<typename tuple_size<T>::type>> : public true_type {};
 template <typename = void> inline constexpr bool always_false = false;
@@ -57,7 +58,7 @@ template <typename T> void _print(const T &x) {
     auto f = [&](auto &&...args) { ((cout << (c++ ? "," : ""), _print(args)), ...); };
     apply(f, x);
     cout << '}';
-  } else if constexpr (is_container<T>::value) {
+  } else if constexpr (is_iterable<T>::value) {
     cout << '[';
     int c = 0;
     for (const auto &e : x) {
@@ -166,7 +167,7 @@ template <typename T, bool ReadEnd> T parse(FILE *f, int &c) {
     if constexpr (ReadEnd)
       c = fgetc(f);
     return dummy->next;
-  } else if constexpr (is_container<T>::value) {
+  } else if constexpr (is_iterable<T>::value) {
     T ans;
     fgetc(f);
     if (char(c = fgetc(f)) != ']') {
@@ -234,7 +235,7 @@ template <bool WriteEnd, typename T> void write(FILE *f, const T &val) {
       cur = cur->next;
     }
     fprintf(f, "]%s", end);
-  } else if constexpr (is_container<T>::value) {
+  } else if constexpr (is_iterable<T>::value) {
     fprintf(f, "[");
     int c = 0;
     for (int i = 0; i < val.size(); i++) {
