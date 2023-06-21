@@ -15,7 +15,7 @@ template <typename T> struct segment {
     };
     f(f, 0, m - 1, 1);
   }
-  T() query(int l, int r) {
+  T query(int l, int r) {
     auto f = [&](auto &self, int tl, int tr, int n) -> T {
       if (tr < l || tl > r || tl > tr)
         return T();
