@@ -11,7 +11,7 @@ template <typename T> struct segment {
       if (!right)
         right = new node();
     }
-    void pushdown(int l, int r, T v) {
+    T pushdown(int l, int r, T v) {
       val = combine(expand(l, r, v), val);
       if (l != r) {
         extend();
@@ -19,24 +19,23 @@ template <typename T> struct segment {
         right->lazy = combine(right->lazy, v);
       }
       lazy = T();
+      return val;
     }
   };
   node *root = new node();
   long long m = 0;
   segment(long long n) : m(n) {}
   void update(long long l, long long r, T v) {
-    auto f = [&](auto &self, long long tl, long long tr, node *cur) -> void {
+    auto f = [&](auto &self, long long tl, long long tr, node *cur) -> T {
       cur->pushdown(tl, tr, cur->lazy);
       if (tl > tr || tl > r || tr < l)
-        return;
+        return T();
       if (tl >= l && tr <= r) {
-        cur->pushdown(tl, tr, v);
+        return cur->pushdown(tl, tr, v);
       } else {
         long long mid = tl + (tr - tl) / 2;
         cur->extend();
-        self(self, tl, mid, cur->left);
-        self(self, mid + 1, tr, cur->right);
-        cur->val = combine(cur->left->val, cur->right->val);
+        return cur->val = combine(self(self, tl, mid, cur->left), self(self, mid + 1, tr, cur->right));
       }
     };
     f(f, 0, m - 1, root);
