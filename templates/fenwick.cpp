@@ -1,15 +1,15 @@
-struct fenwick {
-  vector<long long> bit; // APIs expect one-indexed index, gives finer control
-  int n;
-  fenwick(int n) : bit(n + 1), n{n + 1} {}
-  long long prefix_sum(int i) {
-    long long ans = 0;
+template <typename T> struct fenwick {
+  vector<T> bit; // one-indexed
+  int m;
+  fenwick(int n) : bit(n + 1), m(n + 1) {}
+  T query(int i) {
+    T ans = 0;
     for (; i > 0; i -= i & -i)
       ans += bit[i];
     return ans;
   }
-  void add(int i, long long delta) {
-    for (; i < n; i += i & -i)
+  void update(int i, T delta) {
+    for (; i < m; i += i & -i)
       bit[i] += delta;
   }
 };
