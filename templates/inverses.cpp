@@ -8,4 +8,5 @@ template <int MOD = 1'000'000'007, typename T = long long> struct inverses {
       ifact[i] = ifact[i - 1] * inv[i] % MOD;
     }
   }
+  T ncr(int n, int k) { return fact[n] * ifact[k] % MOD * ifact[n - k] % MOD; }
 };
