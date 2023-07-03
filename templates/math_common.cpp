@@ -1,9 +1,3 @@
-constexpr int gcd(int a, int b) {
-  if (b == 0) return a;
-  return gcd(b, a % b);
-}
-constexpr int lcm(int a, int b) { return (a * b) / gcd(a, b); }
-
 constexpr long long binpow(long long a, long long b, long long m) {
   a %= m;
   long long res = 1;
@@ -31,15 +25,4 @@ template <typename T> constexpr T ceil_div(T a, T b) {
   T res = a / b;
   if (b * res != a) res += (a > 0) & (b > 0);
   return res;
-}
-
-const int SIEVE_MAX = 70;
-vector<int> prime(SIEVE_MAX + 1, -1);
-void sieve() {
-  prime[0] = prime[1] = 0;
-  for (int i = 2; i <= SIEVE_MAX; i++) {
-    if (prime[i] != -1) continue;
-    for (int j = i; j <= SIEVE_MAX; j += i) prime[j] = false;
-    prime[i] = true;
-  }
 }
