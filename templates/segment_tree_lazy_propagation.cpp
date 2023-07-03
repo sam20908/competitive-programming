@@ -17,8 +17,7 @@ template <typename T> struct segment {
   void update(int l, int r, T v) {
     auto f = [&](auto &self, int tl, int tr, int n) -> T {
       pushdown(tl, tr, lazy[n], n);
-      if (tl > tr || l > tr || r < tl)
-        return T();
+      if (tl > tr || l > tr || r < tl) return T();
       if (l <= tl && tr <= r) {
         return pushdown(tl, tr, v, n);
       } else {
@@ -31,8 +30,7 @@ template <typename T> struct segment {
   T query(int l, int r) {
     auto f = [&](auto &self, int tl, int tr, int n) -> T {
       pushdown(tl, tr, lazy[n], n);
-      if (tl > tr || l > tr || r < tl)
-        return T();
+      if (tl > tr || l > tr || r < tl) return T();
       if (l <= tl && tr <= r) {
         return tree[n];
       } else {

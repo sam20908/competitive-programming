@@ -6,10 +6,8 @@ template <typename T> struct segment {
   segment(int n) : m(n), tree(2 * n) {}
   void update(int i, T v) {
     auto f = [&](auto &self, int tl, int tr, int n) -> T {
-      if (tr < i || tl > i || tl > tr)
-        return T();
-      if (tl == tr)
-        return tree[n] += v;
+      if (tr < i || tl > i || tl > tr) return T();
+      if (tl == tr) return tree[n] += v;
       int mid = tl + (tr - tl) / 2;
       return tree[n] = self(self, tl, mid, n + 1) + self(self, mid + 1, tr, n + 2 * (mid - tl + 1));
     };
@@ -17,10 +15,8 @@ template <typename T> struct segment {
   }
   T query(int l, int r) {
     auto f = [&](auto &self, int tl, int tr, int n) -> T {
-      if (tr < l || tl > r || tl > tr)
-        return T();
-      if (tl >= l && tr <= r)
-        return tree[n];
+      if (tr < l || tl > r || tl > tr) return T();
+      if (tl >= l && tr <= r) return tree[n];
       int mid = tl + (tr - tl) / 2;
       return self(self, tl, mid, n + 1) + self(self, mid + 1, tr, n + 2 * (mid - tl + 1));
     };

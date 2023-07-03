@@ -6,10 +6,8 @@ template <typename T> struct segment {
     node *right = nullptr;
     T val = T(), lazy = T();
     void extend() {
-      if (!left)
-        left = new node();
-      if (!right)
-        right = new node();
+      if (!left) left = new node();
+      if (!right) right = new node();
     }
     T pushdown(int l, int r, T v) {
       val = combine(expand(l, r, v), val);
@@ -28,8 +26,7 @@ template <typename T> struct segment {
   void update(long long l, long long r, T v) {
     auto f = [&](auto &self, long long tl, long long tr, node *cur) -> T {
       cur->pushdown(tl, tr, cur->lazy);
-      if (tl > tr || tl > r || tr < l)
-        return T();
+      if (tl > tr || tl > r || tr < l) return T();
       if (tl >= l && tr <= r) {
         return cur->pushdown(tl, tr, v);
       } else {
@@ -43,8 +40,7 @@ template <typename T> struct segment {
   T query(long long l, long long r) {
     auto f = [&](auto &self, long long tl, long long tr, node *cur) -> T {
       cur->pushdown(tl, tr, cur->lazy);
-      if (tl > tr || tl > r || tr < l)
-        return T();
+      if (tl > tr || tl > r || tr < l) return T();
       if (tl >= l && tr <= r) {
         return cur->val;
       } else {
