@@ -12,7 +12,7 @@ for /f "tokens=* usebackq" %%f in (`where g++`) do set gccvar=%%f
 if "%gccvar%"=="%gccvar:nocompiler=%" (
   echo Found GCC as the compiler
   echo.
-  g++ -DLC_LOCAL -std=c++17 -Wshadow main.cpp -g -o main.exe -Wl,--stack,268435456 && goto exec
+  g++ -DLC_LOCAL -D_GLIBCXX_DEBUG -std=c++17 -Wshadow main.cpp -g -o main.exe -Wl,--stack,268435456 && goto exec
   goto compileerr
 )
 for /f "tokens=* usebackq" %%f in (`where clang++`) do set clangvar=%%f
