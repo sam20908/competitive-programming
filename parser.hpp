@@ -94,27 +94,21 @@ template <typename T, bool ReadEnd> T parse(FILE *f, int &c) {
     fgetc(f);
     char ans = char(c = fgetc(f));
     fgetc(f);
-    if constexpr (ReadEnd)
-      c = fgetc(f);
+    if constexpr (ReadEnd) c = fgetc(f);
     return ans;
   } else if constexpr (is_integral_v<T>) {
     T ans = 0, neg = 0;
     while ((char(c = fgetc(f)) >= '0' && (char)c <= '9') || (char)c == '-') {
-      if ((char)c == '-')
-        neg = 1;
-      else
-        ans = ans * 10 + ((char)c - '0') * (1 - 2 * neg);
+      if ((char)c == '-') neg = 1;
+      else ans = ans * 10 + ((char)c - '0') * (1 - 2 * neg);
     }
-    if constexpr (!ReadEnd)
-      ungetc(c, f);
+    if constexpr (!ReadEnd) ungetc(c, f);
     return ans;
   } else if constexpr (is_same_v<T, string>) {
     string ans;
     fgetc(f);
-    while (char(c = fgetc(f)) != '"')
-      ans += (char)c;
-    if constexpr (ReadEnd)
-      c = fgetc(f);
+    while (char(c = fgetc(f)) != '"') ans += (char)c;
+    if constexpr (ReadEnd) c = fgetc(f);
     return ans;
   } else if constexpr (is_same_v<T, TreeNode *>) {
     int e = 2;
@@ -128,19 +122,14 @@ template <typename T, bool ReadEnd> T parse(FILE *f, int &c) {
         int val = 0, neg = 0;
         bool is_null = false;
         while (char(c = fgetc(f)) != ',' && (char)c != ']') {
-          if ((char)c >= '0' && (char)c <= '9')
-            val = val * 10 + ((char)c - '0') * (1 - 2 * neg);
-          else if ((char)c == '-')
-            neg = 1;
-          else
-            is_null = true;
+          if ((char)c >= '0' && (char)c <= '9') val = val * 10 + ((char)c - '0') * (1 - 2 * neg);
+          else if ((char)c == '-') neg = 1;
+          else is_null = true;
         }
         if (!is_null) {
           auto new_node = new TreeNode{val};
-          if (e & 1)
-            q[0]->left = new_node;
-          else
-            q[0]->right = new_node;
+          if (e & 1) q[0]->left = new_node;
+          else q[0]->right = new_node;
           q.push_back(new_node);
         }
         if (e++ % 2 == 0) {
@@ -150,8 +139,7 @@ template <typename T, bool ReadEnd> T parse(FILE *f, int &c) {
       }
       e = 1;
     }
-    if constexpr (ReadEnd)
-      c = fgetc(f);
+    if constexpr (ReadEnd) c = fgetc(f);
     return dummy->right;
   } else if constexpr (is_same_v<T, ListNode *>) {
     auto dummy = new ListNode{};
@@ -164,38 +152,28 @@ template <typename T, bool ReadEnd> T parse(FILE *f, int &c) {
         cur = cur->next;
       }
     }
-    if constexpr (ReadEnd)
-      c = fgetc(f);
+    if constexpr (ReadEnd) c = fgetc(f);
     return dummy->next;
   } else if constexpr (is_iterable<T>::value) {
     T ans;
     fgetc(f);
     if (char(c = fgetc(f)) != ']') {
       ungetc(c, f);
-      while ((char)c != ']')
-        ans.emplace_back(parse<typename T::value_type, true>(f, c));
+      while ((char)c != ']') ans.emplace_back(parse<typename T::value_type, true>(f, c));
     }
-    if constexpr (ReadEnd)
-      c = fgetc(f);
+    if constexpr (ReadEnd) c = fgetc(f);
     return ans;
-  } else
-    static_assert(always_false<T>, "parsing for type not supported");
+  } else static_assert(always_false<T>, "parsing for type not supported");
 }
 
 template <bool WriteEnd, typename T> void write(FILE *f, const T &val) {
   static constexpr const char *end = WriteEnd ? "\n" : "";
-  if constexpr (is_same_v<T, int>)
-    fprintf(f, "%d%s", val, end);
-  else if constexpr (is_same_v<T, float>)
-    fprintf(f, "%.f%s", val, end);
-  else if constexpr (is_same_v<T, double>)
-    fprintf(f, "%.18f%s", val, end);
-  else if constexpr (is_same_v<T, long long>)
-    fprintf(f, "%lld%s", val, end);
-  else if constexpr (is_same_v<T, bool>)
-    fprintf(f, "%s%s", val ? "true" : "false", end);
-  else if constexpr (is_same_v<T, string>)
-    fprintf(f, "\"%s\"%s", val.data(), end);
+  if constexpr (is_same_v<T, int>) fprintf(f, "%d%s", val, end);
+  else if constexpr (is_same_v<T, float>) fprintf(f, "%.f%s", val, end);
+  else if constexpr (is_same_v<T, double>) fprintf(f, "%.18f%s", val, end);
+  else if constexpr (is_same_v<T, long long>) fprintf(f, "%lld%s", val, end);
+  else if constexpr (is_same_v<T, bool>) fprintf(f, "%s%s", val ? "true" : "false", end);
+  else if constexpr (is_same_v<T, string>) fprintf(f, "\"%s\"%s", val.data(), end);
   else if constexpr (is_same_v<T, TreeNode *>) {
     deque<TreeNode *> q;
     fprintf(f, "[");
@@ -213,17 +191,14 @@ template <bool WriteEnd, typename T> void write(FILE *f, const T &val) {
           q.push_back(cur->left);
           ans += ',';
           ans += to_string(cur->left->val);
-        } else
-          ans += ",null";
+        } else ans += ",null";
         if (cur->right) {
           q.push_back(cur->right);
           ans += ',';
           ans += to_string(cur->right->val);
-        } else
-          ans += ",null";
+        } else ans += ",null";
       }
-      if (!q.empty())
-        fprintf(f, ans.data());
+      if (!q.empty()) fprintf(f, ans.data());
     }
     fprintf(f, "]%s", end);
   } else if constexpr (is_same_v<T, ListNode *>) {
@@ -243,8 +218,7 @@ template <bool WriteEnd, typename T> void write(FILE *f, const T &val) {
       write<false>(f, val[i]);
     }
     fprintf(f, "]%s", end);
-  } else
-    static_assert(always_false<T>, "writing for type not supported");
+  } else static_assert(always_false<T>, "writing for type not supported");
 }
 
 template <typename Args, size_t... Idx> void write_args(FILE *f, const Args &args, index_sequence<Idx...>) {
@@ -258,24 +232,19 @@ template <typename Solution, typename R, typename... Ts> void exec(R (Solution::
   if constexpr (sizeof...(Ts) == 0) {
     if constexpr (returns) {
       write<true>(out, (Solution{}.*fn)());
-    } else
-      (Solution{}.*fn)();
+    } else (Solution{}.*fn)();
   } else {
     auto in = fopen("input.txt", "r");
     int c = fgetc(in);
     if (c == EOF) {
       fclose(in);
       return;
-    } else
-      ungetc(c, in);
+    } else ungetc(c, in);
     while (true) {
-      if (char(c = fgetc(in)) == EOF)
-        break;
-      else
-        ungetc(c, in);
+      if (char(c = fgetc(in)) == EOF) break;
+      else ungetc(c, in);
       if (char(c = fgetc(in)) == '/') {
-        while ((c = fgetc(in)) != '\n' && c != EOF) {
-        }
+        while ((c = fgetc(in)) != '\n' && c != EOF) {}
       } else {
         ungetc(c, in);
         tuple args{Solution{}, parse<decay_t<Ts>, true>(in, c)...};
