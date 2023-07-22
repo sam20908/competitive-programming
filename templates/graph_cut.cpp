@@ -1,24 +1,24 @@
 struct graph_cut {
   vector<int> disc, low, is_cut_vertex, is_cut_edge;
-  graph_cut(vector<vector<pair<int, int>>> &adj, int edges)
-      : disc(adj.size()), low(adj.size()), is_cut_vertex(adj.size()), is_cut_edge(edges) {
+  graph_cut(vector<vector<pair<int, int>>> &g, int m)
+      : disc(g.size()), low(g.size()), is_cut_vertex(g.size()), is_cut_edge(m) {
     int time = 0;
-    auto f = [&](auto &self, int cur, int prev) -> int {
-      int childrens = 0;
-      disc[cur] = low[cur] = ++time;
-      for (auto [next, edge_id] : adj[cur]) {
-        if (next == prev) continue;
-        if (!disc[next]) {
-          childrens++;
-          self(self, next, cur);
-          is_cut_vertex[cur] = disc[cur] <= low[next];
-          is_cut_edge[edge_id] = disc[cur] < low[next];
-          low[cur] = min(low[cur], low[next]);
-        } else low[cur] = min(low[cur], disc[next]);
+    auto f = [&](auto &self, int u, int p) -> int {
+      int childs = 0;
+      disc[u] = low[u] = ++time;
+      for (auto [v, e] : g[u]) {
+        if (v == p) continue;
+        if (!disc[v]) {
+          childs++;
+          self(self, v, u);
+          is_cut_vertex[u] = disc[u] <= low[v];
+          is_cut_edge[e] = disc[u] < low[v];
+          low[u] = min(low[u], low[v]);
+        } else low[u] = min(low[u], disc[v]);
       }
-      return childrens;
+      return childs;
     };
-    for (int i = 0; i < adj.size(); i++)
+    for (int i = 0; i < g.size(); i++)
       if (!disc[i]) is_cut_vertex[i] = f(f, i, i) > 1;
   }
 };
