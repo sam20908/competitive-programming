@@ -1,4 +1,4 @@
-template <typename T, typename U> void first_true(T lo, T hi, U f) {
+template <typename T, typename U> T first_true(T lo, T hi, U f) {
   ++hi;
   assert(lo <= hi);
   while (lo < hi) {
