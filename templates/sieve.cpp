@@ -1,7 +1,6 @@
 struct sieve {
   vector<int> primes, composite, sd;
   sieve(int n) : composite(n + 1), sd(n + 1) {
-    primes.reserve(n / log(n)); // per PNT
     sd[1] = 1;
     for (int i = 2; i <= n; i++) {
       if (!composite[i]) {
