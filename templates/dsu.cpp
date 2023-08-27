@@ -1,6 +1,6 @@
 struct dsu {
-  vector<int> parent, rank;
-  dsu(int n) : parent(n), rank(n, 1) { iota(parent.begin(), parent.end(), 0); }
+  vector<int> parent, size;
+  dsu(int n) : parent(n), size(n, 1) { iota(parent.begin(), parent.end(), 0); }
   int find(int i) {
     if (parent[i] == i) return i;
     return parent[i] = find(parent[i]);
@@ -9,8 +9,8 @@ struct dsu {
     if (find(i) != find(j)) {
       int repi = find(i);
       int repj = find(j);
-      if (rank[repi] < rank[repj]) swap(repi, repj);
-      rank[repi] += int(rank[repi] == rank[repj]);
+      if (size[repi] < size[repj]) swap(repi, repj);
+      size[repi] += size[repj];
       parent[repj] = repi;
     }
   }
