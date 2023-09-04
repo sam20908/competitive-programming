@@ -1,4 +1,4 @@
-struct lca {
+struct LCA {
   int lg = 0;
   vector<vector<int>> up;
   vector<int> in, out;

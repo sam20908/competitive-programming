@@ -1,4 +1,4 @@
-template <typename T> struct fenwick {
+template <typename T> struct BIT {
   vector<T> bit; // one-indexed
   int m;
   fenwick(int n) : bit(n + 1), m(n + 1) {}

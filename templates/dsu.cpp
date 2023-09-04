@@ -1,4 +1,4 @@
-struct dsu {
+struct DSU {
   vector<int> parent, size;
   dsu(int n) : parent(n), size(n, 1) { iota(parent.begin(), parent.end(), 0); }
   int find(int i) {
