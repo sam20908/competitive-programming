@@ -1,6 +1,6 @@
 struct DSU {
   vector<int> parent, size;
-  dsu(int n) : parent(n), size(n, 1) { iota(parent.begin(), parent.end(), 0); }
+  DSU(int n) : parent(n), size(n, 1) { iota(parent.begin(), parent.end(), 0); }
   int find(int i) {
     if (parent[i] == i) return i;
     return parent[i] = find(parent[i]);
