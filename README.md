@@ -1,26 +1,17 @@
 # LeetCode C++ Template
 
-### Supported platforms:
-
-- Windows (only platform right now, submit a PR if you want more platforms)
-
-### Brief explanation
-
-This was created because I had enough of manually changing LeetCode inputs to be C++ compatible. For example, every time the input was a list, I have to convert it to a `std::vector`, which was annoying as heck. You can only imagine the pain for linked lists and binary trees...
-
-This template was also designed to read inputs **FAST**, meaning it'll construct the appropriate input objects as it reads the input *character by character*. It has to be fast because the majority of problems will have **HUGE** inputs, often to the size of *MILLIONS*. The outputting of the solution is going to be slower, simply because it's usually much less than the input and writing output character by character is painful.
+This was created for ease of solving LeetCode problems locally. The template is able to parse LeetCode inputs and constructs the appropriate data to pass into the solution. Integration with editors requires minimal work since this template is designed to be minimal.
 
 ### Features
 
-- Supports all possible LeetCode inputs and outputs, which is done in `input.txt` and `output.txt`
-- Ability to ignore certain lines in `input.txt`, to test regressions later on and debug certain tests for now
-- Adds common values and type aliases from competitive programming, such as `INF = 1e9` and more
-- A dedicated debug macro `dbg` for local debugging only
-- Ability to copy the entire file for submission without removing debug calls, and etc
+- Supports LeetCode inputs and outputs
+- Ignore certain lines in `input.txt` to test regressions
+- A debug macro `dbg` to pretty-print variables
+- Copy the entire file for submission
 
 ### How to use?
 
-1. Every time you get a new LeetCode problem, you only need to modify `main.cpp` and `input.txt`:
+1. To set up for a LeetCode problem, only modify `main.cpp` and `input.txt`:
   - ```cpp
      // ----- CHANGE FOR PROBLEM -----
      class Solution {
@@ -39,7 +30,7 @@ This template was also designed to read inputs **FAST**, meaning it'll construct
      /"CHANGE FOR PROBLEM - IGNORED LINE"
      ```
 
-2. Execute `run.bat` (or `run.sh`, and make sure your compiler is in `PATH`):
+2. Execute `run.bat` (or `run.sh`, and make sure `g++` is in `PATH`):
     ```
     run.bat
     ```
