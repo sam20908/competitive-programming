@@ -1,29 +1,4 @@
-#define _CRT_SECURE_NO_WARNINGS
-#include <algorithm>
-#include <array>
-#include <bitset>
-#include <cassert>
-#include <charconv>
-#include <chrono>
-#include <cstring>
-#include <functional>
-#include <iomanip>
-#include <iostream>
-#include <list>
-#include <map>
-#include <numeric>
-#include <queue>
-#include <random>
-#include <set>
-#include <sstream>
-#include <stack>
-#include <string>
-#include <tuple>
-#include <type_traits>
-#include <unordered_map>
-#include <unordered_set>
-#include <utility>
-#include <vector>
+#include <bits/stdc++.h>
 using namespace std;
 
 struct TreeNode {
