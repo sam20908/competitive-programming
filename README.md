@@ -39,7 +39,7 @@ This template was also designed to read inputs **FAST**, meaning it'll construct
      /"CHANGE FOR PROBLEM - IGNORED LINE"
      ```
 
-2. Execute `run.bat` (make sure your compiler is in `PATH`):
+2. Execute `run.bat` (or `run.sh`, and make sure your compiler is in `PATH`):
     ```
     run.bat
     ```
@@ -49,8 +49,6 @@ This template was also designed to read inputs **FAST**, meaning it'll construct
 - For solutions that return a value:
   ```
   > run.bat
-  Found MSVC as the compiler
-
   *some compiler message*
 
   10
@@ -62,8 +60,6 @@ This template was also designed to read inputs **FAST**, meaning it'll construct
 - For solution that modifies a parameter in-place:
     ```
   > run.bat
-  Found MSVC as the compiler
-
   *some compiler message*
 
   New state of parameters:

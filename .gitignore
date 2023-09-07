@@ -1,5 +1,3 @@
-main.exe
-main.obj
-main.pdb
-main.o
-main
+a.out
+problems/
+testcases/
