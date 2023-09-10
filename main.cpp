@@ -4,21 +4,6 @@
 #define dbg(...)
 #endif
 
-#define all(x) x.begin(), x.end()
-#define valid(i, j, m, n) (i >= 0 && i < m && j >= 0 && j < n)
-
-template <typename T> T &amin(T &a, const T &b) { return a = min(a, b); }
-template <typename T> T &amax(T &a, const T &b) { return a = max(a, b); }
-template <typename T> using v = vector<T>;
-template <typename T> using vv = vector<v<T>>;
-template <typename T> using vvv = vector<vv<T>>;
-template <typename T> using vvvv = vector<vvv<T>>;
-
-constexpr int dx[] = {-1, 0, 0, 1, -1, -1, 1, 1};
-constexpr int dy[] = {0, -1, 1, 0, -1, 1, -1, 1};
-constexpr int INF = (int)1e9 + 15;
-constexpr long long INFL = (long long)1e18 + 15;
-
 // ----- CHANGE FOR PROBLEM -----
 class Solution {
 public:
