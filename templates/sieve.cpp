@@ -1,14 +1,14 @@
 struct sieve {
-  vector<int> primes, composite, sd;
-  sieve(int n) : composite(n + 1), sd(n + 1) {
-    sd[1] = 1;
+  vector<int> primes, prime, sd;
+  sieve(int n) : prime(n + 1, true), sd(n + 1, 1) {
+    prime[1] = false;
     for (int i = 2; i <= n; i++) {
-      if (!composite[i]) {
+      if (prime[i]) {
         primes.push_back(i);
         sd[i] = i;
       }
-      for (int j = 0; j < primes.size() && i * primes[j] <= n; j++) {
-        composite[i * primes[j]] = true;
+      for (int j = 0; j < (int)primes.size() && i * primes[j] <= n; j++) {
+        prime[i * primes[j]] = false;
         sd[i * primes[j]] = primes[j];
         if (i % primes[j] == 0) break;
       }
