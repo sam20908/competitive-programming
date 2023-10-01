@@ -1,17 +1,21 @@
-struct DSU {
-  vector<int> parent, size;
-  DSU(int n) : parent(n), size(n, 1) { iota(parent.begin(), parent.end(), 0); }
-  int find(int i) {
-    if (parent[i] == i) return i;
-    return parent[i] = find(parent[i]);
-  }
-  void unite(int i, int j) {
-    if (find(i) != find(j)) {
-      int repi = find(i);
-      int repj = find(j);
-      if (size[repi] < size[repj]) swap(repi, repj);
-      size[repi] += size[repj];
-      parent[repj] = repi;
+struct DSU
+{
+    vector<int> parent, size;
+    DSU(int n) : parent(n), size(n, 1) { iota(parent.begin(), parent.end(), 0); }
+    int find(int i)
+    {
+        if (parent[i] == i)
+            return i;
+        return parent[i] = find(parent[i]);
     }
-  }
+    void unite(int i, int j)
+    {
+        i = find(i), j = find(j);
+        if (i == j)
+            return;
+        if (size[i] < size[j])
+            swap(i, j);
+        size[i] += size[j];
+        parent[j] = i;
+    }
 };
