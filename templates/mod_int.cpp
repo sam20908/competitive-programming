@@ -1,10 +1,10 @@
-template <int MOD>
+template <int M>
 struct mod_int
 {
-    T v{};
+    long long v{};
     constexpr mod_int() = default;
-    constexpr mod_int(T vx) : v((vx % M + M) % M) {}
-    constexpr mod_int &operator=(T vx)
+    constexpr mod_int(long long vx) : v((vx % M + M) % M) {}
+    constexpr mod_int &operator=(long long vx)
     {
         v = (vx % M + M) % M;
         return *this;
