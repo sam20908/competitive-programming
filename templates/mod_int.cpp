@@ -14,7 +14,7 @@ struct mod_int
     {                                                                        \
         return ((a.v op b.v) % M + M) % M;                                   \
     }                                                                        \
-    constexpr friend mod_int operator op(T a, const mod_int &b)              \
+    constexpr friend mod_int operator op(long long a, const mod_int &b)      \
     {                                                                        \
         return (((a % M + M) % M op b.v) % M + M) % M;                       \
     }                                                                        \
