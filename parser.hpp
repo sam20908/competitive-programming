@@ -286,7 +286,7 @@ void write(FILE *f, const T &val)
     {
         fprintf(f, "[");
         int c = 0;
-        for (int i = 0; i < val.size(); i++)
+        for (int i = 0; i < (int)val.size(); i++)
         {
             fprintf(f, "%s", c++ ? "," : "");
             write<false>(f, val[i]);
