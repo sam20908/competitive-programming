@@ -13,5 +13,5 @@ struct factorial
         }
     }
     long long ncr(int n, int k) { return fact[n] * ifact[k] % M * ifact[n - k] % M; }
-    long long ncr(int n, int k) { return fact[n] * ifact[n - k] % M; }
+    long long npr(int n, int k) { return fact[n] * ifact[n - k] % M; }
 };
