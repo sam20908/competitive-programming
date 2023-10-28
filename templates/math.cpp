@@ -12,6 +12,11 @@ constexpr long long binpow(long long a, long long b, long long m)
     return res;
 }
 
+constexpr long long square_sum(long long n)
+{
+    return (n * (n + 1) / 2) * (2 * n + 1) / 3; // sum of first n squares
+}
+
 constexpr int extended_gcd(int a, int b, int &x, int &y)
 {
     x = 1, y = 0;
