@@ -1,4 +1,4 @@
-constexpr long long binpow(long long a, long long b, long long m)
+constexpr long long modpow(long long a, long long b, long long m)
 {
     a %= m;
     long long res = 1;
