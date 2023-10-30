@@ -99,41 +99,34 @@ void _print(const T &x)
 #define dbg(...) CONCAT(DBG_, NUM_ARGS(__VA_ARGS__))(__VA_ARGS__), cout << endl
 // supports up to 10 arguments debugging at one time
 
-template <typename T, bool ReadEnd>
-T parse(FILE *f, int &c)
+template <typename T>
+T parse(FILE *f)
 {
+    int c = 0;
+    T ans{};
     if constexpr (is_same_v<T, char>)
     {
         fgetc(f);
-        char ans = char(c = fgetc(f));
+        ans = (c = fgetc(f));
         fgetc(f);
-        if constexpr (ReadEnd)
-            c = fgetc(f);
-        return ans;
     }
     else if constexpr (is_integral_v<T>)
     {
-        T ans = 0, neg = 0;
-        while ((char(c = fgetc(f)) >= '0' && (char)c <= '9') || (char)c == '-')
+        int neg = 0;
+        while (((c = fgetc(f)) >= '0' && c <= '9') || c == '-')
         {
-            if ((char)c == '-')
+            if (c == '-')
                 neg = 1;
             else
-                ans = ans * 10 + ((char)c - '0') * (1 - 2 * neg);
+                ans = ans * 10 + (c - '0') * (1 - 2 * neg);
         }
-        if constexpr (!ReadEnd)
-            ungetc(c, f);
-        return ans;
+        ungetc(c, f);
     }
     else if constexpr (is_same_v<T, string>)
     {
-        string ans;
         fgetc(f);
-        while (char(c = fgetc(f)) != '"')
+        while ((c = fgetc(f)) != '"')
             ans += (char)c;
-        if constexpr (ReadEnd)
-            c = fgetc(f);
-        return ans;
     }
     else if constexpr (is_same_v<T, TreeNode *>)
     {
@@ -142,18 +135,18 @@ T parse(FILE *f, int &c)
         deque<TreeNode *> q;
         q.push_back(dummy);
         fgetc(f);
-        while ((char)c != ']')
+        while (c != ']')
         {
             int sz = q.size();
-            while (sz > 0 && (char)c != ']')
+            while (sz > 0 && c != ']')
             {
                 int val = 0, neg = 0;
                 bool is_null = false;
-                while (char(c = fgetc(f)) != ',' && (char)c != ']')
+                while ((c = fgetc(f)) != ',' && c != ']')
                 {
-                    if ((char)c >= '0' && (char)c <= '9')
-                        val = val * 10 + ((char)c - '0') * (1 - 2 * neg);
-                    else if ((char)c == '-')
+                    if (c >= '0' && c <= '9')
+                        val = val * 10 + (c - '0') * (1 - 2 * neg);
+                    else if (c == '-')
                         neg = 1;
                     else
                         is_null = true;
@@ -175,44 +168,45 @@ T parse(FILE *f, int &c)
             }
             e = 1;
         }
-        if constexpr (ReadEnd)
-            c = fgetc(f);
-        return dummy->right;
+        ans = dummy->right;
     }
     else if constexpr (is_same_v<T, ListNode *>)
     {
         auto dummy = new ListNode{};
         auto cur = dummy;
         fgetc(f);
-        if (char(c = fgetc(f)) != ']')
+        if ((c = fgetc(f)) != ']')
         {
             ungetc(c, f);
-            while ((char)c != ']')
+            while (c != ']')
             {
-                cur->next = new ListNode{parse<int, true>(f, c)};
+                cur->next = new ListNode{parse<int>(f)};
                 cur = cur->next;
+                c = fgetc(f);
             }
         }
-        if constexpr (ReadEnd)
-            c = fgetc(f);
-        return dummy->next;
+        ans = dummy->next;
     }
     else if constexpr (is_iterable<T>::value)
     {
-        T ans;
         fgetc(f);
-        if (char(c = fgetc(f)) != ']')
+        if ((c = fgetc(f)) != ']')
         {
             ungetc(c, f);
-            while ((char)c != ']')
-                ans.emplace_back(parse<typename T::value_type, true>(f, c));
+            while (c != ']')
+            {
+                if (!isspace(c = fgetc(f)))
+                    ungetc(c, f);
+                ans.emplace_back(parse<typename T::value_type>(f));
+                c = fgetc(f);
+            }
         }
-        if constexpr (ReadEnd)
-            c = fgetc(f);
-        return ans;
     }
     else
         static_assert(always_false<T>, "parsing for type not supported");
+    if ((c = fgetc(f)) != '\n')
+        ungetc(c, f);
+    return ans;
 }
 
 template <bool WriteEnd, typename T>
@@ -321,21 +315,12 @@ void exec(R (Solution::*fn)(Ts...))
     else
     {
         auto in = fopen("input.txt", "r");
-        int c = fgetc(in);
-        if (c == EOF)
-        {
-            fclose(in);
-            return;
-        }
-        else
-            ungetc(c, in);
+        int c = 0;
         while (true)
         {
-            if (char(c = fgetc(in)) == EOF)
+            if ((c = fgetc(in)) == EOF)
                 break;
-            else
-                ungetc(c, in);
-            if (char(c = fgetc(in)) == '/')
+            if (c == '/')
             {
                 while ((c = fgetc(in)) != '\n' && c != EOF)
                 {
@@ -344,7 +329,7 @@ void exec(R (Solution::*fn)(Ts...))
             else
             {
                 ungetc(c, in);
-                tuple args{Solution{}, parse<decay_t<Ts>, true>(in, c)...};
+                tuple args{Solution{}, parse<decay_t<Ts>>(in)...};
                 long long elapsed = 0;
                 if constexpr (!returns)
                 {
@@ -365,9 +350,7 @@ void exec(R (Solution::*fn)(Ts...))
                 }
                 total_elapsed += elapsed;
                 fprintf(out, "Elapsed time: %lldms\n", elapsed);
-#ifdef LC_LOCAL
-                cout << endl;
-#endif
+                printf("\n"); // separate debug calls of test cases
             }
         }
         fclose(in);
