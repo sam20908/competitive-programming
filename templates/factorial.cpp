@@ -1,7 +1,6 @@
 template <int M> struct factorial {
-  vector<long long> fact, ifact;
-  factorial(int n): fact(n + 1, 1), ifact(n + 1, 1) {
-    vector<long long> inv(n + 1, 1);
+  vector<long long> fact, ifact, inv;
+  factorial(int n): fact(n + 1, 1), ifact(n + 1, 1), inv(n + 1, 1) {
     for (int i = 2; i <= n; i++) {
       fact[i] = fact[i - 1] * i % M;
       inv[i] = 1LL * (M - M / i) * inv[M % i] % M;
