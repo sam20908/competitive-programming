@@ -20,6 +20,6 @@ template <typename T> struct sparse_table {
   }
   T query_O1(int l, int r) { // only use if operation is idempotent!
     int i = __lg(r - l + 1);
-    return min(st[i][l], st[i][r - (1 << i) + 1]);
+    return min(dp[i][l], dp[i][r - (1 << i) + 1]);
   }
 };
