@@ -1,6 +1,6 @@
 struct graph_cut {
   vector<int> disc, low, is_cut_vertex, is_cut_edge;
-  graph_cut(vector<vector<pair<int, int>>> &g, int m)
+  graph_cut(vector<vector<pair<int, int>>> &g, int m) // [neighbour vertex, edge id]
       : disc(g.size()), low(g.size()), is_cut_vertex(g.size()), is_cut_edge(m) {
     int time = 0;
     auto f = [&](auto &self, int u, int p) -> int {

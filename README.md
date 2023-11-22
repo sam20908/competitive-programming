@@ -1,17 +1,20 @@
 # LeetCode C++ Template
 
-This was created for ease of solving LeetCode problems locally. The template is able to parse LeetCode inputs and constructs the appropriate data to pass into the solution. Integration with editors requires minimal work since this template is designed to be minimal.
+This was created for ease of solving LeetCode problems locally. The template is able to parse LeetCode inputs and constructs the appropriate data to pass into the solution. Integration with editors requires minimal work since this template was designed to be minimal.
 
 ### Features
 
-- Supports LeetCode inputs and outputs
-- Ignore certain lines in `input.txt` to test regressions
-- A debug macro `dbg` to pretty-print variables
+- Reads LeetCode inputs and outputs (and ignore certain inputs)
+  - If the input is ill-formed or does not match the parameter types, the behavior is undefined!
+- Comes with commonly useful data structures and algorithms
+- A debug macro `dbg` to pretty-print multiple variables at once
 - Copy the entire file for submission
+
+**Tip: Make git local changes to `main.cpp`, `input.txt` and `output.txt` with `git update-index --skip-worktree main.cpp input.txt output.txt`**
 
 ### How to use?
 
-1. To set up for a LeetCode problem, only modify `main.cpp` and `input.txt`:
+1. To set up for a LeetCode problem, modify `main.cpp` and `input.txt`:
   - ```cpp
      // ----- CHANGE FOR PROBLEM -----
      class Solution {
@@ -60,8 +63,6 @@ This was created for ease of solving LeetCode problems locally. The template is 
 
   Total elapsed time: 10ms
   ```
-
-**Note: If the input doesn't match the parameter type, the behavior is undefined!**
 
 ### Debugging example
 
