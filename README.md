@@ -10,7 +10,7 @@ This was created for ease of solving LeetCode problems locally. The template is 
 - A debug macro `dbg` to pretty-print multiple variables at once
 - Copy the entire file for submission
 
-**Tip: Make git local changes to `main.cpp`, `input.txt` and `output.txt` with `git update-index --skip-worktree main.cpp input.txt output.txt`**
+**Tip: Make Git skip changes to `main.cpp`, `input.txt` and `output.txt` with `git update-index --skip-worktree main.cpp input.txt output.txt`**
 
 ### How to use?
 
