@@ -1,3 +1,6 @@
+#include <bits/stdc++.h>
+using namespace std;
+
 template <int M> struct factorial {
   vector<long long> fact, ifact, inv;
   factorial(int n): fact(n + 1, 1), ifact(n + 1, 1), inv(n + 1, 1) {

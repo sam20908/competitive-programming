@@ -1,3 +1,6 @@
+#include <bits/stdc++.h>
+using namespace std;
+
 struct sieve {
   vector<int> p, pd;
   sieve(int n): pd(n + 1) {

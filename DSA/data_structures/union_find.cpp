@@ -1,6 +1,9 @@
-struct DSU {
+#include <bits/stdc++.h>
+using namespace std;
+
+struct union_find {
   vector<int> p, s;
-  DSU(int n): p(n), s(n, 1) {
+  union_find(int n): p(n), s(n, 1) {
     iota(p.begin(), p.end(), 0);
   }
   int find(int i) {

@@ -1,5 +1,8 @@
+#include <bits/stdc++.h>
+using namespace std;
+
 namespace SA {
-vector<int> suffix_array(string s, int alphabet = 256) {
+vector<int> suffix_array(string &s, int alphabet = 256) {
   s.push_back('$');
   int n = s.size();
   vector<int> p(n), c(n), cnt(max(alphabet, n), 0);
@@ -32,6 +35,7 @@ vector<int> suffix_array(string s, int alphabet = 256) {
     }
     c.swap(cn);
   }
+  s.pop_back();
   p.erase(p.begin());
   return p;
 }
