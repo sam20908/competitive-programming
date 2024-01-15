@@ -1,13 +1,13 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-struct segment {
+struct segment_tree {
   struct node_t {
     int v = 0;
   };
   int n = 0;
   vector<node_t> t, p;
-  segment(int n): n(n), t(4 * n), p(4 * n) {}
+  segment_tree(int n): n(n), t(4 * n), p(4 * n) {}
   void propagate(int tl, int tr, int node) {
     t[node].v += p[node].v * (tr - tl + 1);
     if (tl != tr) {
