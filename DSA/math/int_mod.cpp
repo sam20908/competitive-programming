@@ -1,19 +1,19 @@
-template <int M> struct mod_int {
+template <int M> struct int_mod {
   long long v{};
-  constexpr mod_int() = default;
-  constexpr mod_int(long long vx): v((vx % M + M) % M) {}
-  constexpr mod_int &operator=(long long vx) {
+  constexpr int_mod() = default;
+  constexpr int_mod(long long vx): v((vx % M + M) % M) {}
+  constexpr int_mod &operator=(long long vx) {
     v = (vx % M + M) % M;
     return *this;
   }
 #define OP(op)                                                                                                         \
-  constexpr friend mod_int operator op(const mod_int &a, const mod_int &b) {                                           \
+  constexpr friend int_mod operator op(const int_mod &a, const int_mod &b) {                                           \
     return ((a.v op b.v) % M + M) % M;                                                                                 \
   }                                                                                                                    \
-  constexpr friend mod_int operator op(long long a, const mod_int &b) {                                                \
+  constexpr friend int_mod operator op(long long a, const int_mod &b) {                                                \
     return (((a % M + M) % M op b.v) % M + M) % M;                                                                     \
   }                                                                                                                    \
-  constexpr mod_int &operator op##=(const mod_int & other) {                                                           \
+  constexpr int_mod &operator op##=(const int_mod & other) {                                                           \
     v = ((v op other.v) % M + M) % M;                                                                                  \
     return *this;                                                                                                      \
   }
@@ -21,10 +21,10 @@ template <int M> struct mod_int {
   OP(-)
   OP(*)
 #undef OP
-  constexpr friend bool operator==(const mod_int &a, const mod_int &b) {
+  constexpr friend bool operator==(const int_mod &a, const int_mod &b) {
     return a.v == b.v;
   }
-  constexpr friend bool operator!=(const mod_int &a, const mod_int &b) {
+  constexpr friend bool operator!=(const int_mod &a, const int_mod &b) {
     return a.v != b.v;
   }
 };

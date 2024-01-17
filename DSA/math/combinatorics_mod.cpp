@@ -1,9 +1,9 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-template <int M> struct factorial {
+template <int M> struct combinatorics_mod {
   vector<long long> fact, ifact, inv;
-  factorial(int n): fact(n + 1, 1), ifact(n + 1, 1), inv(n + 1, 1) {
+  combinatorics_mod(int n): fact(n + 1, 1), ifact(n + 1, 1), inv(n + 1, 1) {
     for (int i = 2; i <= n; i++) {
       fact[i] = fact[i - 1] * i % M;
       inv[i] = 1LL * (M - M / i) * inv[M % i] % M;
