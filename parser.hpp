@@ -11,48 +11,71 @@ struct ListNode {
   ListNode *next = nullptr;
 };
 
-template <typename T> struct is_bitset: public false_type {};
-template <size_t N> struct is_bitset<bitset<N>>: public true_type {};
-template <typename T, typename = void> struct is_iterable: public false_type {};
-template <typename T>
-struct is_iterable<T, void_t<decltype(begin(declval<T &>())), decltype(end(declval<T &>()))>>: public true_type {};
-template <typename T, typename = void> struct is_tuple_like: public false_type {};
-template <typename T> struct is_tuple_like<T, void_t<typename tuple_size<T>::type>>: public true_type {};
 template <typename = void> inline constexpr bool always_false = false;
+template <typename T>
+concept has_to_string = requires(T t) {
+  { t.to_string() } -> same_as<std::string>;
+};
+template <typename T>
+concept tuple_like = requires { typename tuple_size<T>::type; };
+template <typename T>
+concept iterable = requires(T t) {
+  t.begin();
+  t.end();
+};
 
-template <typename T> void _print(const T &x) {
-  if constexpr (is_same_v<T, bool>) {
-    cout << (x ? "true" : "false");
-  } else if constexpr (is_arithmetic_v<T>) {
-    cout << x;
-  } else if constexpr (is_same_v<T, string> || is_bitset<T>::value) {
-    cout << '\"' << x << '\"';
-  } else if constexpr (is_tuple_like<T>::value) {
-    cout << '{';
-    int c = 0;
-    auto f = [&](auto &&...args) {
-      ((cout << (c++ ? "," : ""), _print(args)), ...);
-    };
-    apply(f, x);
-    cout << '}';
-  } else if constexpr (is_iterable<T>::value) {
-    cout << '[';
-    int c = 0;
-    for (const auto &e : x) {
-      cout << (c++ ? "," : "");
-      _print(e);
+template <typename T> void print_impl(FILE *f, const T &val, bool write_newline) {
+  if constexpr (same_as<T, int>) fprintf(f, "%d", val);
+  else if constexpr (same_as<T, float>) fprintf(f, "%.f", val);
+  else if constexpr (same_as<T, double>) fprintf(f, "%.18f", val);
+  else if constexpr (same_as<T, long long>) fprintf(f, "%lld", val);
+  else if constexpr (same_as<T, bool>) fprintf(f, "%s", val ? "true" : "false");
+  else if constexpr (same_as<T, string>) fprintf(f, "\"%s\"", val.data());
+  else if constexpr (same_as<T, TreeNode *>) {
+    queue<TreeNode *> q;
+    fprintf(f, "[");
+    if (val) {
+      q.push(val);
+      fprintf(f, "%d", val->val);
     }
-    cout << ']';
-  } else {
-    static_assert(always_false<T>, "printing for type not supported");
-  }
+    while (!q.empty()) {
+      auto cur = q.front();
+      q.pop();
+      if (cur->left) {
+        q.push(cur->left);
+        fprintf(f, ",%d", cur->left->val);
+      } else fprintf(f, ",null");
+      if (cur->right) {
+        q.push(cur->right);
+        fprintf(f, ",%d", cur->right->val);
+      } else fprintf(f, ",null");
+    }
+    fprintf(f, "]");
+  } else if constexpr (same_as<T, ListNode *>) {
+    auto cur = val;
+    fprintf(f, "[");
+    while (cur) {
+      if (cur != val) fprintf(f, ",");
+      fprintf(f, "%d", cur->val);
+      cur = cur->next;
+    }
+    fprintf(f, "]");
+  } else if constexpr (iterable<T>) {
+    fprintf(f, "[");
+    for (int i = 0; i < (int)val.size(); i++) {
+      if (i > 0) fprintf(f, ",");
+      print_impl(f, val[i], false);
+    }
+    fprintf(f, "]");
+  } else static_assert(always_false<T>, "printing for type not supported");
+  if (write_newline) fprintf(f, "\n");
 }
 
 #define CONCAT_IMPL(x, y) x##y
 #define CONCAT(x, y) CONCAT_IMPL(x, y)
 #define NUM_ARGS_IMPL(_1, _2, _3, _4, _5, _6, _7, _8, _9, _10, N, ...) N
 #define NUM_ARGS(...) NUM_ARGS_IMPL(__VA_ARGS__, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1)
-#define DBG_VAL(x) cout << '[' << #x << " = ", _print(x), cout << "] "
+#define DBG_VAL(x) fprintf(stderr, "[%s = ", #x), print_impl(stderr, x, false), fprintf(stderr, "] ")
 #define DBG_1(x) DBG_VAL(x)
 #define DBG_2(x, ...) DBG_VAL(x), DBG_1(__VA_ARGS__)
 #define DBG_3(x, ...) DBG_VAL(x), DBG_2(__VA_ARGS__)
@@ -63,183 +86,114 @@ template <typename T> void _print(const T &x) {
 #define DBG_8(x, ...) DBG_VAL(x), DBG_7(__VA_ARGS__)
 #define DBG_9(x, ...) DBG_VAL(x), DBG_8(__VA_ARGS__)
 #define DBG_10(x, ...) DBG_VAL(x), DBG_9(__VA_ARGS__)
-#define dbg(...) CONCAT(DBG_, NUM_ARGS(__VA_ARGS__))(__VA_ARGS__), cout << endl
+#define dbg(...) CONCAT(DBG_, NUM_ARGS(__VA_ARGS__))(__VA_ARGS__), fprintf(stderr, "\n");
 // supports up to 10 arguments debugging at one time
 
-template <typename T> T parse(FILE *f) {
-  int c = 0;
-  T ans{};
-  if constexpr (is_same_v<T, char>) {
-    fgetc(f);
-    ans = (c = fgetc(f));
-    fgetc(f);
-  } else if constexpr (is_integral_v<T>) {
-    int neg = 0;
-    while (((c = fgetc(f)) >= '0' && c <= '9') || c == '-') {
-      if (c == '-') neg = 1;
-      else ans = ans * 10 + (c - '0') * (1 - 2 * neg);
-    }
-    ungetc(c, f);
-  } else if constexpr (is_same_v<T, string>) {
-    fgetc(f);
-    while ((c = fgetc(f)) != '"') ans += (char)c;
-  } else if constexpr (is_same_v<T, TreeNode *>) {
-    int e = 2;
+template <typename T> T parse() {
+  T ans;
+  if constexpr (same_as<T, char>) {
+    scanf("\"%c\"", &ans);
+  } else if constexpr (same_as<T, int>) {
+    scanf("%d", &ans);
+  } else if constexpr (same_as<T, long long>) {
+    scanf("%lld", &ans);
+  } else if constexpr (same_as<T, float>) {
+    scanf("%f", &ans);
+  } else if constexpr (same_as<T, double>) {
+    scanf("%lf", &ans);
+  } else if constexpr (same_as<T, string>) {
+    char *buf;
+    scanf("\"%m[^\"]\"", &buf);
+    ans = buf;
+    delete buf;
+  } else if constexpr (same_as<T, TreeNode *>) {
+    bool right = true;
     auto dummy = new TreeNode{};
-    deque<TreeNode *> q;
-    q.push_back(dummy);
-    fgetc(f);
-    while (c != ']') {
-      int sz = q.size();
-      while (sz > 0 && c != ']') {
-        int val = 0, neg = 0;
-        bool is_null = false;
-        while ((c = fgetc(f)) != ',' && c != ']') {
-          if (c >= '0' && c <= '9') val = val * 10 + (c - '0') * (1 - 2 * neg);
-          else if (c == '-') neg = 1;
-          else is_null = true;
+    queue<TreeNode *> q;
+    q.push(dummy);
+    getchar();
+    if (int c = getchar(); c != ']') {
+      ungetc(c, stdin);
+      while (!q.empty()) {
+        char *buf;
+        scanf("%m[^],]", &buf);
+        getchar();
+        if (strcmp(buf, "null") != 0) {
+          auto new_node = new TreeNode{atoi(buf)};
+          if (right) q.front()->right = new_node;
+          else q.front()->left = new_node;
+          q.push(new_node);
         }
-        if (!is_null) {
-          auto new_node = new TreeNode{val};
-          if (e & 1) q[0]->left = new_node;
-          else q[0]->right = new_node;
-          q.push_back(new_node);
-        }
-        if (e++ % 2 == 0) {
-          q.pop_front();
-          sz--;
-        }
+        if (right) q.pop();
+        right = !right;
+        delete buf;
       }
-      e = 1;
     }
     ans = dummy->right;
-  } else if constexpr (is_same_v<T, ListNode *>) {
+    delete dummy;
+  } else if constexpr (same_as<T, ListNode *>) {
     auto dummy = new ListNode{};
     auto cur = dummy;
-    fgetc(f);
-    if ((c = fgetc(f)) != ']') {
-      ungetc(c, f);
-      while (c != ']') {
-        cur->next = new ListNode{parse<int>(f)};
+    getchar();
+    if (int c = getchar(); c != ']') {
+      ungetc(c, stdin);
+      while (true) {
+        cur->next = new ListNode{parse<int>()};
         cur = cur->next;
-        c = fgetc(f);
+        if (getchar() == ']') break;
       }
     }
     ans = dummy->next;
-  } else if constexpr (is_iterable<T>::value) {
-    fgetc(f);
-    if ((c = fgetc(f)) != ']') {
-      ungetc(c, f);
-      while (c != ']') {
-        if (!isspace(c = fgetc(f))) ungetc(c, f);
-        ans.emplace_back(parse<typename T::value_type>(f));
-        c = fgetc(f);
+    delete dummy;
+  } else if constexpr (iterable<T>) {
+    getchar();
+    if (int c = getchar(); c != ']') {
+      ungetc(c, stdin);
+      while (true) {
+        ans.emplace_back(parse<typename T::value_type>());
+        if (getchar() == ']') break;
       }
     }
   } else static_assert(always_false<T>, "parsing for type not supported");
-  if ((c = fgetc(f)) != '\n') ungetc(c, f);
   return ans;
 }
 
-template <bool WriteEnd, typename T> void write(FILE *f, const T &val) {
-  static constexpr const char *end = WriteEnd ? "\n" : "";
-  if constexpr (is_same_v<T, int>) fprintf(f, "%d%s", val, end);
-  else if constexpr (is_same_v<T, float>) fprintf(f, "%.f%s", val, end);
-  else if constexpr (is_same_v<T, double>) fprintf(f, "%.18f%s", val, end);
-  else if constexpr (is_same_v<T, long long>) fprintf(f, "%lld%s", val, end);
-  else if constexpr (is_same_v<T, bool>) fprintf(f, "%s%s", val ? "true" : "false", end);
-  else if constexpr (is_same_v<T, string>) fprintf(f, "\"%s\"%s", val.data(), end);
-  else if constexpr (is_same_v<T, TreeNode *>) {
-    deque<TreeNode *> q;
-    fprintf(f, "[");
-    if (val) {
-      q.push_back(val);
-      fprintf(f, "%d", val->val);
-    }
-    while (!q.empty()) {
-      int sz = q.size();
-      string ans;
-      while (sz-- > 0) {
-        auto cur = q.front();
-        q.pop_front();
-        if (cur->left) {
-          q.push_back(cur->left);
-          ans += ',';
-          ans += to_string(cur->left->val);
-        } else ans += ",null";
-        if (cur->right) {
-          q.push_back(cur->right);
-          ans += ',';
-          ans += to_string(cur->right->val);
-        } else ans += ",null";
-      }
-      if (!q.empty()) fprintf(f, ans.data());
-    }
-    fprintf(f, "]%s", end);
-  } else if constexpr (is_same_v<T, ListNode *>) {
-    int c = 0;
-    auto cur = val;
-    fprintf(f, "[");
-    while (cur) {
-      fprintf(f, "%s%d", c++ ? "," : "", cur->val);
-      cur = cur->next;
-    }
-    fprintf(f, "]%s", end);
-  } else if constexpr (is_iterable<T>::value) {
-    fprintf(f, "[");
-    int c = 0;
-    for (int i = 0; i < (int)val.size(); i++) {
-      fprintf(f, "%s", c++ ? "," : "");
-      write<false>(f, val[i]);
-    }
-    fprintf(f, "]%s", end);
-  } else static_assert(always_false<T>, "writing for type not supported");
-}
-
-template <typename Args, size_t... Idx> void write_args(FILE *f, const Args &args, index_sequence<Idx...>) {
-  ((fprintf(f, "#%lld: ", Idx + 1), write<true>(f, get<Idx + 1>(args))), ...);
-}
-
 template <typename Solution, typename R, typename... Ts> void exec(R (Solution::*fn)(Ts...)) {
-  constexpr bool returns = !is_same_v<R, void>;
-  auto out = fopen("output.txt", "w");
   long long total_elapsed = 0;
-  if constexpr (sizeof...(Ts) == 0) {
-    if constexpr (returns) {
-      write<true>(out, (Solution{}.*fn)());
-    } else (Solution{}.*fn)();
-  } else {
-    auto in = fopen("input.txt", "r");
-    int c = 0;
-    while (true) {
-      if ((c = fgetc(in)) == EOF) break;
-      if (c == '/') {
-        while ((c = fgetc(in)) != '\n' && c != EOF) {}
+  while (true) {
+    int c = getchar();
+    if (c == EOF) break;
+    if (c == '/') {
+      do {
+        c = getchar();
+      } while (!isspace(c) && c != EOF);
+    } else {
+      ungetc(c, stdin);
+      tuple<Solution, Ts...> args;
+      get<0>(args) = Solution{};
+      [&]<size_t... Idx>(index_sequence<Idx...>) {
+        ((get<Idx + 1>(args) = parse<decay_t<Ts>>(), getchar()), ...);
+      }(index_sequence_for<Ts...>{});
+      long long elapsed = 0;
+      if constexpr (same_as<R, void>) {
+        const clock_t start = clock();
+        apply(fn, args);
+        const clock_t now = clock();
+        elapsed = (now - start) / (CLOCKS_PER_SEC / 1000);
+        []<size_t... Idx>(auto &&args, index_sequence<Idx...>) {
+          ((printf("#%lld: ", Idx + 1), print_impl(stdout, get<Idx + 1>(args), true)), ...);
+        }(args, index_sequence_for<Ts...>{});
       } else {
-        ungetc(c, in);
-        tuple args{Solution{}, parse<decay_t<Ts>>(in)...};
-        long long elapsed = 0;
-        if constexpr (!returns) {
-          auto start = chrono::steady_clock::now();
-          apply(fn, args);
-          auto end = chrono::steady_clock::now();
-          elapsed = chrono::duration_cast<chrono::milliseconds>(end - start).count();
-          fprintf(out, "New state of parameters:\n");
-          write_args(out, args, index_sequence_for<Ts...>{});
-        } else {
-          auto start = chrono::steady_clock::now();
-          auto res = apply(fn, args);
-          auto end = chrono::steady_clock::now();
-          elapsed = chrono::duration_cast<chrono::milliseconds>(end - start).count();
-          write<true>(out, res);
-        }
-        total_elapsed += elapsed;
-        fprintf(out, "Elapsed time: %lldms\n", elapsed);
-        printf("\n"); // separate debug calls of test cases
+        auto start = clock();
+        auto res = apply(fn, args);
+        auto now = clock();
+        elapsed = (now - start) / (CLOCKS_PER_SEC / 1000);
+        print_impl(stdout, res, true);
       }
+      total_elapsed += elapsed;
+      printf("Elapsed time: %lldms\n", elapsed);
+      fprintf(stderr, "\n"); // separate debug output from different testcases
     }
-    fclose(in);
   }
-  fprintf(out, "\nTotal elapsed time: %lldms", total_elapsed);
-  fclose(out);
+  printf("\nTotal elapsed time: %lldms", total_elapsed);
 }

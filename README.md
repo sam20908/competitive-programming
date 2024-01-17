@@ -1,10 +1,11 @@
-# LeetCode C++ Template
+# LeetCode C++
 
 This was created for ease of solving LeetCode problems locally. The template is able to parse LeetCode inputs and constructs the appropriate data to pass into the solution. Integration with editors requires minimal work since this template was designed to be minimal.
 
 ### Features
 
-- Reads LeetCode inputs and outputs (and ignore certain inputs)
+- Parses LeetCode inputs and outputs (and the ability to ignore lines)
+  - The parser reads from **stdin**, outputs to **stdout**, and prints debug information to **stderr**
   - If the input is ill-formed or does not match the parameter types, the behavior is undefined!
 - Comes with commonly useful data structures and algorithms
 - A debug macro `dbg` to pretty-print multiple variables at once
@@ -45,16 +46,20 @@ This was created for ease of solving LeetCode problems locally. The template is 
   > run.bat
   *some compiler message*
 
+  *dbg(...) messages*
+
   10
   Elapsed time: 10ms
 
   Total elapsed time: 10ms
   ```
 
-- For solution that modifies a parameter in-place:
+- For solution that modifies the parameters in-place:
     ```
   > run.bat
   *some compiler message*
+
+  *dbg(...) messages*
 
   New state of parameters:
   #1: [1,2,3,4]
@@ -64,11 +69,11 @@ This was created for ease of solving LeetCode problems locally. The template is 
   Total elapsed time: 10ms
   ```
 
-### Debugging example
+### `dbg` example
 
 ```cpp
 map<int, vector<pair<int, int>>> a{{3, {{4, 5}, {6, 7}}}};
-int b = INF;
+int b = 1e9;
 dbg(a, b);
 // [a = [{3,[{4,5},{6,7}]}]] [b = 1000000000]
 ```
