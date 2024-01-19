@@ -1,3 +1,6 @@
+#include <bits/stdc++.h>
+using namespace std;
+
 #ifdef LC_LOCAL
 #include "parser.hpp"
 #else
