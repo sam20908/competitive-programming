@@ -72,9 +72,9 @@ template <typename T> void print_impl(FILE *f, const T &val, bool write_newline)
     fprintf(f, "]");
   } else if constexpr (iterable<T>) {
     fprintf(f, "[");
-    for (int i = 0; i < (int)val.size(); i++) {
-      if (i > 0) fprintf(f, ",");
-      print_impl(f, val[i], false);
+    for (auto it = val.begin(); it != val.end(); it++) {
+      if (it != val.begin()) fprintf(f, ",");
+      print_impl(f, *it, false);
     }
     fprintf(f, "]");
   } else static_assert(always_false<T>, "printing for type not supported");
@@ -179,10 +179,10 @@ template <typename Solution, typename R, typename... Ts> void exec(R (Solution::
       } while (!isspace(c) && c != EOF);
     } else {
       ungetc(c, stdin);
-      tuple<Solution, Ts...> args;
+      tuple<Solution, decay_t<Ts>...> args;
       get<0>(args) = Solution{};
       [&]<size_t... Idx>(index_sequence<Idx...>) {
-        ((get<Idx + 1>(args) = parse<decay_t<Ts>>(), getchar()), ...);
+        ((get<Idx + 1>(args) = parse<decay_t<Ts>>()), ...);
       }(index_sequence_for<Ts...>{});
       long long elapsed = 0;
       if constexpr (same_as<R, void>) {
