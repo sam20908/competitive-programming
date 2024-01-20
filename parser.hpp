@@ -126,7 +126,7 @@ template <typename T> T parse() {
       ungetc(c, stdin);
       while (!q.empty()) {
         char *buf;
-        scanf("%m[^],]", &buf);
+        scanf(" %m[^],]", &buf);
         getchar();
         if (strcmp(buf, "null") != 0) {
           auto new_node = new TreeNode{atoi(buf)};
