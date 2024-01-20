@@ -31,6 +31,8 @@ template <typename T> void print_impl(FILE *f, const T &val, bool write_newline)
   else if constexpr (same_as<T, float>) fprintf(f, "%.f", val);
   else if constexpr (same_as<T, double>) fprintf(f, "%.18f", val);
   else if constexpr (same_as<T, long long>) fprintf(f, "%lld", val);
+  else if constexpr (same_as<T, unsigned int>) fprintf(f, "%u", val);
+  else if constexpr (same_as<T, unsigned long long>) fprintf(f, "%llu", val);
   else if constexpr (same_as<T, bool>) fprintf(f, "%s", val ? "true" : "false");
   else if constexpr (same_as<T, string>) fprintf(f, "\"%s\"", val.data());
   else if constexpr (same_as<T, TreeNode *>) {
@@ -101,17 +103,14 @@ template <typename T> void print_impl(FILE *f, const T &val, bool write_newline)
 
 template <typename T> T parse() {
   T ans;
-  if constexpr (same_as<T, char>) {
-    scanf("\"%c\"", &ans);
-  } else if constexpr (same_as<T, int>) {
-    scanf("%d", &ans);
-  } else if constexpr (same_as<T, long long>) {
-    scanf("%lld", &ans);
-  } else if constexpr (same_as<T, float>) {
-    scanf("%f", &ans);
-  } else if constexpr (same_as<T, double>) {
-    scanf("%lf", &ans);
-  } else if constexpr (same_as<T, string>) {
+  if constexpr (same_as<T, char>) scanf("\"%c\"", &ans);
+  else if constexpr (same_as<T, int>) scanf("%d", &ans);
+  else if constexpr (same_as<T, long long>) scanf("%lld", &ans);
+  else if constexpr (same_as<T, unsigned int>) scanf("%u", &ans);
+  else if constexpr (same_as<T, unsigned long long>) scanf("%llu", &ans);
+  else if constexpr (same_as<T, float>) scanf("%f", &ans);
+  else if constexpr (same_as<T, double>) scanf("%lf", &ans);
+  else if constexpr (same_as<T, string>) {
     char *buf;
     scanf("\"%m[^\"]\"", &buf);
     ans = buf;
