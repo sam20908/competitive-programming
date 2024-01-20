@@ -53,6 +53,14 @@ template <typename T> void print_impl(FILE *f, const T &val, bool write_newline)
       } else fprintf(f, ",null");
     }
     fprintf(f, "]");
+  } else if constexpr (tuple_like<T>) {
+    fprintf(f, "{");
+    apply(
+        [&, c = 0](auto &&...args) mutable {
+          ((fprintf(f, c++ ? "," : ""), print_impl(f, args, false)), ...);
+        },
+        val);
+    fprintf(f, "}");
   } else if constexpr (same_as<T, ListNode *>) {
     auto cur = val;
     fprintf(f, "[");
