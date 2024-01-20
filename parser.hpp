@@ -168,6 +168,25 @@ template <typename T> T parse() {
   return ans;
 }
 
+template <typename T> void free_var(T &t) {
+  if constexpr (same_as<T, ListNode *>) {
+    auto cur = t;
+    while (cur) {
+      auto next = cur->next;
+      delete cur;
+      cur = next;
+    }
+  } else if constexpr (same_as<T, TreeNode *>) {
+    auto f = [&](auto &self, TreeNode *cur) {
+      if (!cur) return;
+      self(self, cur->left);
+      self(self, cur->right);
+      delete cur;
+    };
+    f(f, t);
+  }
+}
+
 template <typename Solution, typename R, typename... Ts> void exec(R (Solution::*fn)(Ts...)) {
   long long total_elapsed = 0;
   while (true) {
@@ -199,7 +218,11 @@ template <typename Solution, typename R, typename... Ts> void exec(R (Solution::
         auto now = clock();
         elapsed = (now - start) / (CLOCKS_PER_SEC / 1000);
         print_impl(stdout, res, true);
+        free_var(res);
       }
+      [&]<size_t... Idx>(index_sequence<Idx...>) {
+        (free_var(get<Idx + 1>(args)), ...);
+      }(index_sequence_for<Ts...>{});
       total_elapsed += elapsed;
       printf("Elapsed time: %lldms\n", elapsed);
       fprintf(stderr, "\n"); // separate debug output from different testcases
