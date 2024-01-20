@@ -115,7 +115,7 @@ template <typename T> T parse() {
     char *buf;
     scanf("\"%m[^\"]\"", &buf);
     ans = buf;
-    delete buf;
+    free(buf);
   } else if constexpr (same_as<T, TreeNode *>) {
     bool right = true;
     auto dummy = new TreeNode{};
@@ -136,7 +136,7 @@ template <typename T> T parse() {
         }
         if (right) q.pop();
         right = !right;
-        delete buf;
+        free(buf);
       }
     }
     ans = dummy->right;
