@@ -121,7 +121,7 @@ template <typename T> T parse() {
     auto dummy = new TreeNode{};
     queue<TreeNode *> q;
     q.push(dummy);
-    getchar();
+    scanf(" %*c");
     if (int c = getchar(); c != ']') {
       ungetc(c, stdin);
       while (!q.empty()) {
@@ -144,7 +144,7 @@ template <typename T> T parse() {
   } else if constexpr (same_as<T, ListNode *>) {
     auto dummy = new ListNode{};
     auto cur = dummy;
-    getchar();
+    scanf(" %*c");
     if (int c = getchar(); c != ']') {
       ungetc(c, stdin);
       while (true) {
@@ -156,7 +156,7 @@ template <typename T> T parse() {
     ans = dummy->next;
     delete dummy;
   } else if constexpr (iterable<T>) {
-    getchar();
+    scanf(" %*c");
     if (int c = getchar(); c != ']') {
       ungetc(c, stdin);
       while (true) {
