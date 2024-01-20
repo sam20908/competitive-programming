@@ -5,10 +5,11 @@ This was created for ease of solving LeetCode problems locally. The template is 
 ### Features
 
 - Parses LeetCode inputs and outputs (and the ability to ignore lines)
-  - The parser reads from **stdin**, outputs to **stdout**, and prints debug information to **stderr**
+  - The parser reads from **stdin**, outputs to **stdout**, and prints debug information to **stderr**. `run.bat` and `run.sh` already redirects them for you
   - If the input is ill-formed or does not match the parameter types, the behavior is undefined!
+- The solution is compiled with AddressSanitizer and UndefinedSanitizer to catch obscure bugs **(not supported on Windows)**
 - Comes with commonly useful data structures and algorithms
-- A debug macro `dbg` to pretty-print multiple variables at once
+- A debug macro `dbg` to pretty-print multiple variables at once (up to 10 per `dbg` call)
 - Copy the entire file for submission
 
 **Tip: Make Git skip changes to `main.cpp`, `input.txt` and `output.txt` with `git update-index --skip-worktree main.cpp input.txt output.txt`**
