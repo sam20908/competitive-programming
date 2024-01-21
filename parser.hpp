@@ -112,7 +112,7 @@ template <typename T> T parse() {
   else if constexpr (same_as<T, double>) scanf("%lf", &ans);
   else if constexpr (same_as<T, string>) {
     char *buf;
-    scanf("\"%m[^\"]\"", &buf);
+    scanf(" \"%m[^\"]\"", &buf);
     ans = buf;
     free(buf);
   } else if constexpr (same_as<T, TreeNode *>) {
