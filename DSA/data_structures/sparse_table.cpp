@@ -4,7 +4,7 @@ using namespace std;
 struct sparse_table {
   vector<vector<int>> dp;
   int k = 0;
-  sparse_table(int n, vector<int> &v): k(__lg(n)) {
+  sparse_table(int n, vector<int> &v) : k(__lg(n)) {
     dp.resize(k + 1, vector<int>(n));
     ranges::copy(v, dp[0].begin());
     for (int i = 1; i <= k; i++)

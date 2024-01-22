@@ -7,7 +7,7 @@ struct segment_tree {
   };
   int n = 0;
   vector<node_t> t, p;
-  segment_tree(int n): n(n), t(4 * n), p(4 * n) {}
+  segment_tree(int n) : n(n), t(4 * n), p(4 * n) {}
   void propagate(int tl, int tr, int node) {
     t[node].v += p[node].v * (tr - tl + 1);
     if (tl != tr) {
@@ -37,8 +37,10 @@ struct segment_tree {
   auto query(int l, int r) {
     auto f = [&](auto &self, int l, int r, int tl, int tr, int node) {
       propagate(tl, tr, node);
-      if (l > r) return 0;
-      if (tl == l && tr == r) return t[node].v;
+      if (l > r)
+        return 0;
+      if (tl == l && tr == r)
+        return t[node].v;
       int tm = (tl + tr) / 2;
       auto a = self(self, l, min(r, tm), tl, tm, 2 * node);
       auto b = self(self, max(l, tm + 1), r, tm + 1, tr, 2 * node + 1);

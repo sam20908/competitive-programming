@@ -11,9 +11,11 @@ struct lowest_common_ancestor {
     auto f = [&](auto &self, int u, int p) -> void {
       in[u] = ++time;
       dp[0][u] = p;
-      for (int p = 1; p <= lg; p++) dp[p][u] = dp[p - 1][dp[u][p - 1]];
+      for (int p = 1; p <= lg; p++)
+        dp[p][u] = dp[p - 1][dp[u][p - 1]];
       for (int next : g[u])
-        if (next != p) self(self, next, u);
+        if (next != p)
+          self(self, next, u);
       out[u] = ++time;
     };
     f(f, root, root);
@@ -22,10 +24,13 @@ struct lowest_common_ancestor {
     return in[u] <= in[v] && out[u] >= out[v]; // if u is ancestor of v
   }
   int query(int u, int v) {
-    if (is_ancestor(u, v)) return u;
-    if (is_ancestor(v, u)) return v;
+    if (is_ancestor(u, v))
+      return u;
+    if (is_ancestor(v, u))
+      return v;
     for (int p = lg; p >= 0; p--)
-      if (!is_ancestor(dp[p][u], v)) u = dp[p][u];
+      if (!is_ancestor(dp[p][u], v))
+        u = dp[p][u];
     return dp[0][u];
   }
 };

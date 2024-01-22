@@ -22,7 +22,7 @@ struct rolling_hash {
       return ah1 == bh1 && ah2 == bh2;
     }
   };
-  rolling_hash(int n, string &s): h1(n + 1), h2(n + 1), p1(n), p2(n) {
+  rolling_hash(int n, string &s) : h1(n + 1), h2(n + 1), p1(n), p2(n) {
     auto f = [&](vector<long long> &h, vector<long long> &pv, int m, int p) {
       for (long long i = 0, pp = 1; i < n; i++, pp = (pp * p) % m) {
         h[i + 1] = (h[i] + (s[i] - 'a' + 1) * pp) % m;
@@ -32,7 +32,5 @@ struct rolling_hash {
     f(h1, p1, M1, P1);
     f(h2, p2, M2, P2);
   }
-  hash_pair hash(int l, int r) {
-    return {l, r, this};
-  }
+  hash_pair hash(int l, int r) { return {l, r, this}; }
 };
