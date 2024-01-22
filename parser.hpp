@@ -267,5 +267,5 @@ void exec(R (Solution::*fn)(Ts...)) {
       fprintf(stderr, "\n"); // separate debug output from different testcases
     }
   }
-  printf("\nTotal elapsed time: %lldms", total_elapsed);
+  printf("Total elapsed time: %lldms", total_elapsed);
 }
