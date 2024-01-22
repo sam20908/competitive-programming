@@ -4,71 +4,30 @@ This was created for ease of solving LeetCode problems locally. The template is 
 
 ### Features
 
-- Parses LeetCode inputs and outputs (and the ability to ignore lines)
-  - The parser reads from **stdin**, outputs to **stdout**, and prints debug information to **stderr**. `run.bat` and `run.sh` already redirects them for you
+- Parses LeetCode inputs **from stdin** and outputs **to stdout** (lines starting with "/" are ignored)
   - If the input is ill-formed or does not match the parameter types, the behavior is undefined!
-- The solution is compiled with AddressSanitizer and UndefinedSanitizer to catch obscure bugs **(not supported on Windows)**
-- Comes with commonly useful data structures and algorithms
-- A debug macro `dbg` to pretty-print multiple variables at once (up to 10 per `dbg` call)
+- Comes with templates for various data structures and algorithms
+- A debug macro `dbg` to pretty-print multiple variables at once **to stderr** (up to 10 per `dbg` call)
 - Copy the entire file for submission
-
-**Tip: Make Git skip changes to `main.cpp`, `input.txt` and `output.txt` with `git update-index --skip-worktree main.cpp input.txt output.txt`**
 
 ### How to use?
 
-1. To set up for a LeetCode problem, modify `main.cpp` and `input.txt`:
+1. To set up for a LeetCode problem, copy `template.cpp` to another file (commonly `main.cpp`) and change the following parts:
   - ```cpp
-     // ----- CHANGE FOR PROBLEM -----
-     class Solution {
-     public:
-       void test() {}
-     };
-     // ----- CHANGE FOR PROBLEM -----
-     ```
-
+    // ----- CHANGE FOR PROBLEM -----
+    class Solution {
+    public:
+      void test() {}
+    };
+    // ----- CHANGE FOR PROBLEM -----
+    ```
   - ```cpp
-     exec(&Solution::test); // CHANGE FOR PROBLEM
-     ```
-
-  - ```
-     "CHANGE FOR PROBLEM"
-     /"CHANGE FOR PROBLEM - IGNORED LINE"
-     ```
-
-2. Execute `run.bat` (or `run.sh`, and make sure `g++` is in `PATH`):
-    ```
-    run.bat
+    exec(&Solution::test); // CHANGE FOR PROBLEM
     ```
 
-### Output example
-
-- For solutions that return a value:
-  ```
-  > run.bat
-  *some compiler message*
-
-  *dbg(...) messages*
-
-  10
-  Elapsed time: 10ms
-
-  Total elapsed time: 10ms
-  ```
-
-- For solution that modifies the parameters in-place:
-    ```
-  > run.bat
-  *some compiler message*
-
-  *dbg(...) messages*
-
-  New state of parameters:
-  #1: [1,2,3,4]
-  #2: 10
-  Elapsed time: 10ms
-
-  Total elapsed time: 10ms
-  ```
+2. Run `run.sh _your_solution_filename_` (or `run.bat`, and **make sure `g++` is in `PATH`**)
+  - If you want to use a file as input, run `run.sh _your_solution_filename_ < _your_input_filename_`
+  - Similarly, if you want to output to a file, run `run.sh _your_solution_filename_ > _your_output_filename_`
 
 ### `dbg` example
 

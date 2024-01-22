@@ -1,3 +1,14 @@
-a.out
-a.exe
-.vscode/
+# Ignore everything except below...
+/*
+
+# LeetCode files
+!DSA
+!template.cpp
+!parser.hpp
+
+# Documentation
+!README.md
+
+# Run scripts
+!run.bat
+!run.sh

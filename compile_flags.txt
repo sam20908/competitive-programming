@@ -1,3 +1,0 @@
--DLC_LOCAL
--D_GLIBCXX_DEBUG
--std=c++20

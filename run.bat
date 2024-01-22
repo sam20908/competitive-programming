@@ -1,6 +1,4 @@
 @echo off
-g++ -D_GLIBCXX_DEBUG -Wall -g -DLC_LOCAL -std=c++20 main.cpp && goto exec
-exit /B 1
-:exec
-.\a.exe < input.txt > output.txt
-type output.txt
+
+REM AddressSanitizer and UndefinedSanitizer are not supported on Windows' GCC builds
+g++ -D_GLIBCXX_DEBUG -Wall -g -DLC_LOCAL -std=c++20 %1 && .\a.exe
