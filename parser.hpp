@@ -26,15 +26,24 @@ concept iterable = requires(T t) {
   t.end();
 };
 
-template <typename T> void print_impl(FILE *f, const T &val, bool write_newline) {
-  if constexpr (same_as<T, int>) fprintf(f, "%d", val);
-  else if constexpr (same_as<T, float>) fprintf(f, "%.f", val);
-  else if constexpr (same_as<T, double>) fprintf(f, "%.18f", val);
-  else if constexpr (same_as<T, long long>) fprintf(f, "%lld", val);
-  else if constexpr (same_as<T, unsigned int>) fprintf(f, "%u", val);
-  else if constexpr (same_as<T, unsigned long long>) fprintf(f, "%llu", val);
-  else if constexpr (same_as<T, bool>) fprintf(f, "%s", val ? "true" : "false");
-  else if constexpr (same_as<T, string>) fprintf(f, "\"%s\"", val.data());
+template <typename T>
+void print_impl(FILE *f, const T &val, bool write_newline) {
+  if constexpr (same_as<T, int>)
+    fprintf(f, "%d", val);
+  else if constexpr (same_as<T, float>)
+    fprintf(f, "%.f", val);
+  else if constexpr (same_as<T, double>)
+    fprintf(f, "%.18f", val);
+  else if constexpr (same_as<T, long long>)
+    fprintf(f, "%lld", val);
+  else if constexpr (same_as<T, unsigned int>)
+    fprintf(f, "%u", val);
+  else if constexpr (same_as<T, unsigned long long>)
+    fprintf(f, "%llu", val);
+  else if constexpr (same_as<T, bool>)
+    fprintf(f, "%s", val ? "true" : "false");
+  else if constexpr (same_as<T, string>)
+    fprintf(f, "\"%s\"", val.data());
   else if constexpr (same_as<T, TreeNode *>) {
     queue<TreeNode *> q;
     fprintf(f, "[");
@@ -48,11 +57,13 @@ template <typename T> void print_impl(FILE *f, const T &val, bool write_newline)
       if (cur->left) {
         q.push(cur->left);
         fprintf(f, ",%d", cur->left->val);
-      } else fprintf(f, ",null");
+      } else
+        fprintf(f, ",null");
       if (cur->right) {
         q.push(cur->right);
         fprintf(f, ",%d", cur->right->val);
-      } else fprintf(f, ",null");
+      } else
+        fprintf(f, ",null");
     }
     fprintf(f, "]");
   } else if constexpr (tuple_like<T>) {
@@ -67,7 +78,8 @@ template <typename T> void print_impl(FILE *f, const T &val, bool write_newline)
     auto cur = val;
     fprintf(f, "[");
     while (cur) {
-      if (cur != val) fprintf(f, ",");
+      if (cur != val)
+        fprintf(f, ",");
       fprintf(f, "%d", cur->val);
       cur = cur->next;
     }
@@ -75,12 +87,15 @@ template <typename T> void print_impl(FILE *f, const T &val, bool write_newline)
   } else if constexpr (iterable<T>) {
     fprintf(f, "[");
     for (auto it = val.begin(); it != val.end(); it++) {
-      if (it != val.begin()) fprintf(f, ",");
+      if (it != val.begin())
+        fprintf(f, ",");
       print_impl(f, *it, false);
     }
     fprintf(f, "]");
-  } else static_assert(always_false<T>, "printing for type not supported");
-  if (write_newline) fprintf(f, "\n");
+  } else
+    static_assert(always_false<T>, "printing for type not supported");
+  if (write_newline)
+    fprintf(f, "\n");
 }
 
 #define CONCAT_IMPL(x, y) x##y
@@ -98,18 +113,26 @@ template <typename T> void print_impl(FILE *f, const T &val, bool write_newline)
 #define DBG_8(x, ...) DBG_VAL(x), DBG_7(__VA_ARGS__)
 #define DBG_9(x, ...) DBG_VAL(x), DBG_8(__VA_ARGS__)
 #define DBG_10(x, ...) DBG_VAL(x), DBG_9(__VA_ARGS__)
-#define dbg(...) CONCAT(DBG_, NUM_ARGS(__VA_ARGS__))(__VA_ARGS__), fprintf(stderr, "\n");
+#define dbg(...)                                                               \
+  CONCAT(DBG_, NUM_ARGS(__VA_ARGS__))(__VA_ARGS__), fprintf(stderr, "\n");
 // supports up to 10 arguments debugging at one time
 
 template <typename T> T parse() {
   T ans;
-  if constexpr (same_as<T, char>) scanf("\"%c\"", &ans);
-  else if constexpr (same_as<T, int>) scanf("%d", &ans);
-  else if constexpr (same_as<T, long long>) scanf("%lld", &ans);
-  else if constexpr (same_as<T, unsigned int>) scanf("%u", &ans);
-  else if constexpr (same_as<T, unsigned long long>) scanf("%llu", &ans);
-  else if constexpr (same_as<T, float>) scanf("%f", &ans);
-  else if constexpr (same_as<T, double>) scanf("%lf", &ans);
+  if constexpr (same_as<T, char>)
+    scanf("\"%c\"", &ans);
+  else if constexpr (same_as<T, int>)
+    scanf("%d", &ans);
+  else if constexpr (same_as<T, long long>)
+    scanf("%lld", &ans);
+  else if constexpr (same_as<T, unsigned int>)
+    scanf("%u", &ans);
+  else if constexpr (same_as<T, unsigned long long>)
+    scanf("%llu", &ans);
+  else if constexpr (same_as<T, float>)
+    scanf("%f", &ans);
+  else if constexpr (same_as<T, double>)
+    scanf("%lf", &ans);
   else if constexpr (same_as<T, string>) {
     char *buf;
     scanf(" \"%m[^\"]\"", &buf);
@@ -129,11 +152,14 @@ template <typename T> T parse() {
         getchar();
         if (strcmp(buf, "null") != 0) {
           auto new_node = new TreeNode{atoi(buf)};
-          if (right) q.front()->right = new_node;
-          else q.front()->left = new_node;
+          if (right)
+            q.front()->right = new_node;
+          else
+            q.front()->left = new_node;
           q.push(new_node);
         }
-        if (right) q.pop();
+        if (right)
+          q.pop();
         right = !right;
         free(buf);
       }
@@ -149,7 +175,8 @@ template <typename T> T parse() {
       while (true) {
         cur->next = new ListNode{parse<int>()};
         cur = cur->next;
-        if (getchar() == ']') break;
+        if (getchar() == ']')
+          break;
       }
     }
     ans = dummy->next;
@@ -160,10 +187,12 @@ template <typename T> T parse() {
       ungetc(c, stdin);
       while (true) {
         ans.emplace_back(parse<typename T::value_type>());
-        if (getchar() == ']') break;
+        if (getchar() == ']')
+          break;
       }
     }
-  } else static_assert(always_false<T>, "parsing for type not supported");
+  } else
+    static_assert(always_false<T>, "parsing for type not supported");
   return ans;
 }
 
@@ -177,7 +206,8 @@ template <typename T> void free_var(T &t) {
     }
   } else if constexpr (same_as<T, TreeNode *>) {
     auto f = [&](auto &self, TreeNode *cur) {
-      if (!cur) return;
+      if (!cur)
+        return;
       self(self, cur->left);
       self(self, cur->right);
       delete cur;
@@ -186,11 +216,13 @@ template <typename T> void free_var(T &t) {
   }
 }
 
-template <typename Solution, typename R, typename... Ts> void exec(R (Solution::*fn)(Ts...)) {
+template <typename Solution, typename R, typename... Ts>
+void exec(R (Solution::*fn)(Ts...)) {
   long long total_elapsed = 0;
   while (true) {
     int c = getchar();
-    if (c == EOF) break;
+    if (c == EOF)
+      break;
     if (c == '/') {
       do {
         c = getchar();
@@ -209,7 +241,9 @@ template <typename Solution, typename R, typename... Ts> void exec(R (Solution::
         const clock_t now = clock();
         elapsed = (now - start) / (CLOCKS_PER_SEC / 1000);
         []<size_t... Idx>(auto &&args, index_sequence<Idx...>) {
-          ((printf("#%lld: ", Idx + 1), print_impl(stdout, get<Idx + 1>(args), true)), ...);
+          ((printf("#%lld: ", Idx + 1),
+            print_impl(stdout, get<Idx + 1>(args), true)),
+           ...);
         }(args, index_sequence_for<Ts...>{});
       } else {
         auto start = clock();
