@@ -102,7 +102,13 @@ void print_impl(FILE *f, const T &val, bool write_newline) {
 #define CONCAT(x, y) CONCAT_IMPL(x, y)
 #define NUM_ARGS_IMPL(_1, _2, _3, _4, _5, _6, _7, _8, _9, _10, N, ...) N
 #define NUM_ARGS(...) NUM_ARGS_IMPL(__VA_ARGS__, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1)
-#define DBG_VAL(x) fprintf(stderr, "[%s = ", #x), print_impl(stderr, x, false), fprintf(stderr, "] ")
+#define DBG_VAL(x)                                                             \
+  [&]() {                                                                      \
+    auto val = x;                                                              \
+    fprintf(stderr, "[%s = ", #x);                                             \
+    print_impl(stderr, val, false);                                            \
+    fprintf(stderr, "] ");                                                     \
+  }()
 #define DBG_1(x) DBG_VAL(x)
 #define DBG_2(x, ...) DBG_VAL(x), DBG_1(__VA_ARGS__)
 #define DBG_3(x, ...) DBG_VAL(x), DBG_2(__VA_ARGS__)
