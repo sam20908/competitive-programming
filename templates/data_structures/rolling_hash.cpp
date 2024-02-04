@@ -7,7 +7,7 @@ struct rolling_hash {
   struct hash_pair {
     int l = 0, r = 0;
     rolling_hash *ptr = nullptr;
-    constexpr friend bool operator==(const hash_pair &a, const hash_pair &b) {
+    friend bool operator==(const hash_pair &a, const hash_pair &b) {
       long long ah1 = (a.ptr->h1[a.r + 1] - a.ptr->h1[a.l] + M1) % M1;
       long long ah2 = (a.ptr->h2[a.r + 1] - a.ptr->h2[a.l] + M2) % M2;
       long long bh1 = (b.ptr->h1[b.r + 1] - b.ptr->h1[b.l] + M1) % M1;
