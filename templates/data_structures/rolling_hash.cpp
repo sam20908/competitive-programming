@@ -13,11 +13,11 @@ struct rolling_hash {
       long long bh1 = (b.ptr->h1[b.r + 1] - b.ptr->h1[b.l] + M1) % M1;
       long long bh2 = (b.ptr->h2[b.r + 1] - b.ptr->h2[b.l] + M2) % M2;
       if (b.l > a.l) {
-        ah1 = (ah1 * a.ptr->p1[b.l - a.l]) % M1;
-        ah2 = (ah2 * a.ptr->p2[b.l - a.l]) % M2;
+        ah1 = (ah1 * b.ptr->p1[b.l - a.l]) % M1;
+        ah2 = (ah2 * b.ptr->p2[b.l - a.l]) % M2;
       } else if (a.l > b.l) {
-        bh1 = (bh1 * b.ptr->p1[a.l - b.l]) % M1;
-        bh2 = (bh2 * b.ptr->p2[a.l - b.l]) % M2;
+        bh1 = (bh1 * a.ptr->p1[a.l - b.l]) % M1;
+        bh2 = (bh2 * a.ptr->p2[a.l - b.l]) % M2;
       }
       return ah1 == bh1 && ah2 == bh2;
     }
