@@ -2,7 +2,7 @@
 using namespace std;
 
 struct rolling_hash {
-  static constexpr int M1 = 1e9 + 7, M2 = 1e9 + 9, P1 = 31, P2 = 37;
+  static constexpr int M1 = 1e9 + 7, M2 = 1e9 + 9, P1 = 257, P2 = 261;
   vector<long long> h1, h2, p1, p2;
   struct hash_pair {
     int l = 0, r = 0;
@@ -25,7 +25,7 @@ struct rolling_hash {
   rolling_hash(int n, string &s) : h1(n + 1), h2(n + 1), p1(n), p2(n) {
     auto f = [&](vector<long long> &h, vector<long long> &pv, int m, int p) {
       for (long long i = 0, pp = 1; i < n; i++, pp = (pp * p) % m) {
-        h[i + 1] = (h[i] + (s[i] - 'a' + 1) * pp) % m;
+        h[i + 1] = (h[i] + s[i] * pp) % m;
         pv[i] = pp;
       }
     };
