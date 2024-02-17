@@ -7,6 +7,8 @@ using namespace std;
 #define dbg(...)
 #endif
 
+using ll = long long;
+
 // ----- CHANGE FOR PROBLEM -----
 class Solution {
 public:
