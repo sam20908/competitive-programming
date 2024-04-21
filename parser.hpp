@@ -224,48 +224,31 @@ template <typename T> void free_var(T &t) {
 
 template <typename Solution, typename R, typename... Ts>
 void exec(R (Solution::*fn)(Ts...)) {
-  long long total_elapsed = 0;
   while (true) {
     int c = getchar();
-    if (c == EOF)
+    if (c == EOF || c == '/')
       break;
-    if (c == '/') {
-      do {
-        c = getchar();
-      } while (!isspace(c) && c != EOF);
+    ungetc(c, stdin);
+    tuple<Solution, decay_t<Ts>...> args;
+    get<0>(args) = Solution{};
+    [&]<size_t... Idx>(index_sequence<Idx...>) {
+      ((get<Idx + 1>(args) = parse<decay_t<Ts>>()), ...);
+    }(index_sequence_for<Ts...>{});
+    if constexpr (same_as<R, void>) {
+      apply(fn, args);
+      []<size_t... Idx>(auto &&args, index_sequence<Idx...>) {
+        ((printf("#%lld: ", Idx + 1),
+          print_impl(stdout, get<Idx + 1>(args), true)),
+         ...);
+      }(args, index_sequence_for<Ts...>{});
     } else {
-      ungetc(c, stdin);
-      tuple<Solution, decay_t<Ts>...> args;
-      get<0>(args) = Solution{};
-      [&]<size_t... Idx>(index_sequence<Idx...>) {
-        ((get<Idx + 1>(args) = parse<decay_t<Ts>>()), ...);
-      }(index_sequence_for<Ts...>{});
-      long long elapsed = 0;
-      if constexpr (same_as<R, void>) {
-        const clock_t start = clock();
-        apply(fn, args);
-        const clock_t now = clock();
-        elapsed = (now - start) / (CLOCKS_PER_SEC / 1000);
-        []<size_t... Idx>(auto &&args, index_sequence<Idx...>) {
-          ((printf("#%lld: ", Idx + 1),
-            print_impl(stdout, get<Idx + 1>(args), true)),
-           ...);
-        }(args, index_sequence_for<Ts...>{});
-      } else {
-        auto start = clock();
-        auto res = apply(fn, args);
-        auto now = clock();
-        elapsed = (now - start) / (CLOCKS_PER_SEC / 1000);
-        print_impl(stdout, res, true);
-        free_var(res);
-      }
-      [&]<size_t... Idx>(index_sequence<Idx...>) {
-        (free_var(get<Idx + 1>(args)), ...);
-      }(index_sequence_for<Ts...>{});
-      total_elapsed += elapsed;
-      printf("Elapsed time: %lldms\n", elapsed);
-      fprintf(stderr, "\n"); // separate debug output from different testcases
+      auto res = apply(fn, args);
+      print_impl(stdout, res, true);
+      free_var(res);
     }
+    [&]<size_t... Idx>(index_sequence<Idx...>) {
+      (free_var(get<Idx + 1>(args)), ...);
+    }(index_sequence_for<Ts...>{});
+    fprintf(stderr, "\n"); // separate debug output from different testcases
   }
-  printf("Total elapsed time: %lldms", total_elapsed);
 }
