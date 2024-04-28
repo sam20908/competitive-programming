@@ -10,6 +10,8 @@ using namespace __gnu_pbds;
 #define dbg(...)
 #endif
 
+#define all(x) begin(x), end(x)
+
 using ll = long long;
 template <typename T>
 using ordered_set =
