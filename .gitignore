@@ -1,14 +1,5 @@
-# Ignore everything except below...
 /*
 
-# LeetCode files
-!templates/
-!template.cpp
-!parser.hpp
-
-# Documentation
-!README.md
-
-# Run scripts
-!run.bat
-!run.sh
+!cp/
+!library/
+!leetcode/

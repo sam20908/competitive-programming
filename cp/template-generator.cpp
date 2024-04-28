@@ -4,30 +4,32 @@
 using namespace std;
 using namespace __gnu_pbds;
 
-#ifdef LC_LOCAL
-#include "parser.hpp"
+#ifndef ONLINE_JUDGE
+#define eprintf(...) fprintf(stderr, __VA_ARGS__);
 #else
-#define dbg(...)
+#define eprintf(...)
 #endif
 
-#define all(x) begin(x), end(x)
+#define ALL(x) begin(x), end(x)
+#define SUM(x) accumulate(ALL(x), 0LL)
 
 using ll = long long;
 template <typename T>
 using ordered_set =
     tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
 
-// ----- CHANGE FOR PROBLEM -----
-class Solution {
-public:
-  void test() {}
-};
-// ----- CHANGE FOR PROBLEM -----
+void gen() {}
 
-#ifdef LC_LOCAL
 int main() {
-  ios_base::sync_with_stdio(false);
-  cin.tie(NULL);
-  exec(&Solution::test); // CHANGE FOR PROBLEM
-}
+  ios::sync_with_stdio(false);
+
+  ll seed;
+  scanf("%lld", &seed);
+  srand(seed);
+
+#if 1
+  printf("1\n");
 #endif
+
+  gen();
+}
