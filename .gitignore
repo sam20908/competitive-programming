@@ -3,3 +3,5 @@
 !cp/
 !library/
 !leetcode/
+
+!.clang-format

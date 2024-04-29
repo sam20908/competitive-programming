@@ -1,6 +1,3 @@
-#include <bits/stdc++.h>
-using namespace std;
-
 struct segment_tree {
   struct node_t {
     int v = 0;

@@ -1,6 +1,3 @@
-#include <bits/stdc++.h>
-using namespace std;
-
 struct sparse_table {
   vector<vector<int>> dp;
   int k = 0;

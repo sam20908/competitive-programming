@@ -1,8 +1,5 @@
-#include <bits/stdc++.h>
-using namespace std;
-
 // https://cp-algorithms.com/string/suffix-array.html
-vector<int> find_suffix_array(string &s, int alphabet = 256) {
+vector<int> suffix_array(string &s, int alphabet = 256) {
   s.push_back('$');
   int n = s.size();
   vector<int> p(n), c(n), cnt(max(alphabet, n), 0);

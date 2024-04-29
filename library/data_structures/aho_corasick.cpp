@@ -1,21 +1,18 @@
-#include <bits/stdc++.h>
-using namespace std;
-
 struct aho_corasick {
   vector<int> link, next_match;
   vector<vector<int>> next, matches;
-  aho_corasick(int n, vector<string> &words) {
+  aho_corasick(int n, vector<string> &w) {
     int m = 0;
-    for (int i = 0; i < (int)words.size(); i++)
-      m += words[i].size();
+    for (int i = 0; i < (int)w.size(); i++)
+      m += w[i].size();
     link.resize(m + 1);
     next.resize(m + 1, vector<int>(26, -1));
     next_match.resize(m + 1);
     matches.resize(m + 1);
     int new_node = 1;
-    for (int i = 0; i < (int)words.size(); i++) {
+    for (int i = 0; i < (int)w.size(); i++) {
       int cur = 0;
-      for (char c : words[i]) {
+      for (char c : w[i]) {
         if (next[cur][c - 'a'] == -1)
           next[cur][c - 'a'] = new_node++;
         cur = next[cur][c - 'a'];
@@ -37,16 +34,13 @@ struct aho_corasick {
           while (next[cur_link][v] == -1)
             cur_link = link[cur_link];
           link[next[u][v]] = next[cur_link][v];
-          next_match[next[u][v]] = !matches[link[next[u][v]]].empty()
-                                       ? link[next[u][v]]
-                                       : next_match[link[next[u][v]]];
+          next_match[next[u][v]] = !matches[link[next[u][v]]].empty() ? link[next[u][v]] : next_match[link[next[u][v]]];
           q.push(next[u][v]);
         }
     }
   }
-  vector<pair<int, int>> occurences(string &s) {
-    vector<pair<int, int>>
-        ans; // [occurence ending index, index of word matched]
+  vector<pair<int, int>> find(string &s) {
+    vector<pair<int, int>> ans; // [occurence ending index, index of word matched]
     int cur = 0;
     for (int i = 0; i < (int)s.size(); i++) {
       while (next[cur][s[i] - 'a'] == -1)

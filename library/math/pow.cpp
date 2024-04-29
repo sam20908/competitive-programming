@@ -1,4 +1,4 @@
-constexpr long long pow_mod(long long a, long long b, long long m) {
+constexpr long long pow(long long a, long long b, long long m) {
   a %= m;
   long long res = 1;
   while (b > 0) {

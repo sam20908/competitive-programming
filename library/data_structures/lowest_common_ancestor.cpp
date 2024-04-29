@@ -1,12 +1,8 @@
-#include <bits/stdc++.h>
-using namespace std;
-
 struct lowest_common_ancestor {
   int lg = 0;
   vector<vector<int>> dp;
   vector<int> in, out;
-  lowest_common_ancestor(int n, vector<vector<int>> &g, int root)
-      : lg(__lg(n)), dp(lg + 1, vector<int>(n)), in(n), out(n) {
+  lowest_common_ancestor(int n, vector<vector<int>> &g, int root) : lg(__lg(n)), dp(lg + 1, vector<int>(n)), in(n), out(n) {
     int time = 0;
     auto f = [&](auto &self, int u, int p) -> void {
       in[u] = ++time;

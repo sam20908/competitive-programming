@@ -1,8 +1,4 @@
-#include <bits/stdc++.h>
-using namespace std;
-
-vector<vector<int>> strongly_connected_components(int n,
-                                                  vector<vector<int>> &g) {
+vector<vector<int>> strongly_connected_components(int n, vector<vector<int>> &g) {
   vector<int> vis(n), ord;
   ord.reserve(n);
   auto dfs1 = [&](auto &self, int u) -> void {
@@ -24,11 +20,10 @@ vector<vector<int>> strongly_connected_components(int n,
         self(self, v, comp);
   };
   vector<vector<int>> ans;
-  for (int u : ord) {
-    if (!vis[u])
-      continue;
-    ans.push_back({});
-    dfs2(dfs2, u, ans.back());
-  }
+  for (int u : ord)
+    if (vis[u]) {
+      ans.push_back({});
+      dfs2(dfs2, u, ans.back());
+    }
   return ans;
 }

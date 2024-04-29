@@ -12,11 +12,12 @@ using namespace __gnu_pbds;
 
 #define ALL(x) begin(x), end(x)
 #define SUM(x) accumulate(ALL(x), 0LL)
+#define REP(i, n) for (int i = 0; i < n; i++)
+#define PER(i, n) for (int i = n - 1; i >= 0; i--)
 
-using ll = long long;
 template <typename T>
-using ordered_set =
-    tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
+using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
+using ll = long long;
 
 void gen() {}
 

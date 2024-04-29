@@ -1,4 +1,5 @@
-template <typename T, typename U> T last_true(T lo, T hi, U f) {
+template <typename T, typename U>
+T last_true(T lo, T hi, U f) {
   --lo;
   while (lo < hi) {
     T mid = lo + (hi - lo + 1) / 2;

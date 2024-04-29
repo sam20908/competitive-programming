@@ -14,10 +14,14 @@ struct ListNode {
 };
 
 template <typename = void> inline constexpr bool always_false = false;
-template <typename T>
-concept has_to_string = requires(T t) {
-  { t.to_string() } -> same_as<std::string>;
-};
+template <typename T, template <typename...> typename U>
+struct is_specialization : std::false_type {};
+template <template <typename...> typename U, typename... Args>
+struct is_specialization<U<Args...>, U> : std::true_type {};
+template <typename T, template <auto...> typename U>
+struct is_specialization2 : std::false_type {};
+template <template <auto...> typename U, auto... Args>
+struct is_specialization2<U<Args...>, U> : std::true_type {};
 template <typename T>
 concept tuple_like = requires { typename tuple_size<T>::type; };
 template <typename T>
@@ -44,6 +48,8 @@ void print_impl(FILE *f, const T &val, bool write_newline) {
     fprintf(f, "%s", val ? "true" : "false");
   else if constexpr (same_as<T, string>)
     fprintf(f, "\"%s\"", val.data());
+  else if constexpr (is_specialization2<T, bitset>::value)
+    fprintf(f, "\"%s\"", val.to_string().data());
   else if constexpr (same_as<T, TreeNode *>) {
     queue<TreeNode *> q;
     fprintf(f, "[");
@@ -226,7 +232,11 @@ template <typename Solution, typename R, typename... Ts>
 void exec(R (Solution::*fn)(Ts...)) {
   while (true) {
     int c = getchar();
+#ifdef LC_CPPFASTOLYMPICCODING
     if (c == EOF || c == '/')
+#else
+    if (c == EOF)
+#endif
       break;
     ungetc(c, stdin);
     tuple<Solution, decay_t<Ts>...> args;

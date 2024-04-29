@@ -1,6 +1,3 @@
-#include <bits/stdc++.h>
-using namespace std;
-
 struct rolling_hash {
   static constexpr int M1 = 1e9 + 7, M2 = 1e9 + 9, P1 = 257, P2 = 261;
   vector<int> h1, h2;
@@ -20,8 +17,7 @@ struct rolling_hash {
     int l = 0, r = 0;
     rolling_hash *ptr = nullptr;
     pair<int, int> value() const {
-      return {(ptr->h1[r + 1] - ptr->h1[l] + M1) % M1,
-              (ptr->h2[r + 1] - ptr->h2[l] + M2) % M2};
+      return {(ptr->h1[r + 1] - ptr->h1[l] + M1) % M1, (ptr->h2[r + 1] - ptr->h2[l] + M2) % M2};
     };
     friend bool operator==(const hash_pair &a, const hash_pair &b) {
       auto [ah1, ah2] = a.value();
@@ -46,5 +42,7 @@ struct rolling_hash {
     f(h1, pre.p1, M1, P1);
     f(h2, pre.p2, M2, P2);
   }
-  hash_pair hash(int l, int r) { return {l, r, this}; }
+  hash_pair hash(int l, int r) {
+    return {l, r, this};
+  }
 };

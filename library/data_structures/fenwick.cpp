@@ -1,6 +1,3 @@
-#include <bits/stdc++.h>
-using namespace std;
-
 struct fenwick {
   vector<int> t; // one-indexed
   int m;
