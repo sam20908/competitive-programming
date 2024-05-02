@@ -8,8 +8,5 @@ int main() {
   long long seed;
   scanf("%lld", &seed);
   srand(seed);
-#if 1
-  printf("1\n");
-#endif
   gen();
 }
