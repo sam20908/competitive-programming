@@ -6,7 +6,10 @@ struct union_find {
   int find(int i) {
     return p[i] == i ? i : find(p[i]);
   }
-  void unite(int i, int j, function<void(int, int)> fn) {
+  void unite(
+      int i,
+      int j,
+      function<void(int, int)> fn = [](int, int) {}) {
     i = find(i), j = find(j);
     if (i == j)
       return;
