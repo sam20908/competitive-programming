@@ -1,56 +1,55 @@
 struct aho_corasick {
-  vector<int> link, next_match;
-  vector<vector<int>> next, matches;
-  aho_corasick(int n, vector<string> &w) {
-    int m = 0;
-    for (int i = 0; i < (int)w.size(); i++)
-      m += w[i].size();
-    link.resize(m + 1);
-    next.resize(m + 1, vector<int>(26, -1));
-    next_match.resize(m + 1);
-    matches.resize(m + 1);
-    int new_node = 1;
+  struct node_t {
+    int g[26]{};
+    int link = 0, match = -1;
+    node_t() {
+      ranges::fill(g, -1);
+    }
+  };
+  vector<node_t> v = vector<node_t>(1);
+  aho_corasick(vector<string> &w) {
     for (int i = 0; i < (int)w.size(); i++) {
-      int cur = 0;
+      int u = 0;
       for (char c : w[i]) {
-        if (next[cur][c - 'a'] == -1)
-          next[cur][c - 'a'] = new_node++;
-        cur = next[cur][c - 'a'];
+        if (v[u].g[c - 'a'] == -1) {
+          v[u].g[c - 'a'] = v.size();
+          v.push_back({});
+        }
+        u = v[u].g[c - 'a'];
       }
-      matches[cur].push_back(i);
+      v[u].match = i;
     }
     queue<int> q;
     for (int a = 0; a < 26; a++)
-      if (next[0][a] != -1)
-        q.push(next[0][a]);
+      if (v[0].g[a] != -1)
+        q.push(v[0].g[a]);
       else
-        next[0][a] = 0;
+        v[0].g[a] = 0;
     while (!q.empty()) {
       int u = q.front();
       q.pop();
-      for (int v = 0; v < 26; v++)
-        if (next[u][v] != -1) {
-          int cur_link = link[u];
-          while (next[cur_link][v] == -1)
-            cur_link = link[cur_link];
-          link[next[u][v]] = next[cur_link][v];
-          next_match[next[u][v]] = !matches[link[next[u][v]]].empty() ? link[next[u][v]] : next_match[link[next[u][v]]];
-          q.push(next[u][v]);
+      for (int a = 0; a < 26; a++)
+        if (v[u].g[a] != -1) {
+          int l = v[u].link;
+          while (v[l].g[a] == -1)
+            l = v[l].link;
+          v[v[u].g[a]].link = v[l].g[a];
+          q.push(v[u].g[a]);
         }
     }
   }
-  vector<pair<int, int>> find(string &s) {
-    vector<pair<int, int>> ans; // [occurence ending index, index of word matched]
-    int cur = 0;
+  vector<vector<int>> find(const string &s) {
+    vector<vector<int>> ans(s.size());
+    int u = 0;
     for (int i = 0; i < (int)s.size(); i++) {
-      while (next[cur][s[i] - 'a'] == -1)
-        cur = link[cur];
-      cur = next[cur][s[i] - 'a'];
-      int cur_occurence = cur;
-      while (cur_occurence) {
-        for (auto match : matches[cur_occurence])
-          ans.push_back({i, match});
-        cur_occurence = next_match[cur_occurence];
+      while (v[u].g[s[i] - 'a'] == -1)
+        u = v[u].link;
+      u = v[u].g[s[i] - 'a'];
+      int z = u;
+      while (z) {
+        if (v[z].match != -1)
+          ans[i].push_back(v[z].match);
+        z = v[z].link;
       }
     }
     return ans;

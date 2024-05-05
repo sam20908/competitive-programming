@@ -14,7 +14,7 @@ struct lowest_common_ancestor {
           self(self, next, u);
       out[u] = ++time;
     };
-    f(f, root, root);
+    f(f, root, -1);
   }
   bool is_ancestor(int u, int v) {
     return in[u] <= in[v] && out[u] >= out[v]; // if u is ancestor of v
