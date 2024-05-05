@@ -1,4 +1,3 @@
-// https://cp-algorithms.com/string/suffix-array.html
 vector<int> suffix_array(string &s, int alphabet = 256) {
   s.push_back('$');
   int n = s.size();
