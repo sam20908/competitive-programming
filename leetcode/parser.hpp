@@ -13,7 +13,8 @@ struct ListNode {
   ListNode *next = nullptr;
 };
 
-template <typename = void> inline constexpr bool always_false = false;
+template <typename = void>
+inline constexpr bool always_false = false;
 template <typename T, template <typename...> typename U>
 struct is_specialization : std::false_type {};
 template <template <typename...> typename U, typename... Args>
@@ -32,6 +33,8 @@ concept iterable = requires(T t) {
 
 template <typename T>
 void print_impl(FILE *f, const T &val, bool write_newline) {
+  if constexpr (same_as<T, char>)
+    fprintf(f, "%c", val);
   if constexpr (same_as<T, int>)
     fprintf(f, "%d", val);
   else if constexpr (same_as<T, float>)
@@ -108,12 +111,12 @@ void print_impl(FILE *f, const T &val, bool write_newline) {
 #define CONCAT(x, y) CONCAT_IMPL(x, y)
 #define NUM_ARGS_IMPL(_1, _2, _3, _4, _5, _6, _7, _8, _9, _10, N, ...) N
 #define NUM_ARGS(...) NUM_ARGS_IMPL(__VA_ARGS__, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1)
-#define DBG_VAL(x)                                                             \
-  [&]() {                                                                      \
-    auto val = x;                                                              \
-    fprintf(stderr, "[%s = ", #x);                                             \
-    print_impl(stderr, val, false);                                            \
-    fprintf(stderr, "] ");                                                     \
+#define DBG_VAL(x)                                                                                                                                                                                                                                                                                                                                                                                             \
+  [&]() {                                                                                                                                                                                                                                                                                                                                                                                                      \
+    auto val = x;                                                                                                                                                                                                                                                                                                                                                                                              \
+    fprintf(stderr, "[%s = ", #x);                                                                                                                                                                                                                                                                                                                                                                             \
+    print_impl(stderr, val, false);                                                                                                                                                                                                                                                                                                                                                                            \
+    fprintf(stderr, "] ");                                                                                                                                                                                                                                                                                                                                                                                     \
   }()
 #define DBG_1(x) DBG_VAL(x)
 #define DBG_2(x, ...) DBG_VAL(x), DBG_1(__VA_ARGS__)
@@ -125,11 +128,11 @@ void print_impl(FILE *f, const T &val, bool write_newline) {
 #define DBG_8(x, ...) DBG_VAL(x), DBG_7(__VA_ARGS__)
 #define DBG_9(x, ...) DBG_VAL(x), DBG_8(__VA_ARGS__)
 #define DBG_10(x, ...) DBG_VAL(x), DBG_9(__VA_ARGS__)
-#define dbg(...)                                                               \
-  CONCAT(DBG_, NUM_ARGS(__VA_ARGS__))(__VA_ARGS__), fprintf(stderr, "\n");
+#define dbg(...) CONCAT(DBG_, NUM_ARGS(__VA_ARGS__))(__VA_ARGS__), fprintf(stderr, "\n");
 // supports up to 10 arguments debugging at one time
 
-template <typename T> T parse() {
+template <typename T>
+T parse() {
   T ans;
   if constexpr (same_as<T, char>)
     scanf("\"%c\"", &ans);
@@ -208,7 +211,8 @@ template <typename T> T parse() {
   return ans;
 }
 
-template <typename T> void free_var(T &t) {
+template <typename T>
+void free_var(T &t) {
   if constexpr (same_as<T, ListNode *>) {
     auto cur = t;
     while (cur) {
@@ -242,14 +246,12 @@ void exec(R (Solution::*fn)(Ts...)) {
     tuple<Solution, decay_t<Ts>...> args;
     get<0>(args) = Solution{};
     [&]<size_t... Idx>(index_sequence<Idx...>) {
-      ((get<Idx + 1>(args) = parse<decay_t<Ts>>()), ...);
+      (((get<Idx + 1>(args) = parse<decay_t<Ts>>()), scanf("%*c")), ...);
     }(index_sequence_for<Ts...>{});
     if constexpr (same_as<R, void>) {
       apply(fn, args);
       []<size_t... Idx>(auto &&args, index_sequence<Idx...>) {
-        ((printf("#%lld: ", Idx + 1),
-          print_impl(stdout, get<Idx + 1>(args), true)),
-         ...);
+        ((printf("#%lld: ", Idx + 1), print_impl(stdout, get<Idx + 1>(args), true)), ...);
       }(args, index_sequence_for<Ts...>{});
     } else {
       auto res = apply(fn, args);
