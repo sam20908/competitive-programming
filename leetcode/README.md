@@ -5,6 +5,7 @@ This was created for ease of solving LeetCode problems locally. The template is 
 ### Features
 
 - Parses LeetCode inputs **from stdin** and outputs **to stdout**
+  - **Requires C++ macro `LC_LOCAL` to be defined! Do it within your compile command by passing `-DLC_LOCAL` as an argument** like: `g++ {current_file} -DLC_LOCAL`. The run scripts does this for you already.
   - Each line of the testcase should end with a newline (enter key)
   - To signal that you're done with the testcase, simply pretty enter without entering anything
   - If the input is ill-formed or does not match the parameter types, the behavior is undefined!
@@ -26,6 +27,8 @@ This was created for ease of solving LeetCode problems locally. The template is 
   - ```cpp
     exec(&Solution::test); // CHANGE FOR PROBLEM
     ```
+
+#### If using the `run.(bat|sh)` scripts:
 
 2. Run `run.sh _your_solution_filename_` (or `run.bat`, and **make sure `g++` is in `PATH`**)
   - If you want to use a file as input, run `run.sh _your_solution_filename_ < _your_input_filename_`
