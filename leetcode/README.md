@@ -5,7 +5,8 @@ This was created for ease of solving LeetCode problems locally. The template is 
 ### Features
 
 - Parses LeetCode inputs **from stdin** and outputs **to stdout**
-  - If using FastOlympicCoding, then add `#define LC_FASTOLYMPICCODING` to your compilation settings and enter an empty line to end the input
+  - Each line of the testcase should end with a newline (enter key)
+  - To signal that you're done with the testcase, simply pretty enter without entering anything
   - If the input is ill-formed or does not match the parameter types, the behavior is undefined!
 - Comes with templates for various data structures and algorithms
 - A debug macro `dbg` to pretty-print multiple variables at once **to stderr** (up to 10 per `dbg` call)

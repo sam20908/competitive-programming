@@ -236,11 +236,7 @@ template <typename Solution, typename R, typename... Ts>
 void exec(R (Solution::*fn)(Ts...)) {
   while (true) {
     int c = getchar();
-#ifdef LC_FASTOLYMPICCODING
-    if (c == EOF || c == '\n')
-#else
-    if (c == EOF)
-#endif
+    if (c == EOF || c == '\n' || c == '\r\n')
       break;
     ungetc(c, stdin);
     tuple<Solution, decay_t<Ts>...> args;
