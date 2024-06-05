@@ -7,10 +7,23 @@ struct TreeNode {
   int val;
   TreeNode *left = nullptr;
   TreeNode *right = nullptr;
+  TreeNode() : val(0), left(nullptr), right(nullptr) {}
+  TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+  TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+  ~TreeNode() {
+    delete left;
+    delete right;
+  }
 };
 struct ListNode {
   int val;
   ListNode *next = nullptr;
+  ListNode() : val(0), next(nullptr) {}
+  ListNode(int x) : val(x), next(nullptr) {}
+  ListNode(int x, ListNode *next) : val(x), next(next) {}
+  ~ListNode() {
+    delete next;
+  }
 };
 
 template <typename = void>
@@ -212,23 +225,9 @@ T parse() {
 }
 
 template <typename T>
-void free_var(T &t) {
-  if constexpr (same_as<T, ListNode *>) {
-    auto cur = t;
-    while (cur) {
-      auto next = cur->next;
-      delete cur;
-      cur = next;
-    }
-  } else if constexpr (same_as<T, TreeNode *>) {
-    auto f = [&](auto &self, TreeNode *cur) {
-      if (!cur)
-        return;
-      self(self, cur->left);
-      self(self, cur->right);
-      delete cur;
-    };
-    f(f, t);
+void delete_graph_var(T &t) {
+  if constexpr (same_as<T, ListNode *> || same_as<T, TreeNode *>) {
+    delete t;
   }
 }
 
@@ -252,10 +251,10 @@ void exec(R (Solution::*fn)(Ts...)) {
     } else {
       auto res = apply(fn, args);
       print_impl(stdout, res, true);
-      free_var(res);
+      delete_graph_var(res);
     }
     [&]<size_t... Idx>(index_sequence<Idx...>) {
-      (free_var(get<Idx + 1>(args)), ...);
+      (delete_graph_var(get<Idx + 1>(args)), ...);
     }(index_sequence_for<Ts...>{});
     fprintf(stderr, "\n"); // separate debug output from different testcases
   }
