@@ -11,7 +11,6 @@ vector<vector<int>> strongly_connected_components(int n, vector<vector<int>> &g)
   for (int i = 0; i < n; i++)
     if (!vis[i])
       dfs1(dfs1, i);
-  reverse(ord.begin(), ord.end());
   auto dfs2 = [&](auto &self, int u, vector<int> &comp) -> void {
     comp.push_back(u);
     vis[u] = false;
