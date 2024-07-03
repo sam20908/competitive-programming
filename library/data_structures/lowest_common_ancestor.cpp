@@ -3,18 +3,17 @@ struct lowest_common_ancestor {
   vector<vector<int>> dp;
   vector<int> in, out;
   lowest_common_ancestor(int n, vector<vector<int>> &g, int root) : lg(__lg(n)), dp(lg + 1, vector<int>(n)), in(n), out(n) {
-    int time = 0;
-    auto f = [&](auto &self, int u, int p) -> void {
+    auto f = [&, time = 0](auto &self, int u, int p) mutable -> void {
       in[u] = ++time;
       dp[0][u] = p;
-      for (int p = 1; p <= lg; p++)
-        dp[p][u] = dp[p - 1][dp[u][p - 1]];
-      for (int next : g[u])
-        if (next != p)
-          self(self, next, u);
+      for (int l = 1; l <= lg; l++)
+        dp[l][u] = dp[l - 1][dp[l - 1][u]];
+      for (int v : g[u])
+        if (v != p)
+          self(self, v, u);
       out[u] = ++time;
     };
-    f(f, root, -1);
+    f(f, root, root);
   }
   bool is_ancestor(int u, int v) {
     return in[u] <= in[v] && out[u] >= out[v]; // if u is ancestor of v
@@ -24,9 +23,9 @@ struct lowest_common_ancestor {
       return u;
     if (is_ancestor(v, u))
       return v;
-    for (int p = lg; p >= 0; p--)
-      if (!is_ancestor(dp[p][u], v))
-        u = dp[p][u];
+    for (int l = lg; l >= 0; l--)
+      if (!is_ancestor(dp[l][u], v))
+        u = dp[l][u];
     return dp[0][u];
   }
 };
