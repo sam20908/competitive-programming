@@ -19,6 +19,12 @@ struct rolling_hash {
     pair<int, int> value() const {
       return {(ptr->h1[r + 1] - ptr->h1[l] + M1) % M1, (ptr->h2[r + 1] - ptr->h2[l] + M2) % M2};
     };
+#if 0
+    pair<int, int> value_base() const {
+      auto [x, y] = value(); // pow() required for binary exponentiation
+      return {x * pow(pre.p1[l], M1 - 2, M1) % M1, y * pow(pre.p2[l], M2 - 2, M2) % M2};
+    };
+#endif
     friend bool operator==(const hash_pair &a, const hash_pair &b) {
       auto [ah1, ah2] = a.value();
       auto [bh1, bh2] = b.value();
