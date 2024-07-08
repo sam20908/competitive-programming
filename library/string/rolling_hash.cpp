@@ -1,6 +1,5 @@
 struct rolling_hash {
-  static constexpr uint64_t M = (1ULL << 61) - 1;
-  static constexpr int P = 257;
+  static constexpr uint64_t M = (1ULL << 61) - 1, P = 257;
   static constexpr uint64_t mul(uint64_t a, uint64_t b) {
     uint64_t l1 = (uint32_t)a, h1 = a >> 32, l2 = (uint32_t)b, h2 = b >> 32;
     uint64_t l = l1 * l2, m = l1 * h2 + l2 * h1, h = h1 * h2;
