@@ -15,4 +15,14 @@ struct sieve {
   bool is_prime(int x) {
     return x > 1 && spd[x] == x;
   }
+  vector<int> divisors(int x) {
+    vector<int> ans;
+    while (x > 1)
+      for (int d = spd[x], sd = spd[x], n = ans.size(); spd[x] == sd; d *= sd, x /= sd) {
+        for (int i = 0; i < n; i++)
+          ans.push_back(d * ans[i]);
+        ans.push_back(d);
+      }
+    return ans;
+  }
 };
