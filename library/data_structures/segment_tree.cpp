@@ -4,7 +4,7 @@ struct segment_tree {
   U updater;
   V combiner;
   segment_tree(int n, T default_value, U updater, V combiner) : tree(2 * n, default_value), updater(updater), combiner(combiner) {}
-  inline void update(int i, T v) {
+  void update(int i, T v) {
     for (tree[i] = updater(tree[i += tree.size() >> 1], v); i >>= 1;)
       tree[i] = combiner(tree[i << 1], tree[i << 1 | 1]);
   }
