@@ -5,17 +5,17 @@ struct segment_tree {
   V combiner;
   segment_tree(int n, T default_value, U updater, V combiner) : tree(2 * n, default_value), updater(updater), combiner(combiner) {}
   inline void update(int i, T v) {
-    for (tree[i] = updater(tree[i += tree.size() >> 1], v); i > 1; i >>= 1)
-      tree[i >> 1] = combiner(tree[i], tree[i ^ 1]);
+    for (tree[i] = updater(tree[i += tree.size() >> 1], v); i >>= 1;)
+      tree[i] = combiner(tree[i << 1], tree[i << 1 | 1]);
   }
   invoke_result_t<V, T, T> query(int l, int r, invoke_result_t<V, T, T> default_value) { // [l, r)
-    auto ans = default_value;
+    auto ansl = default_value, ansr = default_value;
     for (l += tree.size() >> 1, r += tree.size() >> 1; l < r; l >>= 1, r >>= 1) {
       if (l & 1)
-        ans = combiner(ans, tree[l++]);
+        ansl = combiner(ansl, tree[l++]);
       if (r & 1)
-        ans = combiner(ans, tree[--r]);
+        ansr = combiner(tree[--r], ansr);
     }
-    return ans;
+    return combiner(ansl, ansr);
   }
 };
