@@ -8,7 +8,7 @@ struct segment_tree {
     for (tree[i] = updater(tree[i += tree.size() >> 1], v); i >>= 1;)
       tree[i] = combiner(tree[i << 1], tree[i << 1 | 1]);
   }
-  invoke_result_t<V, T, T> query(int l, int r, invoke_result_t<V, T, T> default_value) { // [l, r)
+  invoke_result_t<V, T, T> query(int l, int r, invoke_result_t<V, T, T> default_value = {}) { // [l, r)
     auto ansl = default_value, ansr = default_value;
     for (l += tree.size() >> 1, r += tree.size() >> 1; l < r; l >>= 1, r >>= 1) {
       if (l & 1)
