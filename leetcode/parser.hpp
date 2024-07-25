@@ -60,6 +60,8 @@ void print_impl(FILE *f, const T &val, bool write_newline) {
     fprintf(f, "%u", val);
   else if constexpr (same_as<T, unsigned long long>)
     fprintf(f, "%llu", val);
+  else if constexpr (same_as<T, char *> || same_as<T, const char *>)
+    fprintf(f, "%s", val);
   else if constexpr (same_as<T, bool>)
     fprintf(f, "%s", val ? "true" : "false");
   else if constexpr (same_as<T, string>)
