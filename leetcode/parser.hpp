@@ -26,14 +26,10 @@ struct ListNode {
   }
 };
 
-template <typename T, template <typename...> typename U>
-struct is_specialization : std::false_type {};
-template <template <typename...> typename U, typename... Args>
-struct is_specialization<U<Args...>, U> : std::true_type {};
-template <typename T, template <auto...> typename U>
-struct is_specialization2 : std::false_type {};
-template <template <auto...> typename U, auto... Args>
-struct is_specialization2<U<Args...>, U> : std::true_type {};
+template <typename T>
+struct is_bitset : std::false_type {};
+template <std::size_t N>
+struct is_bitset<bitset<N>> : std::true_type {};
 template <typename T>
 concept tuple_like = requires { typename tuple_size<T>::type; };
 template <typename T>
@@ -64,7 +60,7 @@ void print_impl(FILE *f, const T &val, bool write_newline) {
     fprintf(f, "%s", val ? "true" : "false");
   else if constexpr (same_as<T, string>)
     fprintf(f, "\"%s\"", val.data());
-  else if constexpr (is_specialization2<T, bitset>::value)
+  else if constexpr (is_bitset<T>::value)
     fprintf(f, "\"%s\"", val.to_string().data());
   else if constexpr (same_as<T, TreeNode *>) {
     queue<TreeNode *> q;
