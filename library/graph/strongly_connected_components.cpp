@@ -1,10 +1,10 @@
-vector<vector<int>> strongly_connected_components(int n, vector<vector<int>> &g) {
-  vector<int> vis(n), ord;
-  vector<vector<int>> g2(n);
-  for (int i = 0; i < n; i++)
+vector<vector<int>> strongly_connected_components(vector<vector<int>> &g) {
+  vector<int> vis(g.size()), ord;
+  vector<vector<int>> g2(g.size());
+  for (int i = 0; i < g.size(); i++)
     for (int j : g[i])
       g2[j].push_back(i);
-  ord.reserve(n);
+  ord.reserve(g.size());
   auto dfs1 = [&](auto &self, int u) -> void {
     vis[u] = true;
     for (int v : g[u])
@@ -12,7 +12,7 @@ vector<vector<int>> strongly_connected_components(int n, vector<vector<int>> &g)
         self(self, v);
     ord.push_back(u);
   };
-  for (int i = 0; i < n; i++)
+  for (int i = 0; i < g.size(); i++)
     if (!vis[i])
       dfs1(dfs1, i);
   reverse(ord.begin(), ord.end());

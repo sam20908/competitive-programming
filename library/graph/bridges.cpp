@@ -1,5 +1,5 @@
-vector<pair<int, int>> bridges(int n, vector<vector<int>> &g) {
-  vector<int> tin(n, -1), low(n, -1);
+vector<pair<int, int>> bridges(vector<vector<int>> &g) {
+  vector<int> tin(g.size(), -1), low(g.size(), -1);
   vector<pair<int, int>> ans;
   auto dfs = [&, timer = 0](auto &self, int v, int p = -1) mutable -> void {
     tin[v] = low[v] = timer++;
@@ -16,7 +16,7 @@ vector<pair<int, int>> bridges(int n, vector<vector<int>> &g) {
       }
     }
   };
-  for (int i = 0; i < n; ++i)
+  for (int i = 0; i < g.size(); ++i)
     if (tin[i] == -1)
       dfs(dfs, i);
   return ans;
