@@ -5,14 +5,14 @@ struct segment_tree_lazy {
   A apply;
   B push;
   U merge;
-  V lazy_ans;
-  segment_tree_lazy(int n, T v, T d0, A apply, B push, U merge, V lazy_ans) : tree(2 * n, v), delay(n, d0), d0(d0), apply(apply), push(push), merge(merge), lazy_ans(lazy_ans) {}
+  V delay_ans;
+  segment_tree_lazy(int n, T v, T d0, A apply, B push, U merge, V delay_ans) : tree(2 * n, v), delay(n, d0), d0(d0), apply(apply), push(push), merge(merge), delay_ans(delay_ans) {}
   void apply_delay(int i, T v, int k) {
     tree[i] = apply(tree[i], v, k);
     if (i < delay.size())
       delay[i] = push(delay[i], v, k);
   }
-  void lift_delay(int l, int r) {
+  void lift(int l, int r) {
     l += delay.size(), r += delay.size() - 1;
     for (int k = 2; l > 1; k <<= 1) {
       l >>= 1, r >>= 1;
@@ -20,7 +20,7 @@ struct segment_tree_lazy {
         if (delay[i] == d0)
           tree[i] = merge(tree[i << 1], tree[i << 1 | 1]);
         else
-          tree[i] = lazy_ans(delay[i], k);
+          tree[i] = delay_ans(delay[i], k);
     }
   }
   void push_delay(int l, int r) {
@@ -43,8 +43,8 @@ struct segment_tree_lazy {
       if (r & 1)
         apply_delay(--r, v, k);
     }
-    lift_delay(l0, l0 + 1);
-    lift_delay(r0 - 1, r0);
+    lift(l0, l0 + 1);
+    lift(r0 - 1, r0);
   }
   T query(int l, int r, T ans = {}) { // [l, r)
     push_delay(l, l + 1);
