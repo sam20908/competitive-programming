@@ -1,32 +1,23 @@
+template <typename T, invocable<T, T> U>
 struct sparse_table {
-  vector<vector<int>> dp;
-  int k = 0;
-  sparse_table(int n, vector<int> &v) : k(__lg(n)) {
-    dp.resize(k + 1, vector<int>(n));
-    ranges::copy(v, dp[0].begin());
-    for (int i = 1; i <= k; i++)
-      for (int j = 0; j + (1 << i) <= n; j++) {
-        auto a = dp[i - 1][j];
-        auto b = dp[i - 1][j + (1 << (i - 1))];
-        dp[i][j] = min(a, b);
-      }
+  vector<vector<T>> dp;
+  U merge;
+  sparse_table(vector<T> &v, U merge) : dp(__lg(v.size()) + 1, vector<T>(v.size())), merge(merge) {
+    dp[0] = v;
+    for (int i = 1; i <= __lg(v.size()); i++)
+      for (int j = 0; j + (1 << i) <= v.size(); j++)
+        dp[i][j] = merge(dp[i - 1][j], dp[i - 1][j + (1 << (i - 1))]);
   }
-  int query(int l, int r) {
-    int ans = 2e9;
-    for (int i = k; i >= 0; i--) {
+  T query(int l, int r, T ans = {}) {
+    for (int i = dp[0].size(); i >= 0; i--)
       if ((1 << i) <= r - l + 1) {
-        auto a = ans;
-        auto b = dp[i][l];
-        ans = min(a, b);
+        ans = merge(ans, dp[i][l]);
         l += 1 << i;
       }
-    }
     return ans;
   }
-  int query_fast(int l, int r) { // only use if operation is idempotent!
+  T query_fast(int l, int r) { // precondition: operation is idempotent
     int i = __lg(r - l + 1);
-    auto a = dp[i][l];
-    auto b = dp[i][r - (1 << i) + 1];
-    return min(a, b);
+    return merge(dp[i][l], dp[i][r - (1 << i) + 1]);
   }
 };
