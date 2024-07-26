@@ -26,8 +26,6 @@ struct ListNode {
   }
 };
 
-template <typename = void>
-inline constexpr bool always_false = false;
 template <typename T, template <typename...> typename U>
 struct is_specialization : std::false_type {};
 template <template <typename...> typename U, typename... Args>
@@ -117,7 +115,7 @@ void print_impl(FILE *f, const T &val, bool write_newline) {
     }
     fprintf(f, "]");
   } else
-    static_assert(always_false<T>, "printing for type not supported");
+    static_assert(false, "printing for type not supported");
   if (write_newline)
     fprintf(f, "\n");
 }
@@ -222,7 +220,7 @@ T parse() {
       }
     }
   } else
-    static_assert(always_false<T>, "parsing for type not supported");
+    static_assert(false, "parsing for type not supported");
   return ans;
 }
 
