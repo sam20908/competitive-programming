@@ -1,21 +1,21 @@
-template <typename T, typename U, typename V>
+template <typename T, invocable<T, T> U, invocable<T, T> V>
 struct segment_tree {
   vector<T> tree;
-  U updater;
-  V merger;
-  segment_tree(int n, T default_value, U updater, V merger) : tree(2 * n, default_value), updater(updater), merger(merger) {}
+  U apply;
+  V merge;
+  segment_tree(int n, T v, U apply, V merge) : tree(2 * n, v), apply(apply), merge(merge) {}
   void update(int i, T v) {
-    for (tree[i] = updater(tree[i += tree.size() >> 1], v); i >>= 1;)
-      tree[i] = merger(tree[i << 1], tree[i << 1 | 1]);
+    for (tree[i] = apply(tree[i += tree.size() >> 1], v); i >>= 1;)
+      tree[i] = merge(tree[i << 1], tree[i << 1 | 1]);
   }
-  invoke_result_t<V, T, T> query(int l, int r, invoke_result_t<V, T, T> default_value = {}) { // [l, r)
-    auto ansl = default_value, ansr = default_value;
+  T query(int l, int r, T ans = {}) { // [l, r)
+    auto ansl = ans, ansr = ans;
     for (l += tree.size() >> 1, r += tree.size() >> 1; l < r; l >>= 1, r >>= 1) {
       if (l & 1)
-        ansl = merger(ansl, tree[l++]);
+        ansl = merge(ansl, tree[l++]);
       if (r & 1)
-        ansr = merger(tree[--r], ansr);
+        ansr = merge(tree[--r], ansr);
     }
-    return merger(ansl, ansr);
+    return merge(ansl, ansr);
   }
 };
