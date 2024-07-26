@@ -8,7 +8,7 @@ struct aho_corasick {
   };
   vector<node_t> v = vector<node_t>(1);
   template <typename F>
-  aho_corasick(vector<string> &w, F f) {
+  aho_corasick(const vector<string> &w, F f) {
     for (int i = 0; i < (int)w.size(); i++) {
       int u = 0;
       for (char c : w[i]) {
