@@ -7,7 +7,7 @@ struct aho_corasick {
     }
   };
   vector<node_t> v = vector<node_t>(1);
-  template <typename F>
+  template <invocable<int, int> F>
   aho_corasick(const vector<string> &w, F f) {
     for (int i = 0; i < (int)w.size(); i++) {
       int u = 0;
@@ -41,7 +41,7 @@ struct aho_corasick {
         }
     }
   }
-  template <typename F>
+  template <invocable<int, int, int> F>
   void iterate(const string &s, F f) {
     for (int i = 0, u = 0; i < (int)s.size(); i++) {
       while (v[u].g[s[i] - 'a'] == -1)
