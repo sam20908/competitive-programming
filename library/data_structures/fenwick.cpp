@@ -1,15 +1,15 @@
+template <typename T, invocable<T, T> U>
 struct fenwick {
-  vector<int> t; // one-indexed
-  int m;
-  fenwick(int n) : t(n + 1), m(n + 1) {}
-  int query(int i) {
-    int ans = 0;
-    for (; i > 0; i -= i & -i)
-      ans += t[i];
-    return ans;
+  vector<T> tree;
+  U merge;
+  fenwick(int n, T v, U merge) : tree(n + 1, v), merge(merge) {}
+  void update(int i, T v) { // one-indexed
+    for (; i < tree.size(); i += i & -i)
+      tree[i] = merge(tree[i], v);
   }
-  void update(int i, int v) {
-    for (; i < m; i += i & -i)
-      t[i] += v;
+  T query(int i, T ans = {}) { // one-indexed
+    for (; i > 0; i -= i & -i)
+      ans = merge(ans, tree[i]);
+    return ans;
   }
 };
