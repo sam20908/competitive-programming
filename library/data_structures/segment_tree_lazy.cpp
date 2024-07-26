@@ -1,12 +1,11 @@
-template <typename T, invocable<T, T, int> A, invocable<T, T, int> B, invocable<T, T> U, invocable<T, int> V>
+template <typename T, invocable<T, T, int> A, invocable<T, T, int> B, invocable<T, T> U>
 struct segment_tree_lazy {
   vector<T> tree, delay;
   T d0;
   A apply;
   B push;
   U merge;
-  V delay_ans;
-  segment_tree_lazy(int n, T v, T d0, A apply, B push, U merge, V delay_ans) : tree(2 * n, v), delay(n, d0), d0(d0), apply(apply), push(push), merge(merge), delay_ans(delay_ans) {}
+  segment_tree_lazy(int n, T v, T d0, A apply, B push, U merge) : tree(2 * n, v), delay(n, d0), d0(d0), apply(apply), push(push), merge(merge) {}
   void apply_delay(int i, T v, int k) {
     tree[i] = apply(tree[i], v, k);
     if (i < delay.size())
@@ -14,14 +13,9 @@ struct segment_tree_lazy {
   }
   void lift(int l, int r) {
     l += delay.size(), r += delay.size() - 1;
-    for (int k = 2; l > 1; k <<= 1) {
-      l >>= 1, r >>= 1;
-      for (int i = r; i >= l; i--)
-        if (delay[i] == d0)
-          tree[i] = merge(tree[i << 1], tree[i << 1 | 1]);
-        else
-          tree[i] = delay_ans(delay[i], k);
-    }
+    for (int k = 2; l > 1; k <<= 1, l >>= 1)
+      for (int i = r >>= 1; i >= l >> 1; i--)
+        tree[i] = delay[i] == d0 ? merge(tree[i << 1], tree[i << 1 | 1]) : apply(d0, delay[i], k);
   }
   void push_delay(int l, int r) {
     int h = __lg(delay.size()), k = 1 << __lg(delay.size()) >> 1;
