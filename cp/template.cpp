@@ -5,13 +5,10 @@ void solve() {}
 
 int main() {
   ios::sync_with_stdio(false);
+  int t = 1;
 #if 1
-  int t;
   scanf("%d", &t);
-  for (int i = 1; i <= t; i++) {
-    solve();
-  }
-#else
-  solve();
 #endif
+  while (t--)
+    solve();
 }
