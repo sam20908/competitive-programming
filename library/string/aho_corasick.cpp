@@ -42,13 +42,17 @@ struct aho_corasick {
     }
   }
   template <invocable<int, int, int> F>
+    requires requires(F f) {
+      { f(0, 0, 0) } -> std::convertible_to<bool>;
+    }
   void iterate(const string &s, F f) {
     for (int i = 0, u = 0; i < (int)s.size(); i++) {
       while (v[u].g[s[i] - 'a'] == -1)
         u = v[u].link;
       u = v[u].g[s[i] - 'a'];
-      for (int p = v[u].match == -1 ? v[u].mlink : u; p; p = v[p].mlink)
-        f(i, v[p].match, p);
+      for (int p = v[u].match == -1 ? v[u].mlink : u && f(i, v[p].match, p); p; p = v[p].mlink) {
+      }
     }
+    {}
   }
 };
