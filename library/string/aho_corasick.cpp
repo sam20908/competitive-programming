@@ -41,10 +41,7 @@ struct aho_corasick {
         }
     }
   }
-  template <invocable<int, int, int> F>
-    requires requires(F f) {
-      { f(0, 0, 0) } -> std::convertible_to<bool>;
-    }
+  template <typename F>
   void iterate(const string &s, F f) {
     for (int i = 0, u = 0; i < (int)s.size(); i++) {
       while (v[u].g[s[i] - 'a'] == -1)

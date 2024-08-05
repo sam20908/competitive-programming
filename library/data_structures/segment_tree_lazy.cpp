@@ -1,4 +1,4 @@
-template <typename T, invocable<T, T, int> A, invocable<T, T, int> B, invocable<T, T> U>
+template <typename T, typename A, typename B, typename U>
 struct segment_tree_lazy {
   vector<T> tree, delay;
   T d0;

@@ -1,4 +1,4 @@
-template <typename T, invocable<T, T> U, invocable<T, T> V>
+template <typename T, typename U, typename V>
 struct segment_tree {
   vector<T> tree;
   U apply;
