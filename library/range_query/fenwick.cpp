@@ -1,15 +1,15 @@
-template <typename T, typename M>
+template <typename T, typename C>
 struct fenwick {
   vector<T> tree;
-  M merge;
-  fenwick(int n, T v, M merge) : tree(n + 1, v), merge(merge) {}
+  C combine;
+  fenwick(int n, T v, C combine) : tree(n + 1, v), combine(combine) {}
   void update(int i, T v) { // one-indexed
     for (; i < tree.size(); i += i & -i)
-      tree[i] = merge(tree[i], v);
+      tree[i] = combine(tree[i], v);
   }
   T query(int i, T ans = {}) { // one-indexed
     for (; i > 0; i -= i & -i)
-      ans = merge(ans, tree[i]);
+      ans = combine(ans, tree[i]);
     return ans;
   }
 };
