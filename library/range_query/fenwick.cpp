@@ -1,8 +1,8 @@
-template <typename T, invocable<T, T> U>
+template <typename T, typename M>
 struct fenwick {
   vector<T> tree;
-  U merge;
-  fenwick(int n, T v, U merge) : tree(n + 1, v), merge(merge) {}
+  M merge;
+  fenwick(int n, T v, M merge) : tree(n + 1, v), merge(merge) {}
   void update(int i, T v) { // one-indexed
     for (; i < tree.size(); i += i & -i)
       tree[i] = merge(tree[i], v);

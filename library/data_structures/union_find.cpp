@@ -1,8 +1,8 @@
-template <invocable<int, int> F>
+template <typename F = decltype([](int, int, bool) {})>
 struct union_find {
   vector<int> par, size;
   F f;
-  union_find(int n, F f) : par(n), size(n, 1), f(f) {
+  union_find(int n, F f = {}) : par(n), size(n, 1), f(f) {
     iota(par.begin(), par.end(), 0);
   }
   int find(int i) {
@@ -12,9 +12,12 @@ struct union_find {
     i = find(i), j = find(j);
     if (i == j)
       return;
-    if (size[i] < size[j])
+    bool swapped = false;
+    if (size[i] < size[j]) {
       swap(i, j);
-    f(i, j);
+      swapped = true;
+    }
+    f(i, j, swapped);
     size[i] += size[j];
     par[j] = i;
   }

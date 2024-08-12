@@ -1,20 +1,21 @@
 vector<int> suffix_array(string &s, int k = 256) {
   s.push_back('$');
-  vector<int> p(s.size()), c(s.size()), cnt(max(k, (int)s.size()), 0);
-  for (int i = 0; i < s.size(); i++)
+  int n = s.size();
+  vector<int> p(n), c(n), cnt(max(k, n), 0);
+  for (int i = 0; i < n; i++)
     cnt[s[i]]++;
   for (int i = 1; i < k; i++)
     cnt[i] += cnt[i - 1];
-  for (int i = 0; i < s.size(); i++)
+  for (int i = 0; i < n; i++)
     p[--cnt[s[i]]] = i;
   c[p[0]] = 0;
   int classes = 1;
-  for (int i = 1; i < s.size(); i++) {
+  for (int i = 1; i < n; i++) {
     if (s[p[i]] != s[p[i - 1]])
       classes++;
     c[p[i]] = classes - 1;
   }
-  vector<int> pn(s.size()), cn(s.size());
+  vector<int> pn(n), cn(n);
   for (int h = 0; (1 << h) < n; ++h) {
     for (int i = 0; i < n; i++) {
       pn[i] = p[i] - (1 << h);
