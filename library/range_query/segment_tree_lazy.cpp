@@ -1,4 +1,4 @@
-template <typename T, typename U, typename A, typename P, typename C, typename C2, typename F = identity>
+template <typename T, typename U, typename A, typename P, typename C, typename C2 = C, typename F = identity>
 struct segment_tree_lazy {
   vector<T> tree;
   vector<U> delay;
@@ -8,7 +8,7 @@ struct segment_tree_lazy {
   C combine;
   C2 query_combine;
   F query_fn;
-  segment_tree_lazy(int n, T v, U d0, A apply, P push, C combine, C2 query_combine, F query_fn = {}) : tree(2 * n, v), delay(n, d0), d0(d0), apply(apply), push(push), combine(combine), query_combine(query_combine), query_fn(query_fn) {
+  segment_tree_lazy(int n, T v, U d0, A apply, P push, C combine, C2 query_combine = {}, F query_fn = {}) : tree(2 * n, v), delay(n, d0), d0(d0), apply(apply), push(push), combine(combine), query_combine(query_combine), query_fn(query_fn) {
     for (int i = n - 1; i > 0; --i)
       tree[i] = combine(tree[i << 1], tree[i << 1 | 1]);
   }

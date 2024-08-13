@@ -1,11 +1,14 @@
-template <typename T, typename A, typename C, typename C2, typename F = identity>
+template <typename T, typename A, typename C, typename C2 = C, typename F = identity>
 struct segment_tree {
   vector<T> tree;
   A apply;
   C combine;
   C2 query_combine;
   F query_fn;
-  segment_tree(int n, T v, A apply, C combine, C2 query_combine, F query_fn = {}) : tree(2 * n, v), apply(apply), combine(combine), query_combine(query_combine), query_fn(query_fn) {}
+  segment_tree(int n, T v, A apply, C combine, C2 query_combine = {}, F query_fn = {}) : tree(2 * n, v), apply(apply), combine(combine), query_combine(query_combine), query_fn(query_fn) {
+    for (int i = n - 1; i > 0; --i)
+      tree[i] = combine(tree[i << 1], tree[i << 1 | 1]);
+  }
   template <typename... Args>
   void update(int i, Args &&...args) {
     int n = tree.size() >> 1;
