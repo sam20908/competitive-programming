@@ -8,17 +8,19 @@ struct union_find {
   int find(int i) {
     return par[i] == i ? i : find(par[i]);
   }
-  void unite(int i, int j) {
+  template <typename... Args>
+  bool unite(int i, int j, Args &&...args) {
     i = find(i), j = find(j);
     if (i == j)
-      return;
+      return false;
     bool swapped = false;
     if (size[i] < size[j]) {
       swap(i, j);
       swapped = true;
     }
-    f(i, j, swapped);
+    f(i, j, swapped, std::forward<Args>(args)...);
     size[i] += size[j];
     par[j] = i;
+    return true;
   }
 };
