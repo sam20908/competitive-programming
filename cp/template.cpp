@@ -7,7 +7,7 @@ int main() {
   ios::sync_with_stdio(false);
   int t = 1;
 #if 1
-  scanf("%d", &t);
+  cin >> t;
 #endif
   while (t--)
     solve();
