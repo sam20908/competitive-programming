@@ -38,6 +38,9 @@ concept iterable = requires(T t) {
   t.end();
 };
 
+template <typename>
+static constexpr bool always_false = false;
+
 template <typename T>
 void print_impl(FILE *f, const T &val, bool write_newline) {
   if constexpr (same_as<T, char>)
@@ -111,7 +114,7 @@ void print_impl(FILE *f, const T &val, bool write_newline) {
     }
     fprintf(f, "]");
   } else
-    static_assert(false, "printing for type not supported");
+    static_assert(always_false<T>, "printing for type not supported");
   if (write_newline)
     fprintf(f, "\n");
 }
@@ -216,7 +219,7 @@ T parse() {
       }
     }
   } else
-    static_assert(false, "parsing for type not supported");
+    static_assert(always_false<T>, "parsing for type not supported");
   return ans;
 }
 
