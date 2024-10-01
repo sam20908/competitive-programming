@@ -44,8 +44,8 @@ static constexpr bool always_false = false;
 template <typename T>
 void print_impl(FILE *f, const T &val, bool write_newline) {
   if constexpr (same_as<T, char>)
-    fprintf(f, "%c", val);
-  if constexpr (same_as<T, int>)
+    fprintf(f, "\"%c\"", val);
+  else if constexpr (same_as<T, int>)
     fprintf(f, "%d", val);
   else if constexpr (same_as<T, float>)
     fprintf(f, "%.f", val);
