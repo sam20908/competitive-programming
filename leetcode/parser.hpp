@@ -192,7 +192,6 @@ T parse() {
       }
     }
     ans = dummy->right;
-    delete dummy;
   } else if constexpr (same_as<T, ListNode *>) {
     auto dummy = new ListNode{};
     auto cur = dummy;
@@ -223,13 +222,6 @@ T parse() {
   return ans;
 }
 
-template <typename T>
-void delete_graph_var(T &t) {
-  if constexpr (same_as<T, ListNode *> || same_as<T, TreeNode *>) {
-    delete t;
-  }
-}
-
 template <typename Solution, typename R, typename... Ts>
 void exec(R (Solution::*fn)(Ts...)) {
   while (true) {
@@ -250,11 +242,7 @@ void exec(R (Solution::*fn)(Ts...)) {
     } else {
       auto res = apply(fn, args);
       print_impl(stdout, res, true);
-      delete_graph_var(res);
     }
-    [&]<size_t... Idx>(index_sequence<Idx...>) {
-      (delete_graph_var(get<Idx + 1>(args)), ...);
-    }(index_sequence_for<Ts...>{});
     fprintf(stderr, "\n"); // separate debug output from different testcases
   }
 }
