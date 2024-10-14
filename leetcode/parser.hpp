@@ -226,7 +226,7 @@ template <typename Solution, typename R, typename... Ts>
 void exec(R (Solution::*fn)(Ts...)) {
   while (true) {
     int c = getchar();
-    if (c == EOF || c == '\n' || c == '\r\n')
+    if (c == EOF || isspace(c))
       break;
     ungetc(c, stdin);
     tuple<Solution, decay_t<Ts>...> args;
