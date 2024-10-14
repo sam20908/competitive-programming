@@ -173,10 +173,10 @@ T parse() {
     scanf(" %*c");
     if (int c = getchar(); c != ']') {
       ungetc(c, stdin);
-      while (!q.empty()) {
+      ungetc('[', stdin);
+      while (!q.empty() && getchar() != ']') {
         char *buf;
         scanf(" %m[^],]", &buf);
-        getchar();
         if (strcmp(buf, "null") != 0) {
           auto new_node = new TreeNode{atoi(buf)};
           if (right)
