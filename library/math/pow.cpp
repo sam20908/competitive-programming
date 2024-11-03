@@ -1,6 +1,7 @@
-constexpr long long pow(long long a, long long b, long long m) {
+template <typename T>
+constexpr T pow(T a, T b, int m, T one = {1}) {
   a %= m;
-  long long res = 1;
+  T res = one;
   while (b > 0) {
     if (b & 1)
       res = res * a % m;
