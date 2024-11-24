@@ -53,11 +53,11 @@ struct segment_tree_lazy {
     lift(r0 - 1, r0);
   }
   template <typename R = T, typename... Args>
-  R query(int l, int r, R ans = {}, Args &&...args) { // [l, r)
+  R query(int l, int r, R ans0, Args &&...args) { // [l, r)
     push_delay(l, l + 1);
     push_delay(r - 1, r);
     int n = delay.size();
-    auto ansl = ans, ansr = ans;
+    auto ansl = ans0, ansr = ans0;
     for (l += n, r += n; l < r; l >>= 1, r >>= 1) {
       if (l & 1)
         ansl = query_combine(ansl, query_fn(tree[l++], std::forward<Args>(args)...));
