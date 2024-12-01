@@ -17,7 +17,7 @@ vector<T> tree_reroot_dp(vector<E> &g, auto &&apply, auto &&apply_dp, auto &&dp_
       ans[u] = apply_dp(ans[u], pdp, pe);
     int m = g[u].size();
     T ansl = ans0, ansr = ans0;
-    vector<T> edp(m, ans0);
+    vector<T> edp(m, ans[u]);
     for (int i = 1; i < m; i++) {
       if (node_projection(g[u][i - 1]) != p)
         ansl = apply_dp(ansl, dp[node_projection(g[u][i - 1])], g[u][i - 1]);
@@ -32,7 +32,7 @@ vector<T> tree_reroot_dp(vector<E> &g, auto &&apply, auto &&apply_dp, auto &&dp_
     }
     for (int i = 0; i < m; i++)
       if (node_projection(g[u][i]) != p)
-        self(self, node_projection(g[u][i]), u, dp_combine(edp[i], ans[u]), g[u][i]);
+        self(self, node_projection(g[u][i]), u, edp[i], g[u][i]);
     for (auto &v : g[u])
       if (node_projection(v) != p)
         ans[u] = apply_dp(ans[u], dp[node_projection(v)], v);
