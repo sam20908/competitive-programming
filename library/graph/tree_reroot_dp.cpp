@@ -1,5 +1,5 @@
 template <typename T, typename F = identity, typename E>
-vector<T> tree_reroot_dp(vector<E> &g, auto &&apply, auto &&apply_dp, auto &&dp_combine, T ans0, int root, F node_projection = {}) {
+vector<T> tree_reroot_dp(vector<vector<E>> &g, auto &&apply, auto &&apply_dp, auto &&dp_combine, T ans0, int root, F node_projection = {}) {
   int n = g.size();
   vector<T> dp(n, ans0), ans(n, ans0);
   auto dfs = [&](auto &self, int u, int p) -> void {
@@ -11,7 +11,7 @@ vector<T> tree_reroot_dp(vector<E> &g, auto &&apply, auto &&apply_dp, auto &&dp_
       }
   };
   dfs(dfs, root, root);
-  auto dfs2 = [&](auto &self, int u, int p, T pdp, typename E::value_type pe) -> void {
+  auto dfs2 = [&](auto &self, int u, int p, T pdp, E pe) -> void {
     ans[u] = apply(ans[u], u);
     if (u != p)
       ans[u] = apply_dp(ans[u], pdp, pe);
@@ -37,6 +37,6 @@ vector<T> tree_reroot_dp(vector<E> &g, auto &&apply, auto &&apply_dp, auto &&dp_
       if (node_projection(v) != p)
         ans[u] = apply_dp(ans[u], dp[node_projection(v)], v);
   };
-  dfs2(dfs2, root, root, ans0, typename E::value_type{});
+  dfs2(dfs2, root, root, ans0, {});
   return ans;
 }
