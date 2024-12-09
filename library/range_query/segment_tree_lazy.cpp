@@ -14,9 +14,9 @@ struct segment_tree_lazy {
   }
   void apply_delay(int i, const U &v, int k) {
     int n = delay.size();
-    apply(tree[i], v, k);
+    tree[i] = apply(tree[i], v, k);
     if (i < n)
-      push(delay[i], v, k);
+      delay[i] = push(delay[i], v, k);
   }
   void lift(int l, int r) {
     int n = delay.size();
@@ -25,7 +25,7 @@ struct segment_tree_lazy {
       for (int i = r >>= 1; i >= l >> 1; i--) {
         tree[i] = combine(tree[i << 1], tree[i << 1 | 1]);
         if (delay[i] != d0)
-          apply(tree[i], delay[i], k);
+          tree[i] = apply(tree[i], delay[i], k);
       }
   }
   void push_delay(int l, int r) {

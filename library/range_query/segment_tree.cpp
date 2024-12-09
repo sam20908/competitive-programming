@@ -12,7 +12,7 @@ struct segment_tree {
   template <typename... Args>
   void update(int i, Args &&...args) {
     int n = tree.size() >> 1;
-    for (apply(tree[i += n], std::forward<Args>(args)...); i >>= 1;)
+    for (tree[i += n] = apply(tree[i + n], std::forward<Args>(args)...); i >>= 1;)
       tree[i] = combine(tree[i << 1], tree[i << 1 | 1]);
   }
   template <typename R = T, typename... Args>

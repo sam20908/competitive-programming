@@ -24,9 +24,7 @@ struct segment_tree_persistent {
   node_t *update(node_t *root, int i, Args &&...args) {
     auto dfs = [&](auto &self, node_t *cur, int tl, int tr) -> node_t * {
       if (tl == tr) {
-        T new_v = cur->v;
-        apply(new_v, std::forward<Args>(args)...);
-        return new node_t{.v = new_v};
+        return new node_t{.v = apply(cur->v, std::forward<Args>(args)...)};
       }
       int tm = (tl + tr) / 2;
       auto node_l = i <= tm ? self(self, cur->l, tl, tm) : cur->l;
@@ -36,7 +34,7 @@ struct segment_tree_persistent {
     return dfs(dfs, root, 0, n - 1);
   }
   template <typename R = T, typename... Args>
-  R query(node_t *root, int l, int r, R ans = {}, Args &&...args) {
+  R query(node_t *root, int l, int r, R ans = {}, Args &&...args) { // [l, r]
     auto dfs = [&](auto &self, node_t *cur, int tl, int tr, int l, int r) -> R {
       if (l > r)
         return ans;
