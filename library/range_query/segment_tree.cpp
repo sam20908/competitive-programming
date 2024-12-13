@@ -27,4 +27,28 @@ struct segment_tree {
     }
     return query_combine(ansl, ansr);
   }
+  template <typename R = T, typename... Args>
+  int max_r(int l, auto fn, R ans0, Args &&...args) { // maximum r>=l such that f(a[l..r-1]) is true
+    int n = tree.size() >> 1, i = l + n, d = 1;
+    assert((n & (n - 1)) == 0);
+    for (R ans; l < n && ((i & 1 ^ 1) || fn(ans = query_combine(ans0, query_fn(tree[i]), std::forward<Args>(args)...))); d <<= 1, i = (i >> 1) + (i & 1))
+      if (i & 1)
+        ans0 = std::move(ans), l += d;
+    for (; l < n && i < 2 * n; d >>= 1)
+      if (auto ans = query_combine(ans0, query_fn(tree[(i <<= 1) >> 1]), std::forward<Args>(args)...); fn(ans))
+        ans0 = std::move(ans), i += 2, l += d;
+    return l;
+  }
+  template <typename R = T, typename... Args>
+  int min_l(int r, auto fn, R ans0, Args &&...args) { // minimum l<=r such that f(a[l+1..r]) is true
+    int n = tree.size() >> 1, i = r + n, d = 1;
+    assert((n & (n - 1)) == 0);
+    for (R ans; i > 1 && ((i & 1) || fn(ans = query_combine(ans0, query_fn(tree[i]), std::forward<Args>(args)...))); d <<= 1, i = (i >> 1) - (i & 1 ^ 1))
+      if (i & 1 ^ 1)
+        ans0 = std::move(ans), r -= d;
+    for (; r >= 0 && i < 2 * n; r -= d, d >>= 1)
+      if (auto ans = exchange(ans0, query_combine(ans0, query_fn(tree[(i = (i << 1) - 1) + 1 >> 1]), std::forward<Args>(args)...)); !fn(ans0))
+        ans0 = std::move(ans), i += 2, r += d;
+    return r;
+  }
 };
