@@ -43,7 +43,7 @@ struct segment_tree {
   int min_l(int r, auto fn, R ans0, Args &&...args) { // minimum l<=r such that f(a[l+1..r]) is true
     int n = tree.size() >> 1, i = r + n, d = 1;
     assert((n & (n - 1)) == 0);
-    for (R ans; i > 1 && ((i & 1) || fn(ans = query_combine(ans0, query_fn(tree[i]), std::forward<Args>(args)...))); d <<= 1, i = (i >> 1) - (i & 1 ^ 1))
+    for (R ans; r >= 0 && i > 1 && ((i & 1) || fn(ans = query_combine(ans0, query_fn(tree[i]), std::forward<Args>(args)...))); d <<= 1, i = (i - 1) >> 1)
       if (i & 1 ^ 1)
         ans0 = std::move(ans), r -= d;
     for (; r >= 0 && i < 2 * n; r -= d, d >>= 1)
