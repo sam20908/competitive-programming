@@ -7,6 +7,16 @@ struct int_mod {
     v = (vx % M + M) % M;
     return *this;
   }
+  constexpr int pow(long long p) const {
+    long long a = v, res = 1;
+    for (; p; p >>= 1, a = a * a % M)
+      if (p & 1)
+        res = res * a % M;
+    return res;
+  }
+  constexpr int inv() const {
+    return pow(M - 2);
+  }
 #define OP(op)                                                                                                                                                                                                                                                                                                                                                                                                 \
   constexpr friend int_mod operator op(const int_mod &a, const int_mod &b) {                                                                                                                                                                                                                                                                                                                                   \
     return ((1LL * a.v op b.v) % M + M) % M;                                                                                                                                                                                                                                                                                                                                                                   \
