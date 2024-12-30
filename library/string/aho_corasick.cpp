@@ -47,8 +47,7 @@ struct aho_corasick {
       while (v[u].g[s[i] - 'a'] == -1)
         u = v[u].link;
       u = v[u].g[s[i] - 'a'];
-      for (int p = v[u].match == -1 ? v[u].mlink : u; p && f(i, v[p].match, p); p = v[p].mlink) {
-      }
+      for (int p = v[u].match == -1 ? v[u].mlink : u; p && f(i, v[p].match, p); p = v[p].mlink) {}
     }
   }
 };

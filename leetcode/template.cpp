@@ -16,8 +16,7 @@ public:
 
 #ifdef LC_LOCAL
 int main() {
-  ios_base::sync_with_stdio(false);
-  cin.tie(NULL);
+  cin.tie(0)->ios_base::sync_with_stdio(false);
   exec(&Solution::test); // CHANGE FOR PROBLEM
 }
 #endif
