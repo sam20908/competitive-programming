@@ -6,9 +6,8 @@ void solve() {}
 int main() {
   cin.tie(0)->sync_with_stdio(false);
   int t = 1;
-#if 1
-  cin >> t;
-#endif
+  if (1)
+    cin >> t;
   while (t--)
     solve();
 }
