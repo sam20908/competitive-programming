@@ -17,4 +17,5 @@ vector<uint64_t> hilbert(const vector<pair<int, int>> &q) {
     }
     ans[i] = ord;
   }
+  return ans;
 }
