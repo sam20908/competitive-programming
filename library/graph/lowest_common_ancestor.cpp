@@ -1,16 +1,18 @@
 struct lowest_common_ancestor {
-  vector<int> tour, first, start, end, depth, mask;
+  vector<int> tour, first, start, end, node, depth, mask;
   vector<vector<int>> dp;
   vector<vector<vector<int>>> blocks;
   lowest_common_ancestor(const vector<vector<int>> &g, int root) {
     int n = g.size(), time = 0;
+    tour.reserve(2 * n);
     first.resize(n);
     start.resize(n);
     end.resize(n);
+    node.resize(2 * n);
     depth.resize(n);
     auto dfs = [&](auto &self, int u, int p, int d) -> void {
       first[u] = tour.size();
-      start[u] = ++time;
+      node[start[u] = time++] = u;
       depth[u] = d;
       tour.push_back(u);
       for (int v : g[u]) {
@@ -19,7 +21,7 @@ struct lowest_common_ancestor {
           tour.push_back(u);
         }
       }
-      end[u] = ++time;
+      node[end[u] = time++] = u;
     };
     dfs(dfs, root, root, 0);
     int m = tour.size();
