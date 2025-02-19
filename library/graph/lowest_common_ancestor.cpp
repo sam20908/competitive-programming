@@ -1,18 +1,16 @@
 struct lowest_common_ancestor {
-  vector<int> tour, first, start, end, node, depth, mask;
+  vector<int> tour, start, end, node, depth, mask;
   vector<vector<int>> dp;
   vector<vector<vector<int>>> blocks;
   lowest_common_ancestor(const vector<vector<int>> &g, int root) {
-    int n = g.size(), time = 0;
+    int n = g.size();
     tour.reserve(2 * n);
-    first.resize(n);
     start.resize(n);
     end.resize(n);
     node.resize(2 * n);
     depth.resize(n);
     auto dfs = [&](auto &self, int u, int p, int d) -> void {
-      first[u] = tour.size();
-      node[start[u] = time++] = u;
+      node[start[u] = end[u] = tour.size()] = u;
       depth[u] = d;
       tour.push_back(u);
       for (int v : g[u]) {
@@ -21,7 +19,7 @@ struct lowest_common_ancestor {
           tour.push_back(u);
         }
       }
-      node[end[u] = time++] = u;
+      node[end[u] = tour.size()] = u;
     };
     dfs(dfs, root, root, 0);
     int m = tour.size();
@@ -73,7 +71,7 @@ struct lowest_common_ancestor {
     return blocks[mask[b]][l][r] + b * b_size;
   }
   int lca(int v, int u) {
-    int l = first[v], r = first[u], b_size = max(1, (int)__lg(tour.size()) >> 1);
+    int l = start[v], r = start[u], b_size = max(1, (int)__lg(tour.size()) >> 1);
     if (l > r)
       swap(l, r);
     int bl = l / b_size;
