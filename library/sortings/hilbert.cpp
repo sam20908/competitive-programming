@@ -1,3 +1,10 @@
+/**
+ * @brief Heuristic for Mo's Algorithm.
+ *        Originally from https://codeforces.com/blog/entry/61203!
+ *
+ * @param q List of queries.
+ * @return List of integers denoting the order to be processed.
+ */
 vector<uint64_t> hilbert(const vector<pair<int, int>> &q) {
   int n = q.size();
   vector<uint64_t> ans(n);

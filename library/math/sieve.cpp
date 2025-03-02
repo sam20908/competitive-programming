@@ -1,5 +1,14 @@
+/**
+ * @brief Precomputes the primes as well as the smallest prime divisor of all numbers [1,`n`].
+ */
 struct sieve {
   vector<int> primes, spd;
+
+  /**
+   * @brief Precomputes the information up to `n`.
+   *
+   * @param n Bound of the precomputation.
+   */
   sieve(int n) : spd(n + 1) {
     iota(spd.begin(), spd.end(), 0);
     for (int i = 2; i <= n; i++) {
@@ -12,9 +21,23 @@ struct sieve {
       }
     }
   }
+
+  /**
+   * @brief Check whether the given integer is a prime.
+   *
+   * @param x Value to check.
+   * @return Whether it is a prime.
+   */
   bool is_prime(int x) {
     return x > 1 && spd[x] == x;
   }
+
+  /**
+   * @brief Compute the list of divisors of the given integer.
+   *
+   * @param x Value to get the divisors of.
+   * @return List of divisors.
+   */
   vector<int> divisors(int x) {
     vector<int> ans;
     while (x > 1)

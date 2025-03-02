@@ -1,8 +1,18 @@
-int gcd(int a, int b, int &x, int &y) {
+/**
+ * @brief Perform the extended Euclidean algorithm.
+ *
+ * @param a
+ * @param b
+ * @param x Mutable reference to write out the first coefficient
+ * @param y Mutable reference to write out the second coefficient
+ * @return GCD of (a,b)
+ */
+template <typename T>
+T gcd(T a, T b, T &x, T &y) {
   x = 1, y = 0;
-  int x1 = 0, y1 = 1, a1 = a, b1 = b;
+  T x1 = 0, y1 = 1, a1 = a, b1 = b;
   while (b1) {
-    int q = a1 / b1;
+    T q = a1 / b1;
     tie(x, x1) = make_tuple(x1, x - q * x1);
     tie(y, y1) = make_tuple(y1, y - q * y1);
     tie(a1, b1) = make_tuple(b1, a1 - q * b1);
