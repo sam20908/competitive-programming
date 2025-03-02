@@ -1,3 +1,9 @@
+/**
+ * @brief Computes the strongly connected components of a graph
+ *
+ * @param g Graph in adjacency list form
+ * @return List of strongly connected components
+ */
 vector<vector<int>> strongly_connected_components(vector<vector<int>> &g) {
   int n = g.size();
   vector<int> vis(n), ord;

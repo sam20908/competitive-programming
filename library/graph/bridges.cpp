@@ -1,3 +1,9 @@
+/**
+ * @brief Computes the bridges of a graph
+ *
+ * @param g Graph in adjacency list form
+ * @return List of edges of (u,v) that is a bridge
+ */
 vector<pair<int, int>> bridges(vector<vector<int>> &g) {
   int n = g.size();
   vector<int> in(n, -1), low(n, -1);

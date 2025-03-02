@@ -1,7 +1,30 @@
-struct lowest_common_ancestor {
+/**
+ * @brief Answers lowest common ancestor queries of a tree.
+ *        This is implemented with "Farach-Colton and Bender Algorithm" and it is asymptotically optimal.
+ */
+class lowest_common_ancestor {
   vector<int> tour, start, end, node, depth, mask;
   vector<vector<int>> dp;
   vector<vector<vector<int>>> blocks;
+
+  int min_by_depth(int i, int j) const {
+    return depth[tour[i]] < depth[tour[j]] ? i : j;
+  }
+
+  int lca_block(int b, int l, int r) const {
+    int b_size = max(1, (int)__lg(tour.size()) >> 1);
+    return blocks[mask[b]][l][r] + b * b_size;
+  }
+
+  friend auto mo_tree(const vector<vector<int>> &, int, const vector<pair<int, int>> &, auto &&, auto &&, auto &&, auto &&);
+
+public:
+  /**
+   * @brief Preprocesses a given tree for queries.
+   *
+   * @param g Tree in adjacency list form
+   * @param root Root of the tree
+   */
   lowest_common_ancestor(const vector<vector<int>> &g, int root) {
     int n = g.size();
     tour.reserve(2 * n);
@@ -63,14 +86,15 @@ struct lowest_common_ancestor {
       }
     }
   }
-  int min_by_depth(int i, int j) {
-    return depth[tour[i]] < depth[tour[j]] ? i : j;
-  }
-  int lca_block(int b, int l, int r) {
-    int b_size = max(1, (int)__lg(tour.size()) >> 1);
-    return blocks[mask[b]][l][r] + b * b_size;
-  }
-  int lca(int v, int u) {
+
+  /**
+   * @brief Computes the lowest common ancestor
+   *
+   * @param v A node
+   * @param u A node
+   * @return Lowest common ancestor of (v,u)
+   */
+  int lca(int v, int u) const {
     int l = start[v], r = start[u], b_size = max(1, (int)__lg(tour.size()) >> 1);
     if (l > r)
       swap(l, r);
