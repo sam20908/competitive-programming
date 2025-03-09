@@ -46,7 +46,7 @@ public:
    * @param args Additional arguments for `query_fn`.
    * @return Answer to the query.
    */
-  auto query(int l, int r, auto ans0, auto &&...args) const { // [l, r)
+  auto query(int l, int r, auto ans0, auto &&...args) const {
     int n = tree.size() >> 1;
     auto ansl = ans0, ansr = ans0;
     for (l += n, r += n; l < r; l >>= 1, r >>= 1) {
@@ -63,11 +63,11 @@ public:
    *
    * @param l Left boundary.
    * @param fn Monotonic boolean function.
-   * @param ans0 Default answer for `fn`.
+   * @param ans0 Default answer for `query_combine`.
    * @param args Additional arguments for `fn`.
    * @return Maximum `r`.
    */
-  int max_r(int l, auto fn, auto ans0, auto &&...args) const { // maximum r>=l such that f(a[l..r-1]) is true
+  int max_r(int l, auto fn, auto ans0, auto &&...args) const {
     int n = tree.size() >> 1, i = l + n, d = 1;
     assert((n & (n - 1)) == 0);
     for (auto ans = ans0; l < n && ((i & 1 ^ 1) || fn(ans = query_combine(ans0, query_fn(tree[i]), args...))); d <<= 1, i = (i >> 1) + (i & 1))
@@ -84,11 +84,11 @@ public:
    *
    * @param r Right boundary.
    * @param fn Monotonic boolean function.
-   * @param ans0 Default answer for `fn`.
+   * @param ans0 Default answer for `query_combine`.
    * @param args Additional arguments for `fn`.
    * @return Minimum `l`.
    */
-  int min_l(int r, auto fn, auto ans0, auto &&...args) const { // minimum l<=r such that f(a[l+1..r]) is true
+  int min_l(int r, auto fn, auto ans0, auto &&...args) const {
     int n = tree.size() >> 1, i = r + n, d = 1;
     assert((n & (n - 1)) == 0);
     for (auto ans = ans0; r >= 0 && i > 1 && ((i & 1) || fn(ans = query_combine(ans0, query_fn(tree[i]), args...))); d <<= 1, i = (i - 1) >> 1)
