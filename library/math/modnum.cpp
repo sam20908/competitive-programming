@@ -1,4 +1,4 @@
-template <int M, typename T = int>
+template <int M, typename T = long long>
 struct modnum {
   T v{};
   constexpr modnum() = default;
