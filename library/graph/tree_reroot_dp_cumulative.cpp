@@ -1,16 +1,3 @@
-/**
- * @brief Computes the answer for each vertex when they are the root of the tree.
- *        This is designed for cumulative transitions to save memory.
- *
- * @param g Tree in adjacency list form.
- * @param init_dp Returns the initial state for a vertex. Called as `fn(ans0, u)`.
- * @param apply_dp Applies the child's state onto the current state. Called as `fn(dp&, const dp_child&, u)`.
- * @param remove_dp Removes the child's state from the current state. Called as `fn(dp&, const dp_child&, u)`.
- * @param ans0 Default state. Note that this may be different from the result of `vertex_initial_dp`.
- * @param root Initial root of the tree.
- * @param node_projection Projection to extract the vertex from an edge. Called as `fn(edge)`.
- * @return vector<T> List of answers where `ans[u]` is the answer for vertex `u`.
- */
 template <typename T, typename F = identity, typename E>
 vector<T> tree_reroot_dp(vector<vector<E>> &g, auto &&init_dp, auto &&apply_dp, auto &&remove_dp, T ans0, int root, F node_projection = {}) {
   int n = g.size();
