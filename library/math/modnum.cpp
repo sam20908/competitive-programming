@@ -23,16 +23,19 @@ struct modnum {
   constexpr modnum<M, T> operator%(long long mod) const {
     return v % mod;
   }
-#define OP(op)                                                            \
-  constexpr friend modnum operator op(const modnum &a, const modnum &b) { \
-    return ((1LL * a.v op b.v) % M + M) % M;                              \
-  }                                                                       \
+#define OP(op, op2, f)                                                    \
   constexpr modnum &operator op##=(const modnum & other) {                \
-    v = ((1LL * v op other.v) % M + M) % M;                               \
+    v = ((1LL * v op2 other.f) % M + M) % M;                              \
     return *this;                                                         \
+  }                                                                       \
+  constexpr friend modnum operator op(const modnum &a, const modnum &b) { \
+    auto c = a;                                                           \
+    c op## = b;                                                           \
+    return c;                                                             \
   }
-  OP(+)
-  OP(-)
-  OP(*)
+  OP(+, +, v)
+  OP(-, -, v)
+  OP(*, *, v)
+  OP(/, *, inv().v)
 #undef OP
 };
