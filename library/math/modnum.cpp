@@ -1,27 +1,24 @@
-template <int M, typename T = long long>
+template <int M>
 struct modnum {
-  T v{};
+  long long v{};
   constexpr modnum() = default;
   constexpr modnum(long long vx) : v((vx % M + M) % M) {}
   constexpr modnum &operator=(long long vx) {
     v = (vx % M + M) % M;
     return *this;
   }
-  constexpr modnum<M, T> pow(long long p) const {
+  constexpr modnum pow(long long p) const {
     long long a = v, res = 1;
     for (; p; p >>= 1, a = a * a % M)
       if (p & 1)
         res = res * a % M;
     return res;
   }
-  constexpr modnum<M, T> inv() const {
+  constexpr modnum inv() const {
     return pow(M - 2);
   }
-  constexpr explicit operator T() const {
+  constexpr explicit operator long long() const {
     return v;
-  }
-  constexpr modnum<M, T> operator%(long long mod) const {
-    return v % mod;
   }
 #define OP(op, op2, f)                                                    \
   constexpr modnum &operator op##=(const modnum & other) {                \
@@ -38,4 +35,20 @@ struct modnum {
   OP(*, *, v)
   OP(/, *, inv().v)
 #undef OP
+  struct combinatorics {
+    vector<modnum> fact, ifact, inv;
+    combinatorics(int n) : fact(n + 1, 1), ifact(n + 1, 1), inv(n + 1, 1) {
+      for (int i = 2; i <= n; i++) {
+        fact[i] = 1LL * fact[i - 1] * i;
+        inv[i] = 1LL * (M - M / i) * inv[M % i];
+        ifact[i] = 1LL * ifact[i - 1] * inv[i];
+      }
+    }
+    modnum ncr(int n, int k) const {
+      return 1LL * fact[n] * ifact[k] * ifact[n - k];
+    }
+    modnum npr(int n, int k) const {
+      return 1LL * fact[n] * ifact[n - k];
+    }
+  };
 };
