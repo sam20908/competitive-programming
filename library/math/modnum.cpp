@@ -45,10 +45,10 @@ struct modnum {
       }
     }
     modnum ncr(int n, int k) const {
-      return 1LL * fact[n] * ifact[k] * ifact[n - k];
+      return fact[n] * ifact[k] * ifact[n - k];
     }
     modnum npr(int n, int k) const {
-      return 1LL * fact[n] * ifact[n - k];
+      return fact[n] * ifact[n - k];
     }
   };
 };
