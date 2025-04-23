@@ -1,15 +1,13 @@
-template <typename A, typename R, typename F>
-struct mo_array {
+template <typename F>
+struct offline_array_queries {
   vector<pair<int, int>> q;
-  A add;
-  R remove;
-  F f;
-  mo_array(A add, R remove, F f) : add(add), remove(remove), f(f) {}
+  function<void(int)> add, erase; // FIXME: Use function_ref in C++26
+  F get_ans;
+  offline_array_queries(function<void(int)> add, function<void(int)> erase, F get_ans) : add(std::move(add)), erase(std::move(erase)), get_ans(get_ans) {}
   void add_query(int l, int r) {
     q.push_back({l, r});
   };
-  template <typename H>
-  auto solve(H &&heuristic) {
+  auto solve(auto &&heuristic) {
     int n = q.size();
     auto h = heuristic(q);
     vector<int> ord(n);
@@ -25,10 +23,10 @@ struct mo_array {
       while (q[ord[i]].first < cl)
         add(--cl);
       while (q[ord[i]].second < cr)
-        remove(cr--);
+        erase(cr--);
       while (cl < q[ord[i]].first)
-        remove(cl++);
-      ans[ord[i]] = f();
+        erase(cl++);
+      ans[ord[i]] = get_ans();
     }
     return ans;
   }
