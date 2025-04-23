@@ -2,7 +2,7 @@ struct lowest_common_ancestor {
   vector<int> tour, start, end, node, depth, mask;
   vector<vector<int>> dp;
   vector<vector<vector<int>>> blocks;
-  lowest_common_ancestor(const vector<vector<int>> &g, int root) {
+  lowest_common_ancestor(const vector<vector<int>> &g, int root = 0) {
     int n = g.size();
     tour.reserve(2 * n);
     start.resize(n);
@@ -63,14 +63,14 @@ struct lowest_common_ancestor {
       }
     }
   }
-  int min_by_depth(int i, int j) {
+  int min_by_depth(int i, int j) const {
     return depth[tour[i]] < depth[tour[j]] ? i : j;
   }
-  int lca_block(int b, int l, int r) {
+  int lca_block(int b, int l, int r) const {
     int b_size = max(1, (int)__lg(tour.size()) >> 1);
     return blocks[mask[b]][l][r] + b * b_size;
   }
-  int lca(int v, int u) {
+  int lca(int v, int u) const {
     int l = start[v], r = start[u], b_size = max(1, (int)__lg(tour.size()) >> 1);
     if (l > r)
       swap(l, r);
@@ -78,15 +78,66 @@ struct lowest_common_ancestor {
     int br = r / b_size;
     if (bl == br)
       return tour[lca_block(bl, l % b_size, r % b_size)];
-    int ans1 = lca_block(bl, l % b_size, b_size - 1);
-    int ans2 = lca_block(br, 0, r % b_size);
-    int ans = min_by_depth(ans1, ans2);
+    int ans = min_by_depth(lca_block(bl, l % b_size, b_size - 1), lca_block(br, 0, r % b_size));
     if (bl + 1 < br) {
       int l = __lg(br - bl - 1);
-      int ans3 = dp[bl + 1][l];
-      int ans4 = dp[br - (1 << l)][l];
-      ans = min_by_depth(ans, min_by_depth(ans3, ans4));
+      ans = min_by_depth(ans, min_by_depth(dp[bl + 1][l], dp[br - (1 << l)][l]));
     }
     return tour[ans];
   }
+  template <typename F>
+  struct offline_path_queries {
+    vector<pair<int, int>> q;
+    function<void(int)> add, erase;
+    F get_ans;
+    offline_path_queries(function<void(int)> add, function<void(int)> remove, F get_ans) : add(std::move(add)), erase(std::move(erase)), get_ans(get_ans) {}
+    void add_query(int l, int r) {
+      q.push_back({l, r});
+    };
+    template <typename T = invoke_result_t<F>>
+    vector<T> solve(auto &&heuristic, const lowest_common_ancestor &lca) {
+      int n = lca.depth.size(), m = q.size();
+      vector<pair<int, int>> q2(m);
+      for (int i = 0; i < m; i++) {
+        auto [u, v] = q[i];
+        if (lca.start[u] > lca.start[v])
+          swap(u, v);
+        q2[i] = {lca.lca(u, v) == u ? lca.start[u] : lca.end[u], lca.start[v]};
+      }
+      auto h = heuristic(q2);
+      vector<int> ord(m);
+      iota(ord.begin(), ord.end(), 0);
+      ranges::sort(ord, [&](int i, int j) {
+        return h[i] < h[j];
+      });
+      vector<int> cnt(n);
+      vector<T> ans(m);
+      auto modify = [&](int u, int c) {
+        if (c & 1)
+          add(u);
+        else
+          erase(u);
+      };
+      for (int i = 0, cl = 0, cr = -1; i < m; i++) {
+        auto [l, r] = q2[ord[i]];
+        int u = lca.node[l], v = lca.node[r], a = lca.lca(lca.node[l], lca.node[r]);
+        while (cr < r)
+          ++cr, modify(lca.node[cr], ++cnt[lca.node[cr]]);
+        while (l < cl)
+          --cl, modify(lca.node[cl], ++cnt[lca.node[cl]]);
+        while (r < cr)
+          modify(lca.node[cr], --cnt[lca.node[cr]]), --cr;
+        while (cl < l)
+          modify(lca.node[cl], --cnt[lca.node[cl]]), ++cl;
+        if (a == u)
+          ans[ord[i]] = get_ans();
+        else {
+          modify(a, ++cnt[a]);
+          ans[ord[i]] = get_ans();
+          modify(a, --cnt[a]);
+        }
+      }
+      return ans;
+    }
+  };
 };
