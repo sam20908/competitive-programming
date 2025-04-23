@@ -88,7 +88,7 @@ struct lowest_common_ancestor {
   template <typename F>
   struct offline_path_queries {
     vector<pair<int, int>> q;
-    function<void(int)> add, erase;
+    function<void(int)> add, erase; // FIXME: Use function_ref in C++26
     F get_ans;
     offline_path_queries(function<void(int)> add, function<void(int)> remove, F get_ans) : add(std::move(add)), erase(std::move(erase)), get_ans(get_ans) {}
     void add_query(int l, int r) {
