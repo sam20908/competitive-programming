@@ -1,8 +1,4 @@
-# Competitive Programming Kickstarter
+## ✨ My Own Competitive Programming Tinkies ✨
 
-Quickly start writing your solution in either LeetCode or other online judges!
-
-C++ is the main language used in this template.
-
-For LeetCode, see [this link](leetcode/README.md)
-For other online judges, see [this link](cp/README.md)
+- C++ LeetCode input/output template and parser [➤](leetcode/README.md)
+- C++ Libraries of data structures and algorithms [➤](library/README.md)

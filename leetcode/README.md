@@ -1,4 +1,4 @@
-# LeetCode with C++
+## ✨ LeetCode with C++ ✨
 
 ### Features
 
