@@ -32,14 +32,6 @@ template <std::size_t N>
 struct is_bitset<bitset<N>> : std::true_type {};
 template <typename T>
 concept tuple_like = requires { typename tuple_size<T>::type; };
-template <typename T>
-concept iterable = requires(T t) {
-  t.begin();
-  t.end();
-};
-
-template <typename>
-static constexpr bool always_false = false;
 
 template <typename T>
 void print_impl(FILE *f, const T &val, bool write_newline) {
@@ -105,7 +97,7 @@ void print_impl(FILE *f, const T &val, bool write_newline) {
       cur = cur->next;
     }
     fprintf(f, "]");
-  } else if constexpr (iterable<T>) {
+  } else if constexpr (ranges::range<T>) {
     fprintf(f, "[");
     for (auto it = val.begin(); it != val.end(); it++) {
       if (it != val.begin())
@@ -114,7 +106,7 @@ void print_impl(FILE *f, const T &val, bool write_newline) {
     }
     fprintf(f, "]");
   } else
-    static_assert(always_false<T>, "printing for type not supported");
+    static_assert(false, "printing for type not supported");
   if (write_newline)
     fprintf(f, "\n");
 }
@@ -207,7 +199,7 @@ T parse() {
     }
     ans = dummy->next;
     delete dummy;
-  } else if constexpr (iterable<T>) {
+  } else if constexpr (ranges::range<T>) {
     scanf(" %*c");
     if (int c = getchar(); c != ']') {
       ungetc(c, stdin);
@@ -218,12 +210,12 @@ T parse() {
       }
     }
   } else
-    static_assert(always_false<T>, "parsing for type not supported");
+    static_assert(false, "parsing for type not supported");
   return ans;
 }
 
 template <typename Solution, typename R, typename... Ts>
-void exec(R (Solution::*fn)(Ts...)) {
+void run(R (Solution::*fn)(Ts...)) {
   while (true) {
     int c = getchar();
     if (c == EOF || isspace(c))
