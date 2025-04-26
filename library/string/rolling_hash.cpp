@@ -9,7 +9,7 @@ struct rolling_hash {
     for (int i = n - 1; i >= 0; i--)
       h[i] = (s[i] + __uint128_t(h[i + 1]) * P % M) % M;
   }
-  uint64_t hash(int l, int r) { // [l, r)
+  uint64_t hash(int l, int r) const { // [l, r)
     return (h[l] - __uint128_t(h[r]) * p[r - l] % M + M) % M;
   }
 };
