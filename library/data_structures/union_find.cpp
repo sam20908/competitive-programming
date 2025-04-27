@@ -7,9 +7,9 @@ struct union_find {
   int comps;
   vector<int> v;            // size for parent and -parent otherwise
   function<void(info_t)> f; // FIXME: Use function_ref in C++26
-  union_find(int n, function<void(info_t)> f) : comps(n), v(n, 1), f(std::move(f)) {}
+  union_find(int n, function<void(info_t)> f = {}) : comps(n), v(n, 1), f(std::move(f)) {}
   int find(int i) {
-    return v[i] > 0 ? i : (v[i] = -find(-v[i]));
+    return v[i] > 0 ? i : -(v[i] = -find(-v[i]));
   }
   bool unite(int i, int j) {
     i = find(i), j = find(j);
