@@ -11,6 +11,9 @@ struct union_find {
   int find(int i) {
     return v[i] > 0 ? i : -(v[i] = -find(-v[i]));
   }
+  int size(int i) {
+    return v[find(i)];
+  }
   bool unite(int i, int j) {
     i = find(i), j = find(j);
     if (i == j)
