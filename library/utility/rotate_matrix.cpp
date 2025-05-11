@@ -4,7 +4,6 @@ vector<vector<T>> rot90(const vector<vector<T>> &v) {
   vector ans(m, vector<int>(n));
   for (int i = 0; i < n; i++)
     for (int j = 0; j < m; j++)
-      ans[j][i] = v[i][j];
-  ranges::reverse(ans);
+      ans[j][n - i - 1] = v[i][j];
   return ans;
 }
