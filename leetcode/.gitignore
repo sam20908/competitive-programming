@@ -2,5 +2,6 @@
 
 !.gitignore
 !template.cpp
+!template.py
 !parser.hpp
 !README.md
