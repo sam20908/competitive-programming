@@ -1,7 +1,7 @@
 from typing import List  # noqa: F401
 from ast import literal_eval
 import inspect
-import collections, math, bisect  # noqa: E401, F401
+import collections, math, bisect, heapq  # noqa: E401, F401
 
 
 class Solution:
