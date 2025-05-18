@@ -2,7 +2,8 @@ struct lowest_common_ancestor {
   vector<int> tour, start, end, node, depth, mask;
   vector<vector<int>> dp;
   vector<vector<vector<int>>> blocks;
-  lowest_common_ancestor(const vector<vector<int>> &g, int root = 0) {
+  template <typename T, typename P = identity>
+  lowest_common_ancestor(const vector<vector<T>> &g, int root = 0, P projection = {}) {
     int n = g.size();
     tour.reserve(2 * n);
     start.resize(n);
@@ -13,9 +14,9 @@ struct lowest_common_ancestor {
       node[start[u] = end[u] = tour.size()] = u;
       depth[u] = d;
       tour.push_back(u);
-      for (int v : g[u]) {
-        if (v != p) {
-          self(self, v, u, d + 1);
+      for (auto &&v : g[u]) {
+        if (projection(v) != p) {
+          self(self, projection(v), u, d + 1);
           tour.push_back(u);
         }
       }
