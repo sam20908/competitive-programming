@@ -1,6 +1,7 @@
 from typing import List  # noqa: F401
 from ast import literal_eval
 import inspect
+import collections  # noqa: F401
 
 
 class Solution:
