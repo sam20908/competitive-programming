@@ -11,9 +11,5 @@ class Solution:
 
 for name, fn in inspect.getmembers(Solution, inspect.isfunction):
   if not name.startswith("_"):
-    args = []
-    for i in range(len(inspect.signature(fn).parameters) - 1):
-      arg = literal_eval(input())
-      args.append(arg)
-    fn(Solution(), *args)
+    print(fn(Solution(), *[literal_eval(input()) for _ in range(len(inspect.signature(fn).parameters) - 1)]))
     break
