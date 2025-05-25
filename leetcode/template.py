@@ -1,8 +1,8 @@
-from typing import List  # noqa: F401
+from typing import List
 from ast import literal_eval
 import inspect
-from functools import cache  # noqa: F401
-import collections, math, bisect, heapq  # noqa: E401, F401
+from functools import cache
+import collections, math, bisect, heapq
 
 
 class Solution:
