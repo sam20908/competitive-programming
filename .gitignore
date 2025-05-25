@@ -3,4 +3,5 @@
 !library/
 !leetcode/
 !.clang-format
+!ruff.toml
 !README.md
