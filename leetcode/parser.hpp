@@ -115,12 +115,12 @@ void print_impl(FILE *f, const T &val, bool write_newline) {
 #define CONCAT(x, y) CONCAT_IMPL(x, y)
 #define NUM_ARGS_IMPL(_1, _2, _3, _4, _5, _6, _7, _8, _9, _10, N, ...) N
 #define NUM_ARGS(...) NUM_ARGS_IMPL(__VA_ARGS__, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1)
-#define DBG_VAL(x)                                                                                                                                                                                                                                                                                                                                                                                             \
-  [&]() {                                                                                                                                                                                                                                                                                                                                                                                                      \
-    auto val = x;                                                                                                                                                                                                                                                                                                                                                                                              \
-    fprintf(stderr, "[%s = ", #x);                                                                                                                                                                                                                                                                                                                                                                             \
-    print_impl(stderr, val, false);                                                                                                                                                                                                                                                                                                                                                                            \
-    fprintf(stderr, "] ");                                                                                                                                                                                                                                                                                                                                                                                     \
+#define DBG_VAL(x)                  \
+  [&]() {                           \
+    auto val = x;                   \
+    fprintf(stderr, "[%s = ", #x);  \
+    print_impl(stderr, val, false); \
+    fprintf(stderr, "] ");          \
   }()
 #define DBG_1(x) DBG_VAL(x)
 #define DBG_2(x, ...) DBG_VAL(x), DBG_1(__VA_ARGS__)
@@ -216,25 +216,18 @@ T parse() {
 
 template <typename Solution, typename R, typename... Ts>
 void run(R (Solution::*fn)(Ts...)) {
-  while (true) {
-    int c = getchar();
-    if (c == EOF || isspace(c))
-      break;
-    ungetc(c, stdin);
-    tuple<Solution, decay_t<Ts>...> args;
-    get<0>(args) = Solution{};
-    [&]<size_t... Idx>(index_sequence<Idx...>) {
-      (((get<Idx + 1>(args) = parse<decay_t<Ts>>()), scanf("%*c")), ...);
-    }(index_sequence_for<Ts...>{});
-    if constexpr (same_as<R, void>) {
-      apply(fn, args);
-      []<size_t... Idx>(auto &&args, index_sequence<Idx...>) {
-        ((printf("#%lld: ", Idx + 1), print_impl(stdout, get<Idx + 1>(args), true)), ...);
-      }(args, index_sequence_for<Ts...>{});
-    } else {
-      auto res = apply(fn, args);
-      print_impl(stdout, res, true);
-    }
-    fprintf(stderr, "\n"); // separate debug output from different testcases
+  tuple<Solution, decay_t<Ts>...> args;
+  get<0>(args) = Solution{};
+  [&]<size_t... Idx>(index_sequence<Idx...>) {
+    (((get<Idx + 1>(args) = parse<decay_t<Ts>>()), scanf("%*c")), ...);
+  }(index_sequence_for<Ts...>{});
+  if constexpr (same_as<R, void>) {
+    apply(fn, args);
+    []<size_t... Idx>(auto &&args, index_sequence<Idx...>) {
+      ((printf("#%lld: ", Idx + 1), print_impl(stdout, get<Idx + 1>(args), true)), ...);
+    }(args, index_sequence_for<Ts...>{});
+  } else {
+    auto res = apply(fn, args);
+    print_impl(stdout, res, true);
   }
 }
