@@ -47,7 +47,7 @@ struct segment_tree {
       if (i & 1 ^ 1)
         ans0 = std::move(ans), r -= d;
     for (; r >= 0 && i < 2 * n; r -= d, d >>= 1)
-      if (auto ans = exchange(ans0, query_combine(ans0, query_fn(tree[(i = (i << 1) - 1) + 1 >> 1]), std::forward<Args>(args)...)); !fn(ans0))
+      if (auto ans = exchange(ans0, query_combine(ans0, query_fn(tree[((i = (i << 1) - 1) + 1) >> 1]), std::forward<Args>(args)...)); !fn(ans0))
         ans0 = std::move(ans), i += 2, r += d;
     return r;
   }
