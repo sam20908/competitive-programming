@@ -20,11 +20,10 @@ struct segment_tree_persistent {
     };
     root0 = dfs(dfs, 0, n - 1);
   }
-  template <typename... Args>
-  node_t *update(node_t *root, int i, Args &&...args) {
+  node_t *update(node_t *root, int i, auto &&...args) {
     auto dfs = [&](auto &self, node_t *cur, int tl, int tr) -> node_t * {
       if (tl == tr) {
-        return new node_t{.v = apply(cur->v, std::forward<Args>(args)...)};
+        return new node_t{.v = apply(cur->v, args...)};
       }
       int tm = (tl + tr) / 2;
       auto node_l = i <= tm ? self(self, cur->l, tl, tm) : cur->l;
@@ -33,13 +32,13 @@ struct segment_tree_persistent {
     };
     return dfs(dfs, root, 0, n - 1);
   }
-  template <typename R = T, typename... Args>
-  R query(node_t *root, int l, int r, R ans = {}, Args &&...args) { // [l, r]
+  template <typename R = T>
+  R query(node_t *root, int l, int r, R ans0 = {}, auto &&...args) { // [l, r]
     auto dfs = [&](auto &self, node_t *cur, int tl, int tr, int l, int r) -> R {
       if (l > r)
-        return ans;
+        return ans0;
       if (tl == l && tr == r)
-        return query_fn(cur->v, std::forward<Args>(args)...);
+        return query_fn(cur->v, args...);
       int tm = (tl + tr) / 2;
       return query_combine(self(self, cur->l, tl, tm, l, min(r, tm)), self(self, cur->r, tm + 1, tr, max(l, tm + 1), r));
     };
