@@ -7,7 +7,8 @@ struct fenwick {
     for (; i < tree.size(); i += i & -i)
       tree[i] = combine(tree[i], v);
   }
-  T query(int i, T ans = {}) { // one-indexed
+  T query(int i) { // one-indexed
+    T ans = tree[0];
     for (; i > 0; i -= i & -i)
       ans = combine(ans, tree[i]);
     return ans;
