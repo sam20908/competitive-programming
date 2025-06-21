@@ -11,7 +11,7 @@ struct sparse_table {
         dp[i][j] = combine(dp[i - 1][j], dp[i - 1][j + (1 << (i - 1))]);
   }
   T query(int l, int r, T ans = {}) {
-    for (int i = dp[0].size(); i >= 0; i--)
+    for (int i = dp.size(); i >= 0; i--)
       if ((1 << i) <= r - l + 1) {
         ans = combine(ans, dp[i][l]);
         l += 1 << i;
