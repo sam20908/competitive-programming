@@ -1,8 +1,10 @@
-from typing import List
+from typing import *
 from ast import literal_eval
 import inspect
-from functools import cache
-import collections, math, bisect, heapq
+from functools import *
+from math import *
+from collections import *
+from heapq import *
 
 
 class Solution:
