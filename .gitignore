@@ -5,3 +5,4 @@
 !.clang-format
 !ruff.toml
 !README.md
+!ac-library
