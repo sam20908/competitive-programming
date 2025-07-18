@@ -1,53 +1,35 @@
+template <int Begin, int End>
 struct aho_corasick {
   struct node_t {
-    int g[26]{};
-    int link = 0, mlink = 0, match = -1;
-    node_t() {
-      ranges::fill(g, -1);
-    }
+    int g[End - Begin + 1]{};
+    int link = 0, exit = 0;
+    vector<int> matches;
   };
-  vector<node_t> v = vector<node_t>(1);
-  template <typename F>
-  aho_corasick(const vector<string> &w, F f) {
+  vector<node_t> t = vector<node_t>(1);
+  aho_corasick(const vector<string> &w) {
     for (int i = 0; i < (int)w.size(); i++) {
       int u = 0;
       for (char c : w[i]) {
-        if (v[u].g[c - 'a'] == -1) {
-          v[u].g[c - 'a'] = v.size();
-          v.push_back({});
+        if (!t[u].g[c - Begin]) {
+          t[u].g[c - Begin] = t.size();
+          t.push_back({});
         }
-        u = v[u].g[c - 'a'];
+        u = t[u].g[c - Begin];
       }
-      v[u].match = i;
-      f(i, u);
+      t[u].matches.push_back(i);
     }
-    queue<int> q;
-    for (int a = 0; a < 26; a++)
-      if (v[0].g[a] != -1)
-        q.push(v[0].g[a]);
-      else
-        v[0].g[a] = 0;
+    queue<int> q{{0}};
     while (!q.empty()) {
       int u = q.front();
       q.pop();
-      for (int a = 0; a < 26; a++)
-        if (v[u].g[a] != -1) {
-          int l = v[u].link;
-          while (v[l].g[a] == -1)
-            l = v[l].link;
-          v[v[u].g[a]].link = v[l].g[a];
-          v[v[u].g[a]].mlink = v[v[l].g[a]].match == -1 ? v[v[l].g[a]].mlink : v[l].g[a];
-          q.push(v[u].g[a]);
-        }
-    }
-  }
-  template <typename F>
-  void iterate(const string &s, F f) {
-    for (int i = 0, u = 0; i < (int)s.size(); i++) {
-      while (v[u].g[s[i] - 'a'] == -1)
-        u = v[u].link;
-      u = v[u].g[s[i] - 'a'];
-      for (int p = v[u].match == -1 ? v[u].mlink : u; p && f(i, v[p].match, p); p = v[p].mlink) {}
+      for (int a = 0; a <= End - Begin; a++) {
+        if (int v = t[u].g[a]) {
+          t[v].link = u ? t[t[u].link].g[a] : 0;
+          t[v].exit = t[t[v].link].matches.empty() ? t[t[v].link].exit : t[v].link;
+          q.push(v);
+        } else
+          t[u].g[a] = t[t[u].link].g[a];
+      }
     }
   }
 };
