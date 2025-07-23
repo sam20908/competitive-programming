@@ -1,46 +1,72 @@
-template <typename T, typename A, typename C, typename C2 = C, typename F = identity>
+template <typename T>
 struct segment_tree_persistent {
   struct node_t {
-    node_t *l = nullptr, *r = nullptr;
+    node_t *l, *r;
     T v;
   };
-  node_t *root0;
   int n;
-  A apply;
-  C combine;
-  C2 query_combine;
-  F query_fn;
-  segment_tree_persistent(int n, T v, A apply, C combine, C2 query_combine = {}, F query_fn = {}) : n(n), apply(apply), combine(combine), query_combine(query_combine), query_fn(query_fn) {
+  function<T(T, T)> combine;
+  list<node_t> nodes; // avoid invalidating references by growth from vector
+  node_t *new_node(node_t *l, node_t *r, const T &v) {
+    return &nodes.emplace_back(node_t{l, r, v});
+  }
+  segment_tree_persistent(int n, function<T(T, T)> combine) : n(n), combine(std::move(combine)) {
     auto dfs = [&](auto &self, int tl, int tr) -> node_t * {
       if (tl == tr)
-        return new node_t{.v = v};
+        return new_node(nullptr, nullptr, T{});
       int tm = (tl + tr) / 2;
-      auto node_l = self(self, tl, tm), node_r = self(self, tm + 1, tr);
-      return new node_t{node_l, node_r, combine(node_l->v, node_r->v)};
+      auto l = self(self, tl, tm);
+      auto r = self(self, tm + 1, tr);
+      return new_node(l, r, this->combine(l->v, r->v));
     };
-    root0 = dfs(dfs, 0, n - 1);
+    dfs(dfs, 0, n - 1);
   }
-  node_t *update(node_t *root, int i, auto &&...args) {
+  segment_tree_persistent(const vector<T> &v, function<T(T, T)> combine) : n(v.size()), combine(std::move(combine)) {
+    auto dfs = [&](auto &self, int tl, int tr) -> node_t * {
+      if (tl == tr)
+        return new_node(nullptr, nullptr, v[tl]);
+      int tm = (tl + tr) / 2;
+      auto l = self(self, tl, tm);
+      auto r = self(self, tm + 1, tr);
+      return new_node(l, r, this->combine(l->v, r->v));
+    };
+    dfs(dfs, 0, n - 1);
+  }
+  node_t *update(node_t *root, int i, const T &v) {
     auto dfs = [&](auto &self, node_t *cur, int tl, int tr) -> node_t * {
       if (tl == tr) {
-        return new node_t{.v = apply(cur->v, args...)};
+        return new_node(nullptr, nullptr, combine(cur->v, v));
       }
       int tm = (tl + tr) / 2;
-      auto node_l = i <= tm ? self(self, cur->l, tl, tm) : cur->l;
-      auto node_r = i > tm ? self(self, cur->r, tm + 1, tr) : cur->r;
-      return new node_t{node_l, node_r, combine(node_l->v, node_r->v)};
+      auto l = i <= tm ? self(self, cur->l, tl, tm) : cur->l;
+      auto r = i > tm ? self(self, cur->r, tm + 1, tr) : cur->r;
+      return new_node(l, r, combine(l->v, r->v));
     };
     return dfs(dfs, root, 0, n - 1);
   }
-  template <typename R = T>
-  R query(node_t *root, int l, int r, R ans0 = {}, auto &&...args) { // [l, r]
-    auto dfs = [&](auto &self, node_t *cur, int tl, int tr, int l, int r) -> R {
-      if (l > r)
-        return ans0;
-      if (tl == l && tr == r)
-        return query_fn(cur->v, args...);
+
+  node_t *set(node_t *root, int i, const T &v) {
+    auto dfs = [&](auto &self, node_t *cur, int tl, int tr) -> node_t * {
+      if (tl == tr) {
+        return new_node(nullptr, nullptr, v);
+      }
       int tm = (tl + tr) / 2;
-      return query_combine(self(self, cur->l, tl, tm, l, min(r, tm)), self(self, cur->r, tm + 1, tr, max(l, tm + 1), r));
+      auto l = i <= tm ? self(self, cur->l, tl, tm) : cur->l;
+      auto r = i > tm ? self(self, cur->r, tm + 1, tr) : cur->r;
+      return new_node(l, r, combine(l->v, r->v));
+    };
+    return dfs(dfs, root, 0, n - 1);
+  }
+  optional<T> query(node_t *root, int l, int r) {
+    auto dfs = [&](auto &self, node_t *cur, int tl, int tr, int ql, int qr) -> optional<T> {
+      if (ql > qr)
+        return nullopt;
+      if (tl == ql && tr == qr)
+        return cur->v;
+      int tm = (tl + tr) / 2;
+      auto ansl = self(self, cur->l, tl, tm, ql, min(qr, tm));
+      auto ansr = self(self, cur->r, tm + 1, tr, max(ql, tm + 1), qr);
+      return ansl && ansr ? combine(*ansl, *ansr) : ansl ? ansl : ansr;
     };
     return dfs(dfs, root, 0, n - 1, l, r);
   }
