@@ -1,11 +1,13 @@
-template <typename F>
-struct offline_array_queries {
+template <typename R, typename... Args>
+struct mo_array {
   vector<pair<int, int>> q;
+  vector<tuple<Args...>> ans_args;
   function<void(int)> add, erase; // FIXME: Use function_ref in C++26
-  F get_ans;
-  offline_array_queries(function<void(int)> add, function<void(int)> erase, F get_ans) : add(std::move(add)), erase(std::move(erase)), get_ans(get_ans) {}
-  void add_query(int l, int r) {
+  function<R(Args...)> get_ans;
+  mo_array(function<void(int)> add, function<void(int)> erase, function<R(Args...)> get_ans) : add(std::move(add)), erase(std::move(erase)), get_ans(get_ans) {}
+  void add_query(int l, int r, const Args &...args) {
     q.push_back({l, r});
+    ans_args.emplace_back(args...);
   };
   auto solve(auto &&heuristic) {
     int n = q.size();
@@ -16,7 +18,7 @@ struct offline_array_queries {
       return h[i] < h[j];
     });
     int cl = 0, cr = -1;
-    vector<long long> ans(n);
+    vector<R> ans(n);
     for (int i = 0; i < n; i++) {
       while (cr < q[ord[i]].second)
         add(++cr);
@@ -26,7 +28,7 @@ struct offline_array_queries {
         erase(cr--);
       while (cl < q[ord[i]].first)
         erase(cl++);
-      ans[ord[i]] = get_ans();
+      ans[ord[i]] = apply(get_ans, ans_args[ord[i]]);
     }
     return ans;
   }
