@@ -1,20 +1,5 @@
 template <int M>
 struct modnum {
-  inline static consteval bool mod_is_prime() {
-    int l = 0, r = M;
-    while (r - l > 1) {
-      int m = (l + r) >> 1;
-      if (1ll * m * m <= M)
-        l = m;
-      else
-        r = m;
-    }
-    for (int i = 2; i <= l; i++)
-      if (M % i == 0)
-        return false;
-    return M != 1;
-  }
-  static_assert(mod_is_prime(), "modulus has to be prime");
   long long v{};
   constexpr modnum() = default;
   constexpr modnum(long long vx) : v((vx % M + M) % M) {}
