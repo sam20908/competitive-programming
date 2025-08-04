@@ -1,6 +1,6 @@
 template <int M>
 struct modnum {
-  long long v{};
+  int v{};
   constexpr modnum() = default;
   constexpr modnum(long long vx) : v((vx % M + M) % M) {}
   constexpr modnum &operator=(long long vx) {
@@ -35,20 +35,4 @@ struct modnum {
   OP(*, *, v)
   OP(/, *, inv().v)
 #undef OP
-  struct combinatorics {
-    vector<modnum> fact, ifact, inv;
-    combinatorics(int n) : fact(n + 1, 1), ifact(n + 1, 1), inv(n + 1, 1) {
-      for (int i = 2; i <= n; i++) {
-        fact[i] = 1LL * fact[i - 1] * i;
-        inv[i] = 1LL * (M - M / i) * inv[M % i];
-        ifact[i] = 1LL * ifact[i - 1] * inv[i];
-      }
-    }
-    modnum ncr(int n, int k) const {
-      return fact[n] * ifact[k] * ifact[n - k];
-    }
-    modnum npr(int n, int k) const {
-      return fact[n] * ifact[n - k];
-    }
-  };
 };
