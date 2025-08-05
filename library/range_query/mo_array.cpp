@@ -9,7 +9,8 @@ struct mo_array {
     q.push_back({l, r});
     ans_args.emplace_back(args...);
   };
-  auto solve(auto &&heuristic) {
+  template <typename H>
+  auto solve(H &&heuristic) {
     int n = q.size();
     auto h = heuristic(q);
     vector<int> ord(n);
