@@ -2,7 +2,7 @@ vector<int> kmp(const string &s) {
   int n = s.size();
   vector<int> pi(n);
   for (int i = 1; i < n; i++) {
-    int j = i;
+    int j = pi[i - 1];
     for (; j > 0 && s[j] != s[i]; j = pi[j - 1]) {}
     if (s[j] == s[i])
       j++;
