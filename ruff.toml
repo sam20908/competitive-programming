@@ -1,5 +1,2 @@
-line-length = 400
-indent-width = 2
-
 [lint]
-ignore = ["E4", "F4", "E74"]
+ignore = ["E4", "F4", "E74", "E731"]
