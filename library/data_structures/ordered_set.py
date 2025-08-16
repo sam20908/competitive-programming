@@ -1,4 +1,5 @@
 from array import array
+from itertools import repeat
 class OrderedSet:
     __slots__ = (
         "value",
@@ -12,7 +13,7 @@ class OrderedSet:
     )
     ALPHA = 0.85  # 0.5 (faster lookups) < ALPHA < 1 (faster modifications)
 
-    def __init__(self, code=None, multiset=False):
+    def __init__(self, iterable=None, multiset=False, code=None):
         self.value = array(code, [0]) if code else [None]
         self.left = array("i", [0, 0])
         self.right = array("i", [0, 0])
@@ -21,6 +22,21 @@ class OrderedSet:
         self.nodes = 0
         self.free = 1
         self.multiset = multiset
+        if iterable:
+            value = sorted(iterable) if multiset else sorted(set(iterable))
+            n = len(value)
+            self.value.extend(value)
+            self.left.extend(repeat(0, n))
+            self.right[-1] = 2
+            self.right.extend(range(3, n + 2))
+            self.right[-1] = 0
+            self.right.append(0)
+            self.size.pop()
+            self.size.extend(range(n, 0, -1))
+            self.size.append(0)
+            self.nodes = self.max_nodes = n
+            self.free = n + 1
+            self.left[0] = self._rebalance(1)
 
     def __len__(self):
         return self.nodes
