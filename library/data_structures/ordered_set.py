@@ -64,7 +64,7 @@ class OrderedSet(MutableSet):
         node = None
         cur = self.__root
         cnt = 0
-        while cur:
+        while cur > 0:
             new_cnt = cnt + self.__size[self.__left[cur]] + 1
             if new_cnt > index:
                 node = cur
@@ -122,18 +122,18 @@ class OrderedSet(MutableSet):
             right = self.__right[cur]
             if left:
                 succ = left
-                while self.__right[succ] and self.__right[succ] != cur:
+                while self.__right[succ] and self.__right[succ] != -cur - 1:
                     succ = self.__right[succ]
                 if self.__right[succ]:
                     self.__right[succ] = 0
                     yield cur
                     cur = right
                 else:
-                    self.__right[succ] = cur
+                    self.__right[succ] = -cur - 1
                     cur = left
             else:
                 yield cur
-                cur = right
+                cur = right if right >= 0 else -(right + 1)
 
     def __rebalance(self, root):
         size = self.__size[root]
@@ -321,7 +321,7 @@ class OrderedSet(MutableSet):
     def atleast(self, x):
         ans = None
         cur = self.__root
-        while cur:
+        while cur > 0:
             value = self.__value[cur]
             if value >= x:
                 ans = value
@@ -333,7 +333,7 @@ class OrderedSet(MutableSet):
     def atmost(self, x):
         ans = None
         cur = self.__root
-        while cur:
+        while cur > 0:
             value = self.__value[cur]
             if value <= x:
                 ans = value
@@ -345,7 +345,7 @@ class OrderedSet(MutableSet):
     def count_atmost(self, x):
         ans = 0
         cur = self.__root
-        while cur:
+        while cur > 0:
             if self.__value[cur] <= x:
                 ans += self.__size[self.__left[cur]] + 1
                 cur = self.__right[cur]
