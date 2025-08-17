@@ -320,6 +320,14 @@ class SortedDict(MutableMapping):
         self.__root = cur
         return deleted
 
+    def values(self):
+        for i in self.__inorder():
+            yield self.__value[i]
+
+    def items(self):
+        for i in self.__inorder():
+            yield (self.__key[i], self.__value[i])
+
     def at(self, index):
         if index < 0:
             index += self.__nodes
