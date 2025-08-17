@@ -36,15 +36,139 @@ class OrderedSet:
             self.__size.append(0)
             self.__nodes = self.__max_nodes = n
             self.__free = n + 1
-            self.__left[0] = self._rebalance(1)
+            self.__left[0] = self.__rebalance(1)
 
     def __len__(self):
         return self.__nodes
 
-    def __iter__(self):
-        return iter(self.values())
+    def __str__(self):
+        return str(list(self))
 
-    def _rebalance(self, root):
+    def __iter__(self):
+        return iter([self.__value[i] for i in self.__inorder()])
+
+    def __contains__(self, x):
+        return self.atleast(x) == x
+
+    def __getitem__(self, index):
+        if index < 0:
+            index += self.__nodes
+        if index < 0 or index >= self.__nodes:
+            raise IndexError("list index out of range")
+        node = None
+        cur = self.__left[0]
+        cnt = 0
+        while cur:
+            new_cnt = cnt + self.__size[self.__left[cur]] + 1
+            if new_cnt > index:
+                node = cur
+                cur = self.__left[cur]
+            else:
+                cnt = new_cnt
+                cur = self.__right[cur]
+        return self.__value[node]
+
+    def __delitem__(self, index):
+        if index < 0:
+            index += self.__nodes
+        if index < 0 or index >= self.__nodes:
+            raise IndexError("list index out of range")
+        cnt = 0
+        cur = self.__left[0]
+        parent = 0
+        while cur:
+            new_cnt = cnt + self.__size[self.__left[cur]] + 1
+            if new_cnt == index + 1:
+                break
+            if new_cnt > index:
+                nxt = self.__left[cur]
+                self.__left[cur] = -parent - 1
+            else:
+                cnt = new_cnt
+                nxt = self.__right[cur]
+                self.__right[cur] = -parent - 1
+            parent = cur
+            cur = nxt
+        cur = self.__remove(cur)
+        self.__repair_upwards(cur, parent, False, True)
+
+    def __inorder(self):
+        cur = self.__left[0]
+        while cur:
+            left = self.__left[cur]
+            right = self.__right[cur]
+            if left:
+                succ = left
+                while self.__right[succ] and self.__right[succ] != cur:
+                    succ = self.__right[succ]
+                if self.__right[succ]:
+                    self.__right[succ] = 0
+                    yield cur
+                    cur = right
+                else:
+                    self.__right[succ] = cur
+                    cur = left
+            else:
+                yield cur
+                cur = right
+
+    def __repair_upwards(self, cur, parent, check_subtree, check_root):
+        while parent:
+            left = self.__left[parent]
+            right = self.__right[parent]
+            if left < 0:
+                self.__left[parent] = cur
+                cur = parent
+                parent = -(left + 1)
+            else:
+                self.__right[parent] = cur
+                cur = parent
+                parent = -(right + 1)
+            left_size = self.__size[self.__left[cur]]
+            right_size = self.__size[self.__right[cur]]
+            self.__size[cur] = left_size + right_size + 1
+            if check_subtree:
+                weight_bound = OrderedSet.ALPHA * self.__size[cur]
+                if left_size > weight_bound or right_size > weight_bound:
+                    cur = self.__rebalance(cur)
+        if check_root and self.__nodes <= OrderedSet.ALPHA * self.__max_nodes:
+            self.__left[0] = self.__rebalance(cur)
+            self.__max_nodes = self.__nodes
+        else:
+            self.__left[0] = cur
+
+    def __remove(self, node):
+        left = self.__left[node]
+        right = self.__right[node]
+        self.__left[node] = self.__free
+        self.__free = node
+        if left and right:
+            succ = succ_parent = self.__right[node]
+            while self.__left[succ]:
+                self.__size[succ] -= 1
+                succ_parent = succ
+                succ = self.__left[succ]
+            if succ == right:
+                self.__left[succ] = left
+                self.__size[succ] += self.__size[left]
+            else:
+                self.__left[succ_parent] = self.__right[succ]
+                self.__left[succ] = left
+                self.__right[succ] = right
+                self.__size[succ] = self.__size[left] + self.__size[right] + 1
+            if node == self.__left[0]:
+                self.__left[0] = succ
+            node = succ
+        elif left:
+            node = left
+        elif right:
+            node = right
+        else:
+            node = 0
+        self.__nodes -= 1
+        return node
+
+    def __rebalance(self, root):
         size = self.__size[root]
         dummy = self.__free
         prev_free = self.__left[dummy]
@@ -104,6 +228,13 @@ class OrderedSet:
         self.__left[dummy] = prev_free
         return root
 
+    def clear(self):
+        for i in self.__inorder():
+            free = self.__free
+            self.__free = i
+            self.__left[i] = free
+        self.__nodes = self.__max_nodes = self.__left[0] = 0
+
     def add(self, x):
         cur = self.__left[0]
         parent = 0
@@ -140,28 +271,12 @@ class OrderedSet:
             self.__max_nodes = (
                 self.__nodes if self.__nodes > self.__max_nodes else self.__max_nodes
             )
-        while parent:
-            left = self.__left[parent]
-            right = self.__right[parent]
-            if left < 0:
-                self.__left[parent] = cur
-                cur = parent
-                parent = -(left + 1)
-            else:
-                self.__right[parent] = cur
-                cur = parent
-                parent = -(right + 1)
-            left_size = self.__size[self.__left[cur]]
-            right_size = self.__size[self.__right[cur]]
-            self.__size[cur] = left_size + right_size + 1
-            weight_bound = OrderedSet.ALPHA * self.__size[cur]
-            if left_size > weight_bound or right_size > weight_bound:
-                cur = self._rebalance(cur)
-        self.__left[0] = cur
+        self.__repair_upwards(cur, parent, True, False)
 
-    def delete(self, x):
+    def discard(self, x):
         cur = self.__left[0]
         parent = 0
+        deleted = False
         while cur:
             value = self.__value[cur]
             if x < value:
@@ -171,78 +286,14 @@ class OrderedSet:
                 nxt = self.__right[cur]
                 self.__right[cur] = -parent - 1
             else:
+                deleted = True
                 break
             parent = cur
             cur = nxt
         if cur:
-            left = self.__left[cur]
-            right = self.__right[cur]
-            self.__left[cur] = self.__free
-            self.__free = cur
-            if left and right:
-                succ = succ_parent = self.__right[cur]
-                while self.__left[succ]:
-                    self.__size[succ] -= 1
-                    succ_parent = succ
-                    succ = self.__left[succ]
-                if succ == right:
-                    self.__left[succ] = left
-                    self.__size[succ] += self.__size[left]
-                else:
-                    self.__left[succ_parent] = self.__right[succ]
-                    self.__left[succ] = left
-                    self.__right[succ] = right
-                    self.__size[succ] = self.__size[left] + self.__size[right] + 1
-                if cur == self.__left[0]:
-                    self.__left[0] = succ
-                cur = succ
-            elif left:
-                cur = left
-            elif right:
-                cur = right
-            else:
-                cur = 0
-            self.__nodes -= 1
-        while parent:
-            left = self.__left[parent]
-            right = self.__right[parent]
-            if left < 0:
-                self.__left[parent] = cur
-                cur = parent
-                parent = -(left + 1)
-            else:
-                self.__right[parent] = cur
-                cur = parent
-                parent = -(right + 1)
-            self.__size[cur] = (
-                self.__size[self.__left[cur]] + self.__size[self.__right[cur]] + 1
-            )
-        self.__left[0] = cur
-        if self.__nodes <= OrderedSet.ALPHA * self.__max_nodes:
-            self.__left[0] = self._rebalance(self.__left[0])
-            self.__max_nodes = self.__nodes
-
-    def values(self):
-        ans = []
-        cur = self.__left[0]
-        while cur:
-            left = self.__left[cur]
-            right = self.__right[cur]
-            if left:
-                succ = left
-                while self.__right[succ] and self.__right[succ] != cur:
-                    succ = self.__right[succ]
-                if self.__right[succ]:
-                    ans.append(self.__value[cur])
-                    self.__right[succ] = 0
-                    cur = right
-                else:
-                    self.__right[succ] = cur
-                    cur = left
-            else:
-                ans.append(self.__value[cur])
-                cur = right
-        return ans
+            cur = self.__remove(cur)
+        self.__repair_upwards(cur, parent, False, True)
+        return deleted
 
     def atleast(self, x):
         ans = None
@@ -266,20 +317,6 @@ class OrderedSet:
                 cur = self.__right[cur]
             else:
                 cur = self.__left[cur]
-        return ans
-
-    def kth_smallest(self, k):
-        ans = None
-        cur = self.__left[0]
-        cnt = 0
-        while cur:
-            lsize = self.__size[self.__left[cur]]
-            if cnt + lsize + 1 > k:
-                ans = self.__value[cur]
-                cur = self.__left[cur]
-            else:
-                cnt += lsize + 1
-                cur = self.__right[cur]
         return ans
 
     def count_atmost(self, x):
