@@ -45,7 +45,7 @@ class OrderedSet:
         return str(list(self))
 
     def __iter__(self):
-        return iter([self.__value[i] for i in self.__inorder()])
+        return map(self.__value.__getitem__, self.__inorder())
 
     def __contains__(self, x):
         return self.atleast(x) == x
