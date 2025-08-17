@@ -46,7 +46,7 @@ class OrderedSet(MutableSet):
 
     def __contains__(self, x):
         cur = self.__root
-        while cur:
+        while cur > 0:
             value = self.__value[cur]
             if value == x:
                 return True
