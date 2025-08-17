@@ -95,7 +95,6 @@ class OrderedSet:
                 self.size[cur] += self.size[root] - self.size[root_left]
                 self.right[root] = self.left[cur]
                 self.left[cur] = root
-
         self.left[dummy] = self.right[dummy]
         self.right[dummy] = 0
         root = self.left[dummy]
@@ -197,16 +196,10 @@ class OrderedSet:
                     self.left[0] = succ
                 cur = succ
             elif left:
-                if cur == self.left[0]:
-                    self.left[0] = left
                 cur = left
             elif right:
-                if cur == self.left[0]:
-                    self.left[0] = right
                 cur = right
             else:
-                if cur == self.left[0]:
-                    self.left[0] = 0
                 cur = 0
             self.nodes -= 1
         while parent:
@@ -221,6 +214,7 @@ class OrderedSet:
                 cur = parent
                 parent = -(right + 1)
             self.size[cur] = self.size[self.left[cur]] + self.size[self.right[cur]] + 1
+        self.left[0] = cur
         if self.nodes <= OrderedSet.ALPHA * self.max_nodes:
             self.left[0] = self._rebalance(self.left[0])
             self.max_nodes = self.nodes
