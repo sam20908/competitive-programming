@@ -328,6 +328,13 @@ class SortedDict(MutableMapping):
         for i in self.__inorder():
             yield (self.__key[i], self.__value[i])
 
+    def popitem(self):
+        if self.__nodes == 0:
+            raise KeyError("popitem(): dictionary is empty")
+        removed = (self.__key[self.__root], self.__value[self.__root])
+        del self[self.__key[self.__root]]
+        return removed
+
     def at(self, index):
         if index < 0:
             index += self.__nodes
