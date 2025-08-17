@@ -3,7 +3,7 @@ from collections.abc import MutableSet
 from itertools import repeat
 
 
-class OrderedSet(MutableSet):
+class SortedSet(MutableSet):
     __slots__ = (
         "__value",
         "__left",
@@ -110,7 +110,7 @@ class OrderedSet(MutableSet):
             left_size = self.__size[self.__left[cur]]
             right_size = self.__size[self.__right[cur]]
             self.__size[cur] = left_size + right_size + 1
-        if self.__nodes <= OrderedSet.ALPHA * self.__max_nodes:
+        if self.__nodes <= SortedSet.ALPHA * self.__max_nodes:
             cur = self.__rebalance(cur)
             self.__max_nodes = self.__nodes
         self.__root = cur
@@ -273,7 +273,7 @@ class OrderedSet(MutableSet):
             left_size = self.__size[self.__left[cur]]
             right_size = self.__size[self.__right[cur]]
             self.__size[cur] = left_size + right_size + 1
-            weight_bound = OrderedSet.ALPHA * self.__size[cur]
+            weight_bound = SortedSet.ALPHA * self.__size[cur]
             if left_size > weight_bound or right_size > weight_bound:
                 cur = self.__rebalance(cur)
         self.__root = cur
@@ -312,7 +312,7 @@ class OrderedSet(MutableSet):
             left_size = self.__size[self.__left[cur]]
             right_size = self.__size[self.__right[cur]]
             self.__size[cur] = left_size + right_size + 1
-        if self.__nodes <= OrderedSet.ALPHA * self.__max_nodes:
+        if self.__nodes <= SortedSet.ALPHA * self.__max_nodes:
             cur = self.__rebalance(cur)
             self.__max_nodes = self.__nodes
         self.__root = cur
