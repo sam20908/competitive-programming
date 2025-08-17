@@ -117,8 +117,7 @@ class OrderedSet:
                 self.right[cur] = -parent - 1
             parent = cur
             cur = nxt
-        insert = not found or self.multiset
-        if insert:
+        if not found or self.multiset:
             cur = self.free
             prev_free = self.left[cur]
             if parent == 0:
@@ -153,9 +152,8 @@ class OrderedSet:
             right_size = self.size[self.right[cur]]
             self.size[cur] = left_size + right_size + 1
             weight_bound = OrderedSet.ALPHA * self.size[cur]
-            if insert and (left_size > weight_bound or right_size > weight_bound):
+            if left_size > weight_bound or right_size > weight_bound:
                 cur = self._rebalance(cur)
-                insert = False
         self.left[0] = cur
 
     def delete(self, x):
