@@ -1,6 +1,7 @@
 from array import array
+from collections.abc import MutableSet
 from itertools import repeat
-class OrderedSet:
+class OrderedSet(MutableSet):
     __slots__ = (
         "__value",
         "__left",
@@ -137,37 +138,6 @@ class OrderedSet:
         else:
             self.__left[0] = cur
 
-    def __remove(self, node):
-        left = self.__left[node]
-        right = self.__right[node]
-        self.__left[node] = self.__free
-        self.__free = node
-        if left and right:
-            succ = succ_parent = self.__right[node]
-            while self.__left[succ]:
-                self.__size[succ] -= 1
-                succ_parent = succ
-                succ = self.__left[succ]
-            if succ == right:
-                self.__left[succ] = left
-                self.__size[succ] += self.__size[left]
-            else:
-                self.__left[succ_parent] = self.__right[succ]
-                self.__left[succ] = left
-                self.__right[succ] = right
-                self.__size[succ] = self.__size[left] + self.__size[right] + 1
-            if node == self.__left[0]:
-                self.__left[0] = succ
-            node = succ
-        elif left:
-            node = left
-        elif right:
-            node = right
-        else:
-            node = 0
-        self.__nodes -= 1
-        return node
-
     def __rebalance(self, root):
         size = self.__size[root]
         dummy = self.__free
@@ -291,8 +261,37 @@ class OrderedSet:
             parent = cur
             cur = nxt
         if cur:
-            cur = self.__remove(cur)
-        self.__repair_upwards(cur, parent, False, True)
+            left = self.__left[cur]
+            right = self.__right[cur]
+            self.__left[cur] = self.__free
+            self.__free = cur
+            if left and right:
+                succ = succ_parent = self.__right[cur]
+                while self.__left[succ]:
+                    self.__size[succ] -= 1
+                    succ_parent = succ
+                    succ = self.__left[succ]
+                if succ == right:
+                    self.__left[succ] = left
+                    self.__size[succ] += self.__size[left]
+                else:
+                    self.__left[succ_parent] = self.__right[succ]
+                    self.__left[succ] = left
+                    self.__right[succ] = right
+                    self.__size[succ] = self.__size[left] + self.__size[right] + 1
+                if cur == self.__left[0]:
+                    self.__left[0] = succ
+                cur = succ
+            elif left:
+                cur = left
+            elif right:
+                cur = right
+            else:
+                cur = 0
+            self.__nodes -= 1
+            self.__repair_upwards(cur, parent, False, True)
+        else:
+            self.__repair_upwards(cur, parent, False, False)
         return deleted
 
     def atleast(self, x):
