@@ -2,69 +2,69 @@ from array import array
 from itertools import repeat
 class OrderedSet:
     __slots__ = (
-        "_value",
-        "_left",
-        "_right",
-        "_size",
-        "_max_nodes",
-        "_nodes",
-        "_free",
-        "_multiset",
+        "__value",
+        "__left",
+        "__right",
+        "__size",
+        "__max_nodes",
+        "__nodes",
+        "__free",
+        "__multiset",
     )
     ALPHA = 0.85  # 0.5 (faster lookups) < ALPHA < 1 (faster modifications)
 
     def __init__(self, iterable=None, multiset=False, code=None):
-        self._value = array(code, [0]) if code else [None]
-        self._left = array("i", [0, 0])
-        self._right = array("i", [0, 0])
-        self._size = array("i", [0, 0])
-        self._max_nodes = 0
-        self._nodes = 0
-        self._free = 1
-        self._multiset = multiset
+        self.__value = array(code, [0]) if code else [None]
+        self.__left = array("i", [0, 0])
+        self.__right = array("i", [0, 0])
+        self.__size = array("i", [0, 0])
+        self.__max_nodes = 0
+        self.__nodes = 0
+        self.__free = 1
+        self.__multiset = multiset
         if iterable:
             value = sorted(iterable) if multiset else sorted(set(iterable))
             n = len(value)
-            self._value.extend(value)
-            self._left.extend(repeat(0, n))
-            self._right[-1] = 2
-            self._right.extend(range(3, n + 2))
-            self._right[-1] = 0
-            self._right.append(0)
-            self._size.pop()
-            self._size.extend(range(n, 0, -1))
-            self._size.append(0)
-            self._nodes = self._max_nodes = n
-            self._free = n + 1
-            self._left[0] = self._rebalance(1)
+            self.__value.extend(value)
+            self.__left.extend(repeat(0, n))
+            self.__right[-1] = 2
+            self.__right.extend(range(3, n + 2))
+            self.__right[-1] = 0
+            self.__right.append(0)
+            self.__size.pop()
+            self.__size.extend(range(n, 0, -1))
+            self.__size.append(0)
+            self.__nodes = self.__max_nodes = n
+            self.__free = n + 1
+            self.__left[0] = self._rebalance(1)
 
     def __len__(self):
-        return self._nodes
+        return self.__nodes
 
     def __iter__(self):
         return iter(self.values())
 
     def _rebalance(self, root):
-        size = self._size[root]
-        dummy = self._free
-        prev_free = self._left[dummy]
-        self._left[dummy] = 0
-        self._right[dummy] = root
+        size = self.__size[root]
+        dummy = self.__free
+        prev_free = self.__left[dummy]
+        self.__left[dummy] = 0
+        self.__right[dummy] = root
         tail = dummy
         cur = root
         while cur:
-            left = self._left[cur]
+            left = self.__left[cur]
             if left:
-                left_right = self._right[left]
-                self._size[cur] += self._size[left_right] - self._size[left]
-                self._size[left] += self._size[cur] - self._size[left_right]
-                self._left[cur] = left_right
-                self._right[left] = cur
+                left_right = self.__right[left]
+                self.__size[cur] += self.__size[left_right] - self.__size[left]
+                self.__size[left] += self.__size[cur] - self.__size[left_right]
+                self.__left[cur] = left_right
+                self.__right[left] = cur
                 cur = left
-                self._right[tail] = left
+                self.__right[tail] = left
             else:
                 tail = cur
-                cur = self._right[cur]
+                cur = self.__right[cur]
         leaf_positions = 1 << (size + 1).bit_length() - 1
         leaves = size + 1 - leaf_positions
         if leaves > 0:
@@ -74,127 +74,127 @@ class OrderedSet:
             cur = dummy
             for i in range(1, leaf_positions):
                 if i == next_hole:
-                    cur = self._right[cur]
+                    cur = self.__right[cur]
                     hole_index += 1
                     next_hole = (hole_index * leaf_positions) // hole_count
                 else:
-                    leaf = self._right[cur]
-                    self._right[cur] = self._right[leaf]
-                    cur = self._right[cur]
-                    self._size[leaf] -= self._size[cur]
-                    self._size[cur] += self._size[leaf]
-                    self._left[cur] = leaf
-                    self._right[leaf] = 0
+                    leaf = self.__right[cur]
+                    self.__right[cur] = self.__right[leaf]
+                    cur = self.__right[cur]
+                    self.__size[leaf] -= self.__size[cur]
+                    self.__size[cur] += self.__size[leaf]
+                    self.__left[cur] = leaf
+                    self.__right[leaf] = 0
         size -= leaves
         while size > 1:
             size >>= 1
             cur = dummy
             for _ in range(size):
-                root = self._right[cur]
-                self._right[cur] = self._right[root]
-                cur = self._right[cur]
-                root_left = self._left[cur]
-                self._size[root] += self._size[root_left] - self._size[cur]
-                self._size[cur] += self._size[root] - self._size[root_left]
-                self._right[root] = self._left[cur]
-                self._left[cur] = root
-        self._left[dummy] = self._right[dummy]
-        self._right[dummy] = 0
-        root = self._left[dummy]
-        self._left[dummy] = prev_free
+                root = self.__right[cur]
+                self.__right[cur] = self.__right[root]
+                cur = self.__right[cur]
+                root_left = self.__left[cur]
+                self.__size[root] += self.__size[root_left] - self.__size[cur]
+                self.__size[cur] += self.__size[root] - self.__size[root_left]
+                self.__right[root] = self.__left[cur]
+                self.__left[cur] = root
+        self.__left[dummy] = self.__right[dummy]
+        self.__right[dummy] = 0
+        root = self.__left[dummy]
+        self.__left[dummy] = prev_free
         return root
 
     def add(self, x):
-        cur = self._left[0]
+        cur = self.__left[0]
         parent = 0
         found = False
         while cur:
-            value = self._value[cur]
+            value = self.__value[cur]
             if x == value:
                 found = True
             if x < value:
-                nxt = self._left[cur]
-                self._left[cur] = -parent - 1
+                nxt = self.__left[cur]
+                self.__left[cur] = -parent - 1
             else:
-                nxt = self._right[cur]
-                self._right[cur] = -parent - 1
+                nxt = self.__right[cur]
+                self.__right[cur] = -parent - 1
             parent = cur
             cur = nxt
-        if not found or self._multiset:
-            cur = self._free
-            prev_free = self._left[cur]
+        if not found or self.__multiset:
+            cur = self.__free
+            prev_free = self.__left[cur]
             if parent == 0:
-                self._left[0] = cur
-            self._left[cur] = self._right[cur] = 0
-            self._size[cur] = 1
-            if cur == len(self._value):
-                self._value.append(x)
-                self._left.append(0)
-                self._right.append(0)
-                self._size.append(0)
-                self._free += 1
+                self.__left[0] = cur
+            self.__left[cur] = self.__right[cur] = 0
+            self.__size[cur] = 1
+            if cur == len(self.__value):
+                self.__value.append(x)
+                self.__left.append(0)
+                self.__right.append(0)
+                self.__size.append(0)
+                self.__free += 1
             else:
-                self._value[cur] = x
-                self._free = prev_free
-            self._nodes += 1
-            self._max_nodes = (
-                self._nodes if self._nodes > self._max_nodes else self._max_nodes
+                self.__value[cur] = x
+                self.__free = prev_free
+            self.__nodes += 1
+            self.__max_nodes = (
+                self.__nodes if self.__nodes > self.__max_nodes else self.__max_nodes
             )
         while parent:
-            left = self._left[parent]
-            right = self._right[parent]
+            left = self.__left[parent]
+            right = self.__right[parent]
             if left < 0:
-                self._left[parent] = cur
+                self.__left[parent] = cur
                 cur = parent
                 parent = -(left + 1)
             else:
-                self._right[parent] = cur
+                self.__right[parent] = cur
                 cur = parent
                 parent = -(right + 1)
-            left_size = self._size[self._left[cur]]
-            right_size = self._size[self._right[cur]]
-            self._size[cur] = left_size + right_size + 1
-            weight_bound = OrderedSet.ALPHA * self._size[cur]
+            left_size = self.__size[self.__left[cur]]
+            right_size = self.__size[self.__right[cur]]
+            self.__size[cur] = left_size + right_size + 1
+            weight_bound = OrderedSet.ALPHA * self.__size[cur]
             if left_size > weight_bound or right_size > weight_bound:
                 cur = self._rebalance(cur)
-        self._left[0] = cur
+        self.__left[0] = cur
 
     def delete(self, x):
-        cur = self._left[0]
+        cur = self.__left[0]
         parent = 0
         while cur:
-            value = self._value[cur]
+            value = self.__value[cur]
             if x < value:
-                nxt = self._left[cur]
-                self._left[cur] = -parent - 1
+                nxt = self.__left[cur]
+                self.__left[cur] = -parent - 1
             elif x > value:
-                nxt = self._right[cur]
-                self._right[cur] = -parent - 1
+                nxt = self.__right[cur]
+                self.__right[cur] = -parent - 1
             else:
                 break
             parent = cur
             cur = nxt
         if cur:
-            left = self._left[cur]
-            right = self._right[cur]
-            self._left[cur] = self._free
-            self._free = cur
+            left = self.__left[cur]
+            right = self.__right[cur]
+            self.__left[cur] = self.__free
+            self.__free = cur
             if left and right:
-                succ = succ_parent = self._right[cur]
-                while self._left[succ]:
-                    self._size[succ] -= 1
+                succ = succ_parent = self.__right[cur]
+                while self.__left[succ]:
+                    self.__size[succ] -= 1
                     succ_parent = succ
-                    succ = self._left[succ]
+                    succ = self.__left[succ]
                 if succ == right:
-                    self._left[succ] = left
-                    self._size[succ] += self._size[left]
+                    self.__left[succ] = left
+                    self.__size[succ] += self.__size[left]
                 else:
-                    self._left[succ_parent] = self._right[succ]
-                    self._left[succ] = left
-                    self._right[succ] = right
-                    self._size[succ] = self._size[left] + self._size[right] + 1
-                if cur == self._left[0]:
-                    self._left[0] = succ
+                    self.__left[succ_parent] = self.__right[succ]
+                    self.__left[succ] = left
+                    self.__right[succ] = right
+                    self.__size[succ] = self.__size[left] + self.__size[right] + 1
+                if cur == self.__left[0]:
+                    self.__left[0] = succ
                 cur = succ
             elif left:
                 cur = left
@@ -202,93 +202,93 @@ class OrderedSet:
                 cur = right
             else:
                 cur = 0
-            self._nodes -= 1
+            self.__nodes -= 1
         while parent:
-            left = self._left[parent]
-            right = self._right[parent]
+            left = self.__left[parent]
+            right = self.__right[parent]
             if left < 0:
-                self._left[parent] = cur
+                self.__left[parent] = cur
                 cur = parent
                 parent = -(left + 1)
             else:
-                self._right[parent] = cur
+                self.__right[parent] = cur
                 cur = parent
                 parent = -(right + 1)
-            self._size[cur] = (
-                self._size[self._left[cur]] + self._size[self._right[cur]] + 1
+            self.__size[cur] = (
+                self.__size[self.__left[cur]] + self.__size[self.__right[cur]] + 1
             )
-        self._left[0] = cur
-        if self._nodes <= OrderedSet.ALPHA * self._max_nodes:
-            self._left[0] = self._rebalance(self._left[0])
-            self._max_nodes = self._nodes
+        self.__left[0] = cur
+        if self.__nodes <= OrderedSet.ALPHA * self.__max_nodes:
+            self.__left[0] = self._rebalance(self.__left[0])
+            self.__max_nodes = self.__nodes
 
     def values(self):
         ans = []
-        cur = self._left[0]
+        cur = self.__left[0]
         while cur:
-            left = self._left[cur]
-            right = self._right[cur]
+            left = self.__left[cur]
+            right = self.__right[cur]
             if left:
                 succ = left
-                while self._right[succ] and self._right[succ] != cur:
-                    succ = self._right[succ]
-                if self._right[succ]:
-                    ans.append(self._value[cur])
-                    self._right[succ] = 0
+                while self.__right[succ] and self.__right[succ] != cur:
+                    succ = self.__right[succ]
+                if self.__right[succ]:
+                    ans.append(self.__value[cur])
+                    self.__right[succ] = 0
                     cur = right
                 else:
-                    self._right[succ] = cur
+                    self.__right[succ] = cur
                     cur = left
             else:
-                ans.append(self._value[cur])
+                ans.append(self.__value[cur])
                 cur = right
         return ans
 
     def atleast(self, x):
         ans = None
-        cur = self._left[0]
+        cur = self.__left[0]
         while cur:
-            value = self._value[cur]
+            value = self.__value[cur]
             if value >= x:
                 ans = value
-                cur = self._left[cur]
+                cur = self.__left[cur]
             else:
-                cur = self._right[cur]
+                cur = self.__right[cur]
         return ans
 
     def atmost(self, x):
         ans = None
-        cur = self._left[0]
+        cur = self.__left[0]
         while cur:
-            value = self._value[cur]
+            value = self.__value[cur]
             if value <= x:
                 ans = value
-                cur = self._right[cur]
+                cur = self.__right[cur]
             else:
-                cur = self._left[cur]
+                cur = self.__left[cur]
         return ans
 
     def kth_smallest(self, k):
         ans = None
-        cur = self._left[0]
+        cur = self.__left[0]
         cnt = 0
         while cur:
-            lsize = self._size[self._left[cur]]
+            lsize = self.__size[self.__left[cur]]
             if cnt + lsize + 1 > k:
-                ans = self._value[cur]
-                cur = self._left[cur]
+                ans = self.__value[cur]
+                cur = self.__left[cur]
             else:
                 cnt += lsize + 1
-                cur = self._right[cur]
+                cur = self.__right[cur]
         return ans
 
     def count_atmost(self, x):
         ans = 0
-        cur = self._left[0]
+        cur = self.__left[0]
         while cur:
-            if self._value[cur] <= x:
-                ans += self._size[self._left[cur]] + 1
-                cur = self._right[cur]
+            if self.__value[cur] <= x:
+                ans += self.__size[self.__left[cur]] + 1
+                cur = self.__right[cur]
             else:
-                cur = self._left[cur]
+                cur = self.__left[cur]
         return ans
