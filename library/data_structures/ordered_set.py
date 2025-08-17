@@ -1,12 +1,15 @@
 from array import array
 from collections.abc import MutableSet
 from itertools import repeat
+
+
 class OrderedSet(MutableSet):
     __slots__ = (
         "__value",
         "__left",
         "__right",
         "__size",
+        "__root",
         "__max_nodes",
         "__nodes",
         "__free",
@@ -16,28 +19,21 @@ class OrderedSet(MutableSet):
 
     def __init__(self, iterable=None, multiset=False, code=None):
         self.__value = array(code, [0]) if code else [None]
-        self.__left = array("i", [0, 0])
-        self.__right = array("i", [0, 0])
-        self.__size = array("i", [0, 0])
-        self.__max_nodes = 0
-        self.__nodes = 0
-        self.__free = 1
+        self.__left = array("i", [0])
+        self.__right = array("i", [0])
+        self.__size = array("i", [0])
+        self.__root = self.__nodes = self.__max_nodes = self.__free = 0
         self.__multiset = multiset
         if iterable:
             value = sorted(iterable) if multiset else sorted(set(iterable))
             n = len(value)
             self.__value.extend(value)
             self.__left.extend(repeat(0, n))
-            self.__right[-1] = 2
-            self.__right.extend(range(3, n + 2))
-            self.__right[-1] = 0
+            self.__right.extend(range(2, n + 1))
             self.__right.append(0)
-            self.__size.pop()
             self.__size.extend(range(n, 0, -1))
-            self.__size.append(0)
             self.__nodes = self.__max_nodes = n
-            self.__free = n + 1
-            self.__left[0] = self.__rebalance(1)
+            self.__root = self.__rebalance(1)
 
     def __len__(self):
         return self.__nodes
@@ -49,7 +45,16 @@ class OrderedSet(MutableSet):
         return map(self.__value.__getitem__, self.__inorder())
 
     def __contains__(self, x):
-        return self.atleast(x) == x
+        cur = self.__root
+        while cur:
+            value = self.__value[cur]
+            if value == x:
+                return True
+            if value > x:
+                cur = self.__left[cur]
+            else:
+                cur = self.__right[cur]
+        return False
 
     def __getitem__(self, index):
         if index < 0:
@@ -57,7 +62,7 @@ class OrderedSet(MutableSet):
         if index < 0 or index >= self.__nodes:
             raise IndexError("list index out of range")
         node = None
-        cur = self.__left[0]
+        cur = self.__root
         cnt = 0
         while cur:
             new_cnt = cnt + self.__size[self.__left[cur]] + 1
@@ -75,7 +80,7 @@ class OrderedSet(MutableSet):
         if index < 0 or index >= self.__nodes:
             raise IndexError("list index out of range")
         cnt = 0
-        cur = self.__left[0]
+        cur = self.__root
         parent = 0
         while cur:
             new_cnt = cnt + self.__size[self.__left[cur]] + 1
@@ -91,10 +96,27 @@ class OrderedSet(MutableSet):
             parent = cur
             cur = nxt
         cur = self.__remove(cur)
-        self.__repair_upwards(cur, parent, False, True)
+        while parent:
+            left = self.__left[parent]
+            right = self.__right[parent]
+            if left < 0:
+                self.__left[parent] = cur
+                cur = parent
+                parent = -(left + 1)
+            else:
+                self.__right[parent] = cur
+                cur = parent
+                parent = -(right + 1)
+            left_size = self.__size[self.__left[cur]]
+            right_size = self.__size[self.__right[cur]]
+            self.__size[cur] = left_size + right_size + 1
+        if self.__nodes <= OrderedSet.ALPHA * self.__max_nodes:
+            cur = self.__rebalance(cur)
+            self.__max_nodes = self.__nodes
+        self.__root = cur
 
     def __inorder(self):
-        cur = self.__left[0]
+        cur = self.__root
         while cur:
             left = self.__left[cur]
             right = self.__right[cur]
@@ -113,36 +135,9 @@ class OrderedSet(MutableSet):
                 yield cur
                 cur = right
 
-    def __repair_upwards(self, cur, parent, check_subtree, check_root):
-        while parent:
-            left = self.__left[parent]
-            right = self.__right[parent]
-            if left < 0:
-                self.__left[parent] = cur
-                cur = parent
-                parent = -(left + 1)
-            else:
-                self.__right[parent] = cur
-                cur = parent
-                parent = -(right + 1)
-            left_size = self.__size[self.__left[cur]]
-            right_size = self.__size[self.__right[cur]]
-            self.__size[cur] = left_size + right_size + 1
-            if check_subtree:
-                weight_bound = OrderedSet.ALPHA * self.__size[cur]
-                if left_size > weight_bound or right_size > weight_bound:
-                    cur = self.__rebalance(cur)
-        if check_root and self.__nodes <= OrderedSet.ALPHA * self.__max_nodes:
-            self.__left[0] = self.__rebalance(cur)
-            self.__max_nodes = self.__nodes
-        else:
-            self.__left[0] = cur
-
     def __rebalance(self, root):
         size = self.__size[root]
         dummy = self.__free
-        prev_free = self.__left[dummy]
-        self.__left[dummy] = 0
         self.__right[dummy] = root
         tail = dummy
         cur = root
@@ -192,21 +187,46 @@ class OrderedSet(MutableSet):
                 self.__size[cur] += self.__size[root] - self.__size[root_left]
                 self.__right[root] = self.__left[cur]
                 self.__left[cur] = root
-        self.__left[dummy] = self.__right[dummy]
-        self.__right[dummy] = 0
-        root = self.__left[dummy]
-        self.__left[dummy] = prev_free
-        return root
+        return self.__right[dummy]
+
+    def __remove(self, cur):
+        left = self.__left[cur]
+        right = self.__right[cur]
+        self.__left[cur] = self.__free
+        self.__free = cur
+        if left and right:
+            succ = succ_parent = self.__right[cur]
+            while self.__left[succ]:
+                self.__size[succ] -= 1
+                succ_parent = succ
+                succ = self.__left[succ]
+            if succ == right:
+                self.__left[succ] = left
+                self.__size[succ] += self.__size[left]
+            else:
+                self.__left[succ_parent] = self.__right[succ]
+                self.__left[succ] = left
+                self.__right[succ] = right
+                self.__size[succ] = self.__size[left] + self.__size[right] + 1
+            cur = succ
+        elif left:
+            cur = left
+        elif right:
+            cur = right
+        else:
+            cur = 0
+        self.__nodes -= 1
+        return cur
 
     def clear(self):
         for i in self.__inorder():
             free = self.__free
             self.__free = i
             self.__left[i] = free
-        self.__nodes = self.__max_nodes = self.__left[0] = 0
+        self.__nodes = self.__max_nodes = self.__root = 0
 
     def add(self, x):
-        cur = self.__left[0]
+        cur = self.__root
         parent = 0
         found = False
         while cur:
@@ -221,30 +241,46 @@ class OrderedSet(MutableSet):
                 self.__right[cur] = -parent - 1
             parent = cur
             cur = nxt
-        if not found or self.__multiset:
+        inserted = not found or self.__multiset
+        if inserted:
             cur = self.__free
-            prev_free = self.__left[cur]
-            if parent == 0:
-                self.__left[0] = cur
-            self.__left[cur] = self.__right[cur] = 0
-            self.__size[cur] = 1
-            if cur == len(self.__value):
+            if cur:
+                self.__free = self.__left[cur]
+                self.__value[cur] = x
+                self.__left[cur] = self.__right[cur] = 0
+                self.__size[cur] = 1
+            else:
+                cur = self.__nodes + 1
                 self.__value.append(x)
                 self.__left.append(0)
                 self.__right.append(0)
-                self.__size.append(0)
-                self.__free += 1
-            else:
-                self.__value[cur] = x
-                self.__free = prev_free
+                self.__size.append(1)
             self.__nodes += 1
             self.__max_nodes = (
                 self.__nodes if self.__nodes > self.__max_nodes else self.__max_nodes
             )
-        self.__repair_upwards(cur, parent, True, False)
+        while parent:
+            left = self.__left[parent]
+            right = self.__right[parent]
+            if left < 0:
+                self.__left[parent] = cur
+                cur = parent
+                parent = -(left + 1)
+            else:
+                self.__right[parent] = cur
+                cur = parent
+                parent = -(right + 1)
+            left_size = self.__size[self.__left[cur]]
+            right_size = self.__size[self.__right[cur]]
+            self.__size[cur] = left_size + right_size + 1
+            weight_bound = OrderedSet.ALPHA * self.__size[cur]
+            if left_size > weight_bound or right_size > weight_bound:
+                cur = self.__rebalance(cur)
+        self.__root = cur
+        return inserted
 
     def discard(self, x):
-        cur = self.__left[0]
+        cur = self.__root
         parent = 0
         deleted = False
         while cur:
@@ -261,42 +297,30 @@ class OrderedSet(MutableSet):
             parent = cur
             cur = nxt
         if cur:
-            left = self.__left[cur]
-            right = self.__right[cur]
-            self.__left[cur] = self.__free
-            self.__free = cur
-            if left and right:
-                succ = succ_parent = self.__right[cur]
-                while self.__left[succ]:
-                    self.__size[succ] -= 1
-                    succ_parent = succ
-                    succ = self.__left[succ]
-                if succ == right:
-                    self.__left[succ] = left
-                    self.__size[succ] += self.__size[left]
-                else:
-                    self.__left[succ_parent] = self.__right[succ]
-                    self.__left[succ] = left
-                    self.__right[succ] = right
-                    self.__size[succ] = self.__size[left] + self.__size[right] + 1
-                if cur == self.__left[0]:
-                    self.__left[0] = succ
-                cur = succ
-            elif left:
-                cur = left
-            elif right:
-                cur = right
+            cur = self.__remove(cur)
+        while parent:
+            left = self.__left[parent]
+            right = self.__right[parent]
+            if left < 0:
+                self.__left[parent] = cur
+                cur = parent
+                parent = -(left + 1)
             else:
-                cur = 0
-            self.__nodes -= 1
-            self.__repair_upwards(cur, parent, False, True)
-        else:
-            self.__repair_upwards(cur, parent, False, False)
+                self.__right[parent] = cur
+                cur = parent
+                parent = -(right + 1)
+            left_size = self.__size[self.__left[cur]]
+            right_size = self.__size[self.__right[cur]]
+            self.__size[cur] = left_size + right_size + 1
+        if self.__nodes <= OrderedSet.ALPHA * self.__max_nodes:
+            cur = self.__rebalance(cur)
+            self.__max_nodes = self.__nodes
+        self.__root = cur
         return deleted
 
     def atleast(self, x):
         ans = None
-        cur = self.__left[0]
+        cur = self.__root
         while cur:
             value = self.__value[cur]
             if value >= x:
@@ -308,7 +332,7 @@ class OrderedSet(MutableSet):
 
     def atmost(self, x):
         ans = None
-        cur = self.__left[0]
+        cur = self.__root
         while cur:
             value = self.__value[cur]
             if value <= x:
@@ -320,7 +344,7 @@ class OrderedSet(MutableSet):
 
     def count_atmost(self, x):
         ans = 0
-        cur = self.__left[0]
+        cur = self.__root
         while cur:
             if self.__value[cur] <= x:
                 ans += self.__size[self.__left[cur]] + 1
