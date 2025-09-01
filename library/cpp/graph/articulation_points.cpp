@@ -4,6 +4,7 @@ vector<int> articulation_points(vector<vector<int>> &g) {
   auto dfs = [&, timer = 0](auto &self, int v, int p = -1) mutable -> void {
     in[v] = low[v] = timer++;
     int children = 0;
+    bool is_ap = false;
     for (int to : g[v]) {
       if (to == p)
         continue;
@@ -13,11 +14,13 @@ vector<int> articulation_points(vector<vector<int>> &g) {
         self(self, to, v);
         low[v] = min(low[v], low[to]);
         if (low[to] >= in[v] && p != -1)
-          ans.push_back(v);
+          is_ap = true;
         ++children;
       }
     }
     if (p == -1 && children > 1)
+      is_ap = true;
+    if (is_ap)
       ans.push_back(v);
   };
   for (int i = 0; i < n; ++i)
