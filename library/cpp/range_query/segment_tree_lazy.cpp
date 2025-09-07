@@ -1,118 +1,163 @@
-template <typename T, typename D>
-struct segment_tree_lazy {
-  vector<T> tree;
-  vector<optional<D>> delay;
-  function<T(T, D, int)> apply;
-  function<D(D, D, int)> push;
-  function<T(T, T)> combine;
-  segment_tree_lazy(unsigned int n, function<T(T, D, int)> apply, function<D(D, D, int)> push, function<T(T, T)> combine) : tree(2 * bit_ceil(n)), delay(bit_ceil(n)), apply(std::move(apply)), push(std::move(push)), combine(std::move(combine)) {
-    for (int i = (int)delay.size() - 1; i > 0; --i)
-      tree[i] = this->combine(tree[i << 1], tree[i << 1 | 1]);
+/**
+ * @brief Iterative Segment Tree with lazy propagation.
+ *
+ * @tparam T Value type.
+ * @tparam D Update type.
+ * @tparam Apply Applies delayed updates to node value with signature `Fn(value,
+ * updates, interval-length) -> new-value`.
+ * @tparam Push Pushes update into delayed updates with signature `Fn(updates,
+ new-update, interval-length) -> combined-updates`.
+ * @tparam Combine Combines two child node values with signature `Fn(value1,
+ value2) -> result`.
+ */
+template <typename T, typename D, typename Apply, typename Push,
+          typename Combine>
+class segment_tree_lazy {
+  vector<T> t;
+  vector<D> d;
+  vector<bool> f;
+  Apply apply;
+  Push push;
+  Combine combine;
+  int n0;
+
+  void _apply(int i, const D &v, int k) {
+    int n = d.size();
+    t[i] = apply(t[i], v, k);
+    if (i < n) {
+      d[i] = push(d[i], v, k);
+      f[i] = true;
+    }
   }
-  void _apply_delay(int i, const D &v, int k) {
-    tree[i] = apply(tree[i], v, k);
-    if (i < (int)delay.size())
-      delay[i] = delay[i] ? push(*delay[i], v, k) : v;
+  void _push(int p) {
+    int n = d.size();
+    int h = __lg(n) + 1;
+    int k = 1 << (h - 1);
+    for (p += n; h > 0; h--, k >>= 1) {
+      int i = p >> h;
+      if (f[i]) {
+        _apply(i << 1, d[i], k);
+        _apply(i << 1 | 1, d[i], k);
+        d[i] = d[0];
+        f[i] = false;
+      }
+    }
   }
-  void _push_delay(int l, int r) {
-    int n = delay.size();
-    int h = __lg(n), k = 1 << __lg(n) >> 1;
-    for (l += n, r += n - 1; h; h--, k >>= 1)
-      for (int i = l >> h; i <= r >> h; i++)
-        if (delay[i]) {
-          _apply_delay(i << 1, *delay[i], k);
-          _apply_delay(i << 1 | 1, *delay[i], k);
-          delay[i] = nullopt;
-        }
+  void _compute(int i, int k) {
+    t[i] = f[i] ? apply(t[i], d[i], k) : combine(t[i << 1], t[i << 1 | 1]);
   }
-  void _compute_value(int i, int k) {
-    tree[i] = delay[i] ? apply(tree[i], *delay[i], k) : combine(tree[i << 1], tree[i << 1 | 1]);
+
+public:
+  segment_tree_lazy(const vector<T> &v, const D &d0, const Apply &apply,
+                    const Push &push, const Combine &combine)
+      : apply(apply), push(push), combine(combine) {
+    n0 = v.size();
+    int n2 = 1 << (__lg(n0) + int((n0 & (n0 - 1)) > 0)); // lowest pow2 >= n
+    t.resize(2 * n2);
+    d.resize(n2, d0);
+    f.resize(n2);
+    for (int i = 0; i < n0; i++)
+      t[i + n2] = v[i];
+    for (int i = n2 - 1; i > 0; --i)
+      t[i] = combine(t[i << 1], t[i << 1 | 1]);
   }
-  void set(int i, const T &t) {
-    _push_delay(i, i + 1);
-    _push_delay(i - 1, i);
-    tree[i += delay.size()] = t;
-    for (i >>= 1; i; i >>= 1)
-      tree[i] = combine(tree[i << 1], tree[i << 1 | 1]);
-  }
-  void update(int l, int r, const D &v) { // [l, r)
-    _push_delay(l, l + 1);
-    _push_delay(r - 1, r);
-    int k = 1, n = delay.size(), cl = 0, cr = 0;
+  segment_tree_lazy(int n, const T &v, const D &d0, const Apply &apply,
+                    const Push &push, const Combine &combine)
+      : segment_tree_lazy(vector<T>(n, v), d0, apply, push, combine) {}
+
+  /**
+   * @brief Updates the range `[l, r)`.
+   */
+  void update(int l, int r, const D &v) {
+    _push(l);
+    _push(r - 1);
+    int k = 1, n = d.size(), cl = 0, cr = 0;
     for (l += n, r += n; l < r; l >>= 1, r >>= 1, k <<= 1) {
       if (cl)
-        _compute_value(l - 1, k);
+        _compute(l - 1, k);
       if (cr)
-        _compute_value(r, k);
+        _compute(r, k);
       if (l & 1) {
-        _apply_delay(l++, v, k);
+        _apply(l++, v, k);
         cl = true;
       }
       if (r & 1) {
-        _apply_delay(--r, v, k);
+        _apply(--r, v, k);
         cr = true;
       }
     }
     for (--l; r > 0; l >>= 1, r >>= 1, k <<= 1) {
       if (cl)
-        _compute_value(l, k);
+        _compute(l, k);
       if (cr && (!cl || l != r))
-        _compute_value(r, k);
+        _compute(r, k);
     }
   }
-  optional<T> query(int l, int r) { // [l, r)
-    _push_delay(l, l + 1);
-    _push_delay(r - 1, r);
-    int n = delay.size();
-    optional<T> ansl, ansr;
+
+  /**
+   * @brief Queries the range `[l, r)`.
+   */
+  T query(int l, int r, const T &ans0) {
+    _push(l);
+    _push(r - 1);
+    int n = d.size();
+    T ansl = ans0, ansr = ans0;
     for (l += n, r += n; l < r; l >>= 1, r >>= 1) {
       if (l & 1)
-        ansl = ansl ? combine(*ansl, tree[l++]) : tree[l++];
+        ansl = combine(ansl, t[l++]);
       if (r & 1)
-        ansr = ansr ? combine(tree[--r], *ansr) : tree[--r];
+        ansr = combine(t[--r], ansr);
     }
-    return ansl && ansr ? combine(*ansl, *ansr) : ansl ? ansl : ansr;
+    return combine(ansl, ansr);
   }
-  template <typename R, typename F = identity>
-  optional<R> query(int l, int r, function<R(R, R)> query_combine, F query_fn = {}, auto &&...args) { // [l,r)
-    _push_delay(l, l + 1);
-    _push_delay(r - 1, r);
-    int n = delay.size();
-    optional<R> ansl, ansr;
-    for (l += n, r += n; l < r; l >>= 1, r >>= 1) {
-      if (l & 1)
-        ansl = ansl ? query_combine(*ansl, query_fn(tree[l++], args...)) : query_fn(tree[l++], args...);
-      if (r & 1)
-        ansr = ansr ? query_combine(query_fn(tree[--r], args...), *ansr) : query_fn(tree[--r], args...);
-    }
-    return ansl && ansr ? query_combine(*ansl, *ansr) : ansl ? ansl : ansr;
-  }
-  template <typename R = T>
-  int max_r(int l, auto fn, auto &&...args) { // maximum r>=l such that f(a[l..r-1]) is true
-    int n = delay.size(), i = l + n, d = 1;
-    _push_delay(l, l + 1);
-    optional<R> ans0;
-    for (optional<R> ans; l < n && ((i & 1 ^ 1) || fn(ans = ans0 ? query_combine(*ans0, query_fn(tree[i], args...)) : query_fn(tree[i], args...))); d <<= 1, i = (i >> 1) + (i & 1))
+
+  /**
+   * @brief Find maximum `r>=l` s.t. `f(a[l..r-1])` remains true.
+   *
+   * @param l Left bound.
+   * @param f Predicate callable on node value.
+   * @param ans0 Default answer for nodes.
+   */
+  template <typename F> int max_r(int l, F &&f, T ans0) {
+    int n = d.size();
+    int i = l + n, d = 1;
+    _push(l);
+    for (T ans = ans0;
+         l < n && ((i & 1 ^ 1) ||
+                   std::invoke(std::forward<F>(f), ans = combine(ans0, t[i])));
+         d <<= 1, i = (i >> 1) + (i & 1))
       if (i & 1)
         ans0 = std::move(ans), l += d;
     for (; l < n && i < 2 * n; d >>= 1) {
-      _push_delay(l, l + 1);
-      if (auto ans = ans0 ? query_combine(*ans0, query_fn(tree[(i <<= 1) >> 1], args...)) : query_fn(tree[(i <<= 1) >> 1], args...); fn(ans))
+      _push(l);
+      if (auto ans = combine(ans0, t[exchange(i, i << 1)]); f(ans))
         ans0 = std::move(ans), i += 2, l += d;
     }
-    return l;
+    return min(l, n0);
   }
-  template <typename R = T>
-  int min_l(int r, auto fn, auto &&...args) { // minimum l<=r such that f(a[l+1..r]) is true
-    int n = delay.size(), i = r + n, d = 1;
-    _push_delay(r, r + 1);
-    optional<R> ans0;
-    for (optional<R> ans; r >= 0 && i > 1 && ((i & 1) || fn(ans = ans0 ? query_combine(*ans0, query_fn(tree[i], args...)) : query_fn(tree[i], args...))); d <<= 1, i = (i - 1) >> 1)
+
+  /**
+   * @brief Find minimum `l<=r` s.t. `f(a[l+1..r])` remains true.
+   *
+   * @param r Right bound.
+   * @param f Predicate callable on node value.
+   * @param ans0 Default answer for nodes.
+   */
+  template <typename F> int min_l(int r, F &&f, T ans0) {
+    int n = d.size();
+    int i = r + n, d = 1;
+    _push(r);
+    for (T ans = t[0]; r >= 0 && i > 1 &&
+                       ((i & 1) || std::invoke(std::forward<F>(f),
+                                               ans = combine(ans0, t[i])));
+         d <<= 1, i = (i - 1) >> 1)
       if (i & 1 ^ 1)
         ans0 = std::move(ans), r -= d;
     for (; r >= 0 && i < 2 * n; r -= d, d >>= 1) {
-      _push_delay(r, r + 1);
-      if (auto ans = exchange(ans0, ans0 ? query_combine(*ans0, query_fn(tree[((i = (i << 1) - 1) + 1) >> 1], args...)) : query_fn(tree[((i = (i << 1) - 1) + 1) >> 1], args...)); !fn(ans0))
+      _push(r);
+      if (auto ans =
+              exchange(ans0, combine(ans0, t[exchange(i, (i << 1) - 1)]));
+          !f(ans0))
         ans0 = std::move(ans), i += 2, r += d;
     }
     return r;
