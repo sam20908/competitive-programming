@@ -1,3 +1,16 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+/**
+ * @brief Compute the suffix array of a given string in `O(N log N)`.
+ *
+ * Even though this is not the optimal `O(N)` time complexity, the benefit is
+ * the algorithm works with cyclic shifts. For example, `SA[0]` is the smallest
+ * cyclic shift.
+ *
+ * @param s The string
+ * @param k Size of the alphabet.
+ */
 vector<int> suffix_array(string &s, int k = 256) {
   s.push_back('$');
   int n = s.size();

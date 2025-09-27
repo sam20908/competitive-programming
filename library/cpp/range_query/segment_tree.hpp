@@ -1,3 +1,14 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+/**
+ * @brief Segment Tree for efficient point update and range queries.
+ *
+ * The Segment Tree is implemented iteratively.
+ *
+ * @tparam T Value type.
+ * @tparam Combine Binary callable.
+ */
 template <typename T, typename Combine> class segment_tree {
   vector<T> t;
   Combine combine;
@@ -5,11 +16,20 @@ template <typename T, typename Combine> class segment_tree {
 
 public:
   segment_tree(int n, const T &v, const Combine &combine)
-      : segment_tree(vector<T>(n, v), combine) {}
-  segment_tree(const vector<T> &v, const Combine &combine) : combine(combine) {
+      : segment_tree(vector<T>(n, v), v, combine) {}
+
+  /**
+   * @brief Constructs a Segment Tree from the array.
+   *
+   * @param v The array.
+   * @param v0 Default value for queries.
+   * @param combine Binary callable.
+   */
+  segment_tree(const vector<T> &v, const T &v0, const Combine &combine)
+      : combine(combine) {
     n0 = v.size();
     int n2 = 1 << (__lg(n0) + int((n0 & (n0 - 1)) > 0)); // lowest pow2 >= n
-    t.resize(2 * n2);
+    t.resize(2 * n2, v0);
     for (int i = 0; i < n0; i++)
       t[i + n2] = v[i];
     for (int i = n2 - 1; i > 0; --i)
@@ -17,7 +37,15 @@ public:
   }
 
   /**
+   * @brief Returns the default value for queries.
+   */
+  T identity() const { return t[0]; }
+
+  /**
    * @brief Update the value at the index.
+   *
+   * @param i The index.
+   * @param v Value to update with.
    */
   void update(int i, const T &v) {
     int n = t.size() >> 1;
@@ -27,6 +55,9 @@ public:
 
   /**
    * @brief Sets the value at the index.
+   *
+   * @param i The index.
+   * @param v Value to set.
    */
   void set(int i, const T &v) {
     int n = t.size() >> 1;
@@ -36,15 +67,18 @@ public:
 
   /**
    * @brief Queries the range `[l, r)`.
+   *
+   * @param l Left bound.
+   * @param r Right bound.
    */
-  T query(int l, int r, const T &ans0) { // [l, r)
+  T query(int l, int r) const {
     int n = t.size() >> 1;
-    T ansl = ans0, ansr = ans0;
+    T ansl = t[0], ansr = t[0];
     for (l += n, r += n; l < r; l >>= 1, r >>= 1) {
       if (l & 1)
-        ansl = ansl ? combine(ansl, t[l++]) : t[l++];
+        ansl = combine(ansl, t[l++]);
       if (r & 1)
-        ansr = ansr ? combine(t[--r], ansr) : t[--r];
+        ansr = combine(t[--r], ansr);
     }
     return combine(ansl, ansr);
   }
@@ -53,13 +87,13 @@ public:
    * @brief Find maximum `r>=l` s.t. `f(a[l..r-1])` remains true.
    *
    * @param l Left bound.
-   * @param f Predicate callable on node value.
-   * @param ans0 Default answer for nodes.
+   * @param f Predicate callable.
    */
-  template <typename F> int max_r(int l, F &&f, T ans0) {
+  template <typename F> int max_r(int l, F &&f) {
     int n = t.size() >> 1;
     int i = l + n, d = 1;
-    for (T ans = ans0;
+    T ans0 = t[0];
+    for (T ans;
          l < n && ((i & 1 ^ 1) ||
                    std::invoke(std::forward<F>(f), ans = combine(ans0, t[i])));
          d <<= 1, i = (i >> 1) + (i & 1))
@@ -75,15 +109,15 @@ public:
    * @brief Find minimum `l<=r` s.t. `f(a[l+1..r])` remains true.
    *
    * @param r Right bound.
-   * @param f Predicate callable on node value.
-   * @param ans0 Default answer for nodes.
+   * @param f Predicate callable.
    */
-  template <typename F> int min_l(int r, F &&f, T ans0) {
+  template <typename F> int min_l(int r, F &&f) {
     int n = t.size() >> 1;
     int i = r + n, d = 1;
-    for (T ans = t[0]; r >= 0 && i > 1 &&
-                       ((i & 1) || std::invoke(std::forward<F>(f),
-                                               ans = combine(ans0, t[i])));
+    T ans0 = t[0];
+    for (T ans; r >= 0 && i > 1 &&
+                ((i & 1) ||
+                 std::invoke(std::forward<F>(f), ans = combine(ans0, t[i])));
          d <<= 1, i = (i - 1) >> 1)
       if (i & 1 ^ 1)
         ans0 = std::move(ans), r -= d;

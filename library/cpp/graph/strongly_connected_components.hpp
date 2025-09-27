@@ -1,3 +1,11 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+/**
+ * @brief Find all the strongly connected components of a graph.
+ *
+ * @param g The graph.
+ */
 vector<vector<int>> strongly_connected_components(vector<vector<int>> &g) {
   int n = g.size();
   vector<int> vis(n), ord;

@@ -1,3 +1,11 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+/**
+ * @brief Computes the Hilbert Curve for the queries.
+ *
+ * @param q List of queries of `a[l..r]`.
+ */
 vector<uint64_t> hilbert(const vector<pair<int, int>> &q) {
   int n = q.size();
   vector<uint64_t> ans(n);

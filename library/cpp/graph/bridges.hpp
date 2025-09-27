@@ -1,3 +1,11 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+/**
+ * @brief Find all the edges that are bridges.
+ *
+ * @param g The graph.
+ */
 vector<pair<int, int>> bridges(vector<vector<int>> &g) {
   int n = g.size();
   vector<int> in(n, -1), low(n, -1);

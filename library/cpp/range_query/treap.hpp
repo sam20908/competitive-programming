@@ -1,3 +1,13 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+/**
+ * @brief Treap class that automatically handles updating subtree values.
+ *
+ * @tparam T Value type.
+ * @tparam Combine Combines two subtree values with signature `Fn(left, right)
+ * -> new-value`.
+ */
 template <typename T, typename Combine> class treap {
 public:
   struct node {
