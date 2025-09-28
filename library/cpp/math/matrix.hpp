@@ -17,7 +17,7 @@ public:
     int n = v0.size(), m = v0[0].size();
     for (int i = 0; i < n; i++)
       for (int j = 0; j < m; j++)
-        v[i][j] %= M;
+        v[i][j] = (v[i][j] % M + M) % M;
   }
 
   /**
