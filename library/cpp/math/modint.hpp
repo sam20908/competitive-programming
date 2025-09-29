@@ -7,13 +7,13 @@ using namespace std;
  * The modulo is taken as a constant template parameter to optimize for the
  * common case of fixed modulo.
  */
-template <int M> class modnum {
+template <int M> class modint {
   int v{};
 
 public:
-  constexpr modnum() = default;
-  constexpr modnum(long long vx) : v((vx % M + M) % M) {}
-  constexpr modnum &operator=(long long vx) {
+  constexpr modint() = default;
+  constexpr modint(long long vx) : v((vx % M + M) % M) {}
+  constexpr modint &operator=(long long vx) {
     v = (vx % M + M) % M;
     return *this;
   }
@@ -23,7 +23,7 @@ public:
    *
    * @param p The power.
    */
-  constexpr modnum pow(long long p) const {
+  constexpr modint pow(long long p) const {
     long long a = v, res = 1;
     for (; p; p >>= 1, a = a * a % M)
       if (p & 1)
@@ -34,16 +34,16 @@ public:
   /**
    * @brief Compute the modulo inverse of the internal value.
    */
-  constexpr modnum inv() const { return pow(M - 2); }
+  constexpr modint inv() const { return pow(M - 2); }
 
   constexpr operator int() const { return v; }
 
 #define OP(op, op2, f)                                                         \
-  constexpr modnum &operator op##=(const modnum & other) {                     \
+  constexpr modint &operator op##=(const modint & other) {                     \
     v = ((1LL * v op2 other.f) % M + M) % M;                                   \
     return *this;                                                              \
   }                                                                            \
-  constexpr friend modnum operator op(const modnum &a, const modnum &b) {      \
+  constexpr friend modint operator op(const modint &a, const modint &b) {      \
     auto c = a;                                                                \
     c op## = b;                                                                \
     return c;                                                                  \
