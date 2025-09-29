@@ -7,9 +7,10 @@ using namespace std;
  * The modulo is taken as a constant template parameter to optimize for the
  * common case of fixed modulo.
  */
-template <int M> struct modnum {
+template <int M> class modnum {
   int v{};
 
+public:
   constexpr modnum() = default;
   constexpr modnum(long long vx) : v((vx % M + M) % M) {}
   constexpr modnum &operator=(long long vx) {
@@ -35,7 +36,7 @@ template <int M> struct modnum {
    */
   constexpr modnum inv() const { return pow(M - 2); }
 
-  constexpr explicit operator long long() const { return v; }
+  constexpr operator int() const { return v; }
 
 #define OP(op, op2, f)                                                         \
   constexpr modnum &operator op##=(const modnum & other) {                     \
