@@ -2,23 +2,20 @@
 using namespace std;
 
 /**
- * @brief Matrix class with overloaded arithmetic and modulo.
+ * @brief Matrix class with overloaded arithmetic.
  *
  * This implementation is designed for competitive programming, so it does not
  * have fancy features compared to something such as Numpy. Only the most
  * relevant operations are included.
+ *
+ * @tparam T Value type.
  */
-template <typename T, int M> class matrix {
+template <typename T> class matrix {
   vector<vector<T>> v;
 
 public:
-  matrix(int n, int m, const T &v0 = {}) : v(n, vector(m, (v0 + M) % M)) {}
-  matrix(const vector<vector<T>> &v0) : v(v0) {
-    int n = v0.size(), m = v0[0].size();
-    for (int i = 0; i < n; i++)
-      for (int j = 0; j < m; j++)
-        v[i][j] = (v[i][j] % M + M) % M;
-  }
+  matrix(int n, int m, const T &v0 = {}) : v(n, vector(m, v0)) {}
+  matrix(const vector<vector<T>> &v0) : v(v0) {}
 
   /**
    * @brief Returns the identity matrix of size `NxN`.
@@ -64,7 +61,7 @@ public:
     int n = v.size(), m = v[0].size();                                         \
     for (int i = 0; i < n; i++)                                                \
       for (int j = 0; j < m; j++)                                              \
-        v[i][j] = (1ll * v[i][j] op other.v[i][j] + M) % M;                    \
+        v[i][j] op## = other.v[i][j];                                          \
     return *this;                                                              \
   }                                                                            \
   friend matrix operator op(const matrix &a, const matrix &b) {                \
@@ -76,16 +73,23 @@ public:
   OP(-)
 #undef OP
 
-  friend matrix operator*(const matrix &a, const matrix &b) {
-    int n = a.v.size(), c = a.v[0].size(), m = b.v[0].size();
-    vector res(n, vector(m, T{}));
+  matrix &operator*=(const matrix &other) {
+    int n = v.size(), c = v[0].size(), m = other.v[0].size();
+    vector res(n, vector<T>(m));
     for (int i = 0; i < n; i++)
       for (int k = 0; k < c; k++) {
-        if (a.v[i][k] == 0)
+        if (!v[i][k])
           continue; // deceivingly important optimization (blame LeetCode)
         for (int j = 0; j < m; j++)
-          res[i][j] = (res[i][j] + 1ll * a.v[i][k] * b.v[k][j]) % M;
+          res[i][j] += v[i][k] * other.v[k][j];
       }
-    return res;
+    v = std::move(res);
+    return *this;
+  }
+
+  friend matrix operator*(const matrix &a, const matrix &b) {
+    auto c = a;
+    c *= b;
+    return c;
   }
 };
