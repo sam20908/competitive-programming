@@ -23,7 +23,7 @@ public:
 
   heavy_light_decomposition(const vector<vector<int>> &g, const vector<T> &v,
                             const T &v0, const Combine &combine, int root = 0)
-      : seg(v, v0, combine), combine(combine) {
+      : seg(g.size(), v0, combine), combine(combine) {
     int n = g.size();
     vector<int> size(n, 1);
     top.resize(n);
@@ -57,6 +57,8 @@ public:
           self(self, v, u, v);
     };
     dfs2(dfs2, root, root, root);
+    for (int i = 0; i < n; i++)
+      seg.set(id[i], v[i]);
   }
 
   /**
