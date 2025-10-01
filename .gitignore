@@ -2,7 +2,9 @@
 
 !library/
 !leetcode/
+!test/
 !.clang-format
 !ruff.toml
 !README.md
+!CMakeLists.txt
 !ac-library
