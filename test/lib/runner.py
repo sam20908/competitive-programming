@@ -11,13 +11,13 @@ def run(program: str, solution: str, stdin: str) -> tuple[str, str]:
     try:
         proc_output = subprocess.check_output(program, input=input)
     except subprocess.CalledProcessError as error:
-        print("Program crashed!")
+        print(f"Program crashed with error: {error.stderr}")
         raise error
 
     try:
         sol_output = subprocess.check_output(solution, input=input)
     except subprocess.CalledProcessError as error:
-        print("Solution crashed!")
+        print(f"Solution crashed with error: {error.stderr}")
         raise error
 
     proc_ans = proc_output.decode().strip()
