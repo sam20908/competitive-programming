@@ -1,6 +1,5 @@
 from test.lib import cli, runner, random
 from random import randint
-import subprocess
 
 
 def main():
