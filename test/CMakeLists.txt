@@ -24,3 +24,4 @@ add_library_test("treap")
 
 # string
 add_library_test("aho_corasick")
+add_library_test("rolling_hash")
