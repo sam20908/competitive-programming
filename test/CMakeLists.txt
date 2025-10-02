@@ -16,6 +16,7 @@ function(add_library_test name)
 endfunction()
 
 add_library_test("heavy_light_decomposition")
+add_library_test("mo_array")
 add_library_test("segment_tree")
 add_library_test("segment_tree_lazy")
 add_library_test("treap")
