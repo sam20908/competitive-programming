@@ -64,10 +64,9 @@ public:
     for (int i = n2 - 1; i > 0; --i)
       t[i] = combine(t[i << 1], t[i << 1 | 1]);
   }
-  segment_tree_lazy(int n, const T &v, const T &v0, const U &u0,
-                    const Apply &apply, const Push &push,
-                    const Combine &combine)
-      : segment_tree_lazy(vector<T>(n, v), v0, u0, apply, push, combine) {}
+  segment_tree_lazy(int n, const T &v, const U &u0, const Apply &apply,
+                    const Push &push, const Combine &combine)
+      : segment_tree_lazy(vector<T>(n, v), v, u0, apply, push, combine) {}
 
   /**
    * @brief Returns the default value for queries.
