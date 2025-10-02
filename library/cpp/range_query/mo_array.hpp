@@ -47,9 +47,9 @@ public:
    * @param f The heuristic function with signature `Fn(queries) -> H` where
    * `Q[i]` will be processed before `Q[j]` if `H[i]<H[j]`.
    */
-  template <typename F> auto solve(F &&f) {
+  template <typename H> auto solve(H &&heuristic) {
     int m = q.size();
-    auto h = f(q);
+    auto h = invoke(forward<H>(heuristic), q);
     vector<int> ord(m);
     iota(ord.begin(), ord.end(), 0);
     sort(ord.begin(), ord.end(), [&](int i, int j) { return h[i] < h[j]; });
