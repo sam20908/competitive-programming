@@ -18,7 +18,18 @@ template <typename T, typename Combine> class fenwick {
   Combine combine;
 
 public:
-  fenwick(int n, T v, Combine combine) : t(n + 1, v), combine(combine) {}
+  fenwick(const vector<T> &v, const Combine &combine) : t(v.size() + 1) {
+    int n = v.size();
+    for (int i = 0; i < n; i++)
+      t[i + 1] = v[i];
+    for (int i = 1; i <= n; i++) {
+      int j = i + (i & -i);
+      if (j <= n)
+        t[j] = combine(t[j], t[i]);
+    }
+  }
+  fenwick(int n, T v, const Combine &combine)
+      : fenwick(vector<T>(n, v), combine) {}
 
   /**
    * @brief Update the element.
