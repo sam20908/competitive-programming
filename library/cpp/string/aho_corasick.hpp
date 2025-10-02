@@ -2,48 +2,56 @@
 using namespace std;
 
 /**
- * @brief Computes the automaton to efficiently match all patterns.
- *
- * Due to wide application from traversing the automaton, it is up to you to
- * create a solve function inside the class.
+ * @brief Node class for the Aho-Corasick Automaton.
  *
  * @tparam Begin Lowest character in range.
  * @tparam End Highest character in range.
  */
-template <int Begin, int End> class aho_corasick {
-  struct node_t {
-    int g[End - Begin + 1]{};
-    int link = 0, exit = 0;
-    vector<int> matches;
-  };
-  vector<node_t> t = vector<node_t>(1);
+template <int Begin, int End> struct aho_corasick_node_t {
+  int next[End - Begin + 1]{}; // Next node index from a given character.
+  int link = 0;                // Suffix link.
+  int exit = 0;                // Next match link.
+  vector<int> matches;         // Index of matches in provided patterns.
+};
 
-public:
-  aho_corasick(const vector<string> &w) {
-    for (int i = 0; i < (int)w.size(); i++) {
-      int u = 0;
-      for (char c : w[i]) {
-        if (!t[u].g[c - Begin]) {
-          t[u].g[c - Begin] = t.size();
-          t.push_back({});
-        }
-        u = t[u].g[c - Begin];
+/**
+ * @brief Computes the automaton to efficiently match the given patterns.
+ *
+ * Dedicated template parameters denoting the ASCII range of characters are
+ * provided to create C-style arrays for adjacent list (blame CodeForces).
+ *
+ * @tparam Begin Lowest character in range.
+ * @tparam End Highest character in range.
+ */
+template <int Begin, int End>
+vector<aho_corasick_node_t<Begin, End>>
+aho_corasick_automaton(const vector<string> &p) {
+  int m = p.size();
+  vector<aho_corasick_node_t<Begin, End>> g(1);
+  for (int i = 0; i < m; i++) {
+    int u = 0;
+    for (char c : p[i]) {
+      if (!g[u].next[c - Begin]) {
+        g[u].next[c - Begin] = g.size();
+        g.push_back({});
       }
-      t[u].matches.push_back(i);
+      u = g[u].next[c - Begin];
     }
-    queue<int> q{{0}};
-    while (!q.empty()) {
-      int u = q.front();
-      q.pop();
-      for (int a = 0; a <= End - Begin; a++) {
-        if (int v = t[u].g[a]) {
-          t[v].link = u ? t[t[u].link].g[a] : 0;
-          t[v].exit =
-              t[t[v].link].matches.empty() ? t[t[v].link].exit : t[v].link;
-          q.push(v);
-        } else
-          t[u].g[a] = t[t[u].link].g[a];
-      }
+    g[u].matches.push_back(i);
+  }
+  queue<int> q{{0}};
+  while (!q.empty()) {
+    int u = q.front();
+    q.pop();
+    for (int a = 0; a <= End - Begin; a++) {
+      if (int v = g[u].next[a]) {
+        g[v].link = u ? g[g[u].link].next[a] : 0;
+        g[v].exit =
+            g[g[v].link].matches.empty() ? g[g[v].link].exit : g[v].link;
+        q.push(v);
+      } else
+        g[u].next[a] = g[g[u].link].next[a];
     }
   }
-};
+  return g;
+}
