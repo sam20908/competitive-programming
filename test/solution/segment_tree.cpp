@@ -1,4 +1,4 @@
-// ----- CSES ANALYSIS SOLUTION -----
+// https://cses.fi/problemset/model/3226/
 
 #include <iostream>
 using namespace std;

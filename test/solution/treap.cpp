@@ -1,4 +1,4 @@
-// ----- CSES ANALYSIS SOLUTION -----
+// https://cses.fi/problemset/model/2072/
 
 #include <chrono>
 #include <iostream>
