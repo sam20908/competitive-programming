@@ -26,7 +26,6 @@ def main():
 
         stdin.append(str(len(patterns)))
         stdin.extend(patterns)
-        print(stdin)
 
         proc_ans, sol_ans = runner.run(args.program, args.solution, "\n".join(stdin))
         assert proc_ans == sol_ans
