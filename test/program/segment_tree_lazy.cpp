@@ -1,5 +1,3 @@
-// ----- CSES ANALYSIS SOLUTION -----
-
 #include <bits/stdc++.h>
 using namespace std;
 
