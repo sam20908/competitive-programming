@@ -49,7 +49,7 @@ public:
    */
   template <typename H> auto solve(H &&heuristic) {
     int m = q.size();
-    auto h = invoke(forward<H>(heuristic), q);
+    auto h = invoke(std::forward<H>(heuristic), q);
     vector<int> ord(m);
     iota(ord.begin(), ord.end(), 0);
     sort(ord.begin(), ord.end(), [&](int i, int j) { return h[i] < h[j]; });
