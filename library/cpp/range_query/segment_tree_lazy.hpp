@@ -70,6 +70,11 @@ public:
       : segment_tree_lazy(vector<T>(n, v), v0, u0, apply, push, combine) {}
 
   /**
+   * @brief Returns the default value for queries.
+   */
+  T identity() const { return t[0]; }
+
+  /**
    * @brief Update the range `[l, r)`.
    *
    * @param l Left bound.
