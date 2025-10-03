@@ -43,6 +43,8 @@ public:
    */
   constexpr int value() const { return v; }
 
+  constexpr explicit operator int() { return v; }
+
 #define OP(op, op2, f)                                                         \
   constexpr modint &operator op##=(const modint & other) {                     \
     v = ((1LL * v op2 other.f) % M + M) % M;                                   \
