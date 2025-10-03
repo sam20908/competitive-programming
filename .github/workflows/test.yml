@@ -18,4 +18,4 @@ jobs:
               run: cmake --build build --target all --parallel
 
             - name: Run tests
-              run: ctest --test-dir build -j
+              run: ctest --test-dir build --output-on-failure -j
