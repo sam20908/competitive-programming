@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-#include <math/modnum.hpp>
+#include <math/modint.hpp>
 
 /**
  * @brief Computes information necessary for combinatoric calculations in `O(1)`
@@ -23,7 +23,7 @@ template <int M> struct combinatorics {
    * @param n Total number of objects.
    * @param k Number of objects to choose.
    */
-  modnum<M> ncr(int n, int k) const {
+  modint<M> ncr(int n, int k) const {
     return fact[n] * ifact[k] * ifact[n - k];
   }
 
@@ -33,5 +33,5 @@ template <int M> struct combinatorics {
    * @param n Total number of objects.
    * @param k Number of objects to choose.
    */
-  modnum<M> npr(int n, int k) const { return fact[n] * ifact[n - k]; }
+  modint<M> npr(int n, int k) const { return fact[n] * ifact[n - k]; }
 };
