@@ -24,6 +24,7 @@ add_library_test("strongly_connected_components")
 
 # math
 add_library_test("combinatorics")
+add_library_test("matrix")
 
 # range_query
 add_library_test("fenwick")
