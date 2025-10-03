@@ -15,6 +15,9 @@ function(add_library_test name)
         )
 endfunction()
 
+# data_structure
+add_library_test("union_find")
+
 # graph
 add_library_test("strongly_connected_components")
 
