@@ -15,6 +15,9 @@ function(add_library_test name)
         )
 endfunction()
 
+# math
+add_library_test("combinatorics")
+
 # range_query
 add_library_test("fenwick")
 add_library_test("heavy_light_decomposition")
