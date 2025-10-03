@@ -5,7 +5,9 @@ using namespace std;
  * @brief Keeps the internal 32-bit integer value modulo `M`.
  *
  * The modulo is taken as a constant template parameter to optimize for the
- * common case of fixed modulo.
+ * common case of fixed modulo, and it assumes the modulus is prime.
+ *
+ * @tparam M The modulus.
  */
 template <int M> class modint {
   int v{};
@@ -36,7 +38,10 @@ public:
    */
   constexpr modint inv() const { return pow(M - 2); }
 
-  constexpr operator int() const { return v; }
+  /**
+   * @brief Returns the internal integer value.
+   */
+  constexpr int value() const { return v; }
 
 #define OP(op, op2, f)                                                         \
   constexpr modint &operator op##=(const modint & other) {                     \
