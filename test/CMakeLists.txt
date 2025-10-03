@@ -15,6 +15,9 @@ function(add_library_test name)
         )
 endfunction()
 
+# graph
+add_library_test("strongly_connected_components")
+
 # math
 add_library_test("combinatorics")
 
