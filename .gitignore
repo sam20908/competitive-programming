@@ -3,6 +3,7 @@
 !library/
 !leetcode/
 !test/
+!.github/
 !.clang-format
 !ruff.toml
 !README.md

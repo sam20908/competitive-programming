@@ -1,0 +1,21 @@
+on:
+    push:
+        branches:
+            - main
+    pull_request:
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+
+            - name: Configure tests
+              run: cmake . -B build
+
+            - name: Build tests
+              run: cmake --build build --target all --parallel
+
+            - name: Run tests
+              run: ctest --test-dir build -j
