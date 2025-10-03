@@ -5,15 +5,17 @@ using namespace std;
 
 /**
  * @brief Computes information necessary for combinatoric calculations in `O(1)`
- * with `O(N)` precomputation.
+ * with `O(N)` precomputation. This assumes the modulus is prime.
+ *
+ * @tparam M The modulus.
  */
 template <int M> struct combinatorics {
-  vector<modnum<M>> fact, ifact, inv;
+  vector<modint<M>> fact, ifact, inv;
   combinatorics(int n) : fact(n + 1, 1), ifact(n + 1, 1), inv(n + 1, 1) {
     for (int i = 2; i <= n; i++) {
-      fact[i] = 1LL * fact[i - 1] * i;
-      inv[i] = 1LL * (M - M / i) * inv[M % i];
-      ifact[i] = 1LL * ifact[i - 1] * inv[i];
+      fact[i] = fact[i - 1] * i;
+      inv[i] = inv[M % i] * (M - M / i);
+      ifact[i] = ifact[i - 1] * inv[i];
     }
   }
 
