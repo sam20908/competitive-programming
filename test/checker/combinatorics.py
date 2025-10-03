@@ -12,7 +12,7 @@ def main():
         stdin.append(str(n))
 
         for _ in range(n):
-            a = randint(1, 10**6)
+            a = randint(0, 10**6)
             b = randint(0, a)
             stdin.append(f"{a} {b}")
 
