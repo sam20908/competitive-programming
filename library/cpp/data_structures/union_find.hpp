@@ -29,7 +29,12 @@ public:
    *
    * @param i The component.
    */
-  int size(int i) const { return v[find(i)]; }
+  int size(int i) { return v[find(i)]; }
+
+  /**
+   * @brief Get the number of components.
+   */
+  int components() const { return comps; }
 
   /**
    * @brief Unites two components if they are different.
