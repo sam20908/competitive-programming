@@ -29,3 +29,21 @@ def rand_tree_edges(n: int) -> list[list[int]]:
             leaf = ptr
     ed.append([ptr + 1, n])
     return ed
+
+
+def rand_tree_parent_list(n: int, root: int = 1) -> list[int]:
+    ed = rand_tree_edges(n)
+    g = [[] for _ in range(n + 1)]
+    for a, b in ed:
+        g[a].append(b)
+        g[b].append(a)
+    ans = [-1] * (n + 1)
+
+    def dfs(u, p):
+        ans[u] = p
+        for v in g[u]:
+            if v != p:
+                dfs(v, u)
+
+    dfs(root, -1)
+    return ans[1:]
